@@ -27,19 +27,20 @@
 
 ## Available Scripts
 
-| Command              | Description                                     |
-| :------------------- | :---------------------------------------------- |
-| `npm test`           | Run the test suite once via Vitest              |
-| `npm run test:watch` | Run Vitest in interactive watch mode            |
-| `npm run lint`       | Check formatting across all files with Prettier |
-| `npm run format`     | Auto-format all files in place with Prettier    |
+| Command                | Description                                  |
+| :--------------------- | :------------------------------------------- |
+| `npm test`             | Run the test suite once via Vitest           |
+| `npm run test:watch`   | Run Vitest in interactive watch mode         |
+| `npm run lint`         | Lint all files with ESLint                   |
+| `npm run format`       | Auto-format all files in place with Prettier |
+| `npm run format:check` | Check formatting without writing changes     |
 
 ---
 
 ## Development Workflow
 
 - **Tests:** Place test suites inside the `tests/` directory matching `*.test.js` or `*.spec.js`.
-- **Pre-commit check:** Run tests and ensure code conforms to format:
+- **Pre-commit check:** Lint, check formatting, and run tests:
   ```bash
-  npm run format && npm test
+  npm run lint && npm run format:check && npm test
   ```
