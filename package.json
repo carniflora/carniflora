@@ -14,16 +14,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hyphen-space/carniflora.git"
+    "url": "git+https://github.com/carniflora/carniflora.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "bugs": {
-    "url": "https://github.com/hyphen-space/carniflora/issues"
+    "url": "https://github.com/carniflora/carniflora/issues"
   },
-  "homepage": "https://github.com/hyphen-space/carniflora#readme",
+  "homepage": "https://github.com/carniflora/carniflora#readme",
   "devDependencies": {
     "prettier": "3.9.9",
     "vitest": "^5.0.3"
