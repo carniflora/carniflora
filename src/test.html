@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head><title>Test</title></head>
+<body>
+    <h1>Carnivorous Plants Game Test</h1>
+    <div id="result">Testing...</div>
+    <script src="js/plant-system.js"></script>
+    <script>
+        try {
+            const plants = PlantData.getAllPlants();
+            document.getElementById("result").innerHTML = 
+                "✅ Test successful! Loaded " + plants.length + " plant types";
+        } catch (error) {
+            document.getElementById("result").innerHTML = 
+                "❌ Test failed: " + error.message;
+        }
+    </script>
+</body>
+</html>
