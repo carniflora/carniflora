@@ -1,0 +1,31 @@
+{
+  "name": "carniflora",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "lint": "prettier --check .",
+    "format": "prettier --write .",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hyphen-space/carniflora.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/hyphen-space/carniflora/issues"
+  },
+  "homepage": "https://github.com/hyphen-space/carniflora#readme",
+  "devDependencies": {
+    "prettier": "3.9.9",
+    "vitest": "^5.0.3"
+  }
+}
