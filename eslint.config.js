@@ -1,15 +1,12 @@
 import js from "@eslint/js";
-import eslintConfigPrettier from "eslint-config-prettier";
 import globals from "globals";
+import eslintConfigPrettier from "eslint-config-prettier";
 
 export default [
   js.configs.recommended,
   {
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-      },
-    },
+    files: ["src/**/*.js"],
+    languageOptions: { globals: globals.browser },
   },
   eslintConfigPrettier,
 ];
