@@ -9,40 +9,151 @@
     <title>Carniflora: Breach</title>
     <link rel="stylesheet" href="./style.css" />
   </head>
+
   <body>
     <div id="app">
+      <!-- HEADER -->
       <header>
         <h1>Carniflora: Breach</h1>
         <div class="stats">
-          <span>Spores <b id="sp">0</b></span
-          ><span>Level <b id="lv">1</b></span
-          ><span>Towers <b id="tw">0</b></span>
+          <span>
+            Spores
+            <b id="sp">0</b>
+          </span>
+
+          <span>
+            Level
+            <b id="lv">1</b>
+          </span>
+
+          <span>
+            Towers
+            <b id="tw">0</b>
+          </span>
         </div>
       </header>
-      <div class="stage">
-        <canvas
-          id="c"
-          width="960"
-          height="540"
-          aria-label="Game field"
-        ></canvas>
-        <div id="ov">
-          <div class="box">
-            <h2 id="ot"></h2>
-            <p id="om"></p>
-            <button class="ctl" id="ob"></button>
+
+      <!-- MAIN 3-COLUMN LAYOUT -->
+      <main class="game-layout">
+        <!-- LEFT NAVIGATION -->
+        <aside class="side-nav">
+          <button class="nav-btn active" data-tab="plants">Plants</button>
+          <button class="nav-btn" data-tab="upgrades">Upgrades</button>
+          <button class="nav-btn" data-tab="battle">Battle</button>
+          <button class="nav-btn" data-tab="map">Map</button>
+        </aside>
+
+        <!-- CENTER PANEL -->
+        <section class="main-panel">
+          <!-- PLANTS TAB -->
+          <div id="plantsTab" class="tab-content active">
+            <h2>Select a Plant</h2>
+
+            <p class="tab-description">Choose a plant to view its stats.</p>
+            <div id="plantGrid" class="plant-grid"></div>
           </div>
-        </div>
-      </div>
-      <div class="cards" id="cards"></div>
-      <div class="row">
-        <button class="ctl" id="pz">Pause (P)</button
-        ><button class="ctl" id="rs">Restart level</button
-        ><span class="hint"
-          >Keys 1-4 send plants. Spores regenerate over time.</span
-        >
+
+          <!-- UPGRADES TAB -->
+          <div id="upgradesTab" class="tab-content">
+            <h2>Upgrades</h2>
+            <p>Plant upgrades will appear here.</p>
+          </div>
+
+          <!-- BATTLE TAB -->
+          <div id="battleTab" class="tab-content">
+            <h2>Battle</h2>
+            <div class="stage">
+              <canvas
+                id="c"
+                width="960"
+                height="540"
+                aria-label="Game field"
+              ></canvas>
+
+              <div id="ov">
+                <div class="box">
+                  <h2 id="ot"></h2>
+                  <p id="om"></p>
+                  <button class="ctl" id="ob"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- MAP TAB -->
+          <div id="mapTab" class="tab-content">
+            <h2>Map</h2>
+            <p>Level map will appear here.</p>
+          </div>
+        </section>
+
+        <!-- RIGHT SIDE: PLANT INFO -->
+        <aside class="plant-details">
+          <p class="sidebar-label">PLANT INFO</p>
+
+          <div id="detailColor" class="detail-color"></div>
+
+          <h2 id="detailName">Choose a Plant</h2>
+
+          <p id="detailDescription" class="detail-description">
+            Select a plant to see its abilities.
+          </p>
+
+          <div class="stat-list">
+            <div class="stat-row">
+              <span>Health</span>
+
+              <strong id="detailHealth"> -- </strong>
+            </div>
+
+            <div class="stat-row">
+              <span>Damage</span>
+
+              <strong id="detailDamage"> -- </strong>
+            </div>
+
+            <div class="stat-row">
+              <span>Range</span>
+
+              <strong id="detailRange"> -- </strong>
+            </div>
+
+            <div class="stat-row">
+              <span>Speed</span>
+
+              <strong id="detailSpeed"> -- </strong>
+            </div>
+
+            <div class="stat-row">
+              <span>Cost</span>
+
+              <strong>
+                <span id="detailCost"> -- </span>
+                spores
+              </strong>
+            </div>
+          </div>
+
+          <button id="selectPlantBtn" class="ctl select-plant-btn" disabled>
+            Deploy Plant
+          </button>
+
+          <p id="plantMessage" class="plant-message"></p>
+        </aside>
+      </main>
+
+      <!-- BOTTOM CONTROLS -->
+      <div class="game-controls">
+        <button class="ctl" id="pz">Pause (P)</button>
+
+        <button class="ctl" id="rs">Restart Level</button>
+
+        <span class="hint">
+          Keys 1-4 also deploy plants. Spores regenerate over time.
+        </span>
       </div>
     </div>
+
     <script type="module" src="./main.js"></script>
   </body>
 </html>
