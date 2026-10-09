@@ -1,93 +1,20 @@
-import { at, TOTAL, PATH } from "./path.js";
+import { state, build, update, PLANTS, sendOut, TILE } from "./game.js";
+
+import { MAP_COLS, MAP_ROWS } from "./levels.js";
+
+const $ = (id) => document.getElementById(id);
+
 // ===========
 // CANVAS
 // ===========
-const C = document.getElementById("c"),
-  g = C.getContext("2d");
+const canvas = document.getElementById("c"),
+  g = canvas.getContext("2d");
 
-// ===============
-// PLANT TYPES
-// ==============
-const KINDS = [
-  {
-    n: "Flytrap",
-    cost: 40,
-    hp: 140,
-    spd: 46,
-    rng: 70,
-    dmg: 16,
-    cd: 0.8,
-    col: "#8fd45a",
-    r: 10,
-    d: "Tough biter, short reach",
-  },
+// set canvas size
+canvas.width = MAP_COLS * TILE;
+canvas.height = MAP_ROWS * TILE;
 
-  {
-    n: "Sundew",
-    cost: 30,
-    hp: 55,
-    spd: 58,
-    rng: 115,
-    dmg: 6,
-    cd: 0.7,
-    col: "#e0457b",
-    r: 7,
-    d: "Ranged, slows tower fire",
-  },
-
-  {
-    n: "Pitcher",
-    cost: 60,
-    hp: 220,
-    spd: 38,
-    rng: 70,
-    dmg: 5,
-    cd: 1,
-    col: "#e8b04a",
-    r: 12,
-    d: "Soaks hits, heals allies",
-  },
-
-  {
-    n: "Rafflesia",
-    cost: 90,
-    hp: 90,
-    spd: 34,
-    rng: 125,
-    dmg: 34,
-    cd: 2.4,
-    col: "#b05cf0",
-    r: 9,
-    d: "Splash blast on towers",
-  },
-];
-
-// ===================
-// TOWER POSITIONS
-// ===================
-const SPOTS = [
-  [150, 160],
-  [270, 250],
-  [350, 350],
-  [430, 260],
-  [540, 200],
-  [600, 90],
-  [690, 260],
-  [800, 370],
-];
-
-// ====================
-// GAME STATE
-// ====================
-const S = {
-  state: "menu",
-  level: 1,
-  spores: 0,
-  plants: [],
-  towers: [],
-  fx: [],
-  keep: null,
-};
+// let towerType = null;
 
 // =====================================================
 //
@@ -103,247 +30,32 @@ const S = {
 
 let selectedPlantIndex = null;
 
-const $ = (id) => document.getElementById(id);
-
-// ================
-// BUILD LEVEL
-// ================
-
-function build() {
-  const L = S.level - 1;
-  S.towers = SPOTS.map((p) => ({
-    x: p[0],
-    y: p[1],
-    hp: 90 * (1 + 0.35 * L),
-    max: 90 * (1 + 0.35 * L),
-    rng: 115,
-    dmg: 8 * (1 + 0.2 * L),
-    cd: 0,
-    base: 1.1,
-    slow: 0,
-    r: 16,
-  }));
-
-  S.keep = {
-    x: 905,
-    y: 420,
-    hp: 420 * (1 + 0.35 * L),
-    max: 420 * (1 + 0.35 * L),
-    rng: 105,
-    dmg: 10 * (1 + 0.2 * L),
-    cd: 0,
-    base: 1.2,
-    slow: 0,
-    r: 30,
-    keep: true,
-  };
-  S.towers.push(S.keep);
-  S.plants = [];
-  S.fx = [];
-  S.spores = 120;
-}
-
 // =====================================================
 // SEND / DEPLOY PLANT
 // added messages for the new user interface.
 // =====================================================
-
-function send(i) {
-  const k = KINDS[i];
+function deploy(i) {
+  const k = PLANTS[i];
 
   // Player cannot deploy until the game starts.
-  if (S.state !== "play") {
+  if (state.phase !== "play") {
     showPlantMessage("Start the battle before deploying a plant.");
     return;
   }
 
   // Tell the player when they do not have enough spores.
-  if (S.spores < k.cost) {
+  if (state.spores < k.cost) {
     showPlantMessage(`You need ${k.cost} spores to deploy ${k.n}.`);
     return;
   }
 
-  S.spores -= k.cost;
-  S.plants.push({
-    k: i,
-    s: 0,
-    x: -20,
-    y: 110,
-    hp: k.hp,
-    cd: 0,
-  });
+  sendOut(i);
   showPlantMessage(`${k.n} deployed!`);
-}
-
-// ============================
-// FIND NEAREST TARGET
-// =============================
-
-function nearest(list, x, y, rng) {
-  let b = null,
-    bd = rng;
-  for (const o of list) {
-    const d = Math.hypot(o.x - x, o.y - y);
-    if (d <= bd + (o.r || 0) && o.hp > 0) {
-      b = o;
-      bd = d;
-    }
-  }
-  return b;
-}
-
-// =================================
-// UPDATE GAME
-// =================================
-function update(dt) {
-  // Regenerate spores over time.
-  S.spores += 6 * dt;
-  // Towers that are still alive.
-  const alive = S.towers.filter((t) => t.hp > 0);
-
-  // ===================
-  // UPDATE PLANTS
-  // ====================
-
-  for (const p of S.plants) {
-    const k = KINDS[p.k];
-    // Move plant along the path.
-    if (p.s < TOTAL) {
-      p.s += k.spd * dt;
-    }
-
-    // Get x and y position.
-    [p.x, p.y] = at(p.s);
-
-    // Reduce attack cooldown.
-    p.cd -= dt;
-
-    // =========================
-    // PITCHER HEALING
-    // ==========================
-
-    if (k.n === "Pitcher") {
-      for (const q of S.plants) {
-        if (q !== p && Math.hypot(q.x - p.x, q.y - p.y) < 80) {
-          q.hp = Math.min(KINDS[q.k].hp, q.hp + 4 * dt);
-        }
-      }
-    }
-
-    // ========================
-    // PLANT ATTACK
-    // =========================
-
-    if (p.cd <= 0) {
-      const t = nearest(alive, p.x, p.y, k.rng);
-
-      if (t) {
-        p.cd = k.cd;
-        t.hp -= k.dmg;
-
-        S.fx.push({
-          x1: p.x,
-          y1: p.y,
-          x2: t.x,
-          y2: t.y,
-          t: 0.12,
-          c: k.col,
-        });
-
-        // Sundew slows towers.
-        if (k.n === "Sundew") {
-          t.slow = 2;
-        }
-
-        // Rafflesia splash attack.
-        if (k.n === "Rafflesia") {
-          for (const o of alive) {
-            if (o !== t && Math.hypot(o.x - t.x, o.y - t.y) < 60) {
-              o.hp -= k.dmg * 0.5;
-            }
-          }
-
-          S.fx.push({
-            x1: t.x,
-            y1: t.y,
-            x2: t.x,
-            y2: t.y,
-            t: 0.3,
-            c: k.col,
-            ring: 60,
-          });
-        }
-      }
-    }
-  }
-
-  // =========================
-  // TOWER ATTACKS
-  // ==========================
-
-  for (const t of alive) {
-    t.slow = Math.max(0, t.slow - dt);
-    t.cd -= dt * (t.slow > 0 ? 0.55 : 1);
-
-    if (t.cd <= 0) {
-      const p = nearest(S.plants, t.x, t.y, t.rng);
-      if (p) {
-        t.cd = t.base;
-        p.hp -= t.dmg;
-        S.fx.push({
-          x1: t.x,
-          y1: t.y,
-          x2: p.x,
-          y2: p.y,
-          t: 0.1,
-          c: "#ffd9a0",
-        });
-      }
-    }
-  }
-
-  // Remove dead plants.
-  S.plants = S.plants.filter((p) => p.hp > 0);
-
-  // Update attack effects.
-  S.fx.forEach((f) => (f.t -= dt));
-
-  S.fx = S.fx.filter((f) => f.t > 0);
-
-  // Win.
-  if (S.keep.hp <= 0) {
-    end(true);
-  }
-
-  // Lose.
-  else if (
-    !S.plants.length &&
-    S.spores < Math.min(...KINDS.map((k) => k.cost))
-  ) {
-    end(false);
-  }
-}
-
-// =======================
-// END LEVEL
-// ======================
-
-function end(win) {
-  S.state = win ? "won" : "lost";
-
-  show(
-    win ? "Keep breached" : "The swarm withered",
-    win
-      ? "Level " + S.level + " cleared. The next keep has tougher towers."
-      : "No plants left and not enough spores to send more. Try mixing Pitchers and Rafflesia.",
-    win ? "Next level" : "Retry",
-  );
 }
 
 // ======================
 // SHOW OVERLAY
 // =====================
-
 function show(t, m, b) {
   $("ot").textContent = t;
   $("om").textContent = m;
@@ -355,10 +67,10 @@ function show(t, m, b) {
 // =========================
 // START LEVEL
 // =========================
-
 function startLevel() {
+  // towerType = null;
   build();
-  S.state = "play";
+  state.phase = "play";
   $("ov").classList.add("hide");
   showPlantMessage("Choose a plant and deploy it.");
 }
@@ -366,13 +78,12 @@ function startLevel() {
 // ====================
 // PAUSE
 // ==================
-
 function pause() {
-  if (S.state === "play") {
-    S.state = "pause";
+  if (state.phase === "play") {
+    state.phase = "pause";
     show("Paused", "Timers are frozen.", "Resume");
-  } else if (S.state === "pause") {
-    S.state = "play";
+  } else if (state.phase === "pause") {
+    state.phase = "play";
     $("ov").classList.add("hide");
   }
 }
@@ -383,7 +94,7 @@ function pause() {
 
 $("pz").onclick = pause;
 $("rs").onclick = () => {
-  if (S.state !== "menu") {
+  if (state.phase !== "menu") {
     startLevel();
   }
 };
@@ -394,25 +105,38 @@ $("rs").onclick = () => {
 
 $("ob").onclick = () => {
   // Start game.
-  if (S.state === "menu") {
+  if (state.phase === "menu") {
     startLevel();
     return;
   }
 
   // Resume game.
-  if (S.state === "pause") {
+  if (state.phase === "pause") {
     pause();
     return;
   }
 
   // Next level.
-  if (S.state === "won") {
-    S.level++;
+  if (state.phase === "won") {
+    state.level++;
   }
 
   // Retry / next level.
   startLevel();
 };
+
+// // click to add a Tower
+// addEventListener("click", (e) => {
+//   if (state.phase !== "play") return;
+//   const rect = canvas.getBoundingClientRect();
+//   const c = Math.floor((e.clientX - rect.left) / TILE);
+//   const r = Math.floor((e.clientY - rect.top) / TILE);
+
+//   const existing = state.myTowers.find(
+//     (tower) => tower.c === c && tower.r === r,
+//   );
+//   placeTower(c, r, towerType);
+// });
 
 // ==========================
 // KEYBOARD CONTROLS
@@ -426,7 +150,7 @@ addEventListener("keydown", (e) => {
   const n = parseInt(e.key, 10);
 
   if (n >= 1 && n <= 4) {
-    send(n - 1);
+    deploy(n - 1);
   }
 });
 
@@ -507,7 +231,7 @@ function showPlantMessage(message) {
 
 function showPlantDetails(index) {
   // Get selected plant.
-  const plant = KINDS[index];
+  const plant = PLANTS[index];
 
   // Remember selected plant.
   selectedPlantIndex = index;
@@ -531,7 +255,7 @@ function showPlantDetails(index) {
   $("detailCost").textContent = plant.cost;
 
   // Update description.
-  $("detailDescription").textContent = plant.d;
+  $("detailDescription").textContent = plant.desc;
 
   // Change plant colour circle.
   $("detailColor").style.background = plant.col;
@@ -563,7 +287,7 @@ const plantGrid = $("plantGrid");
 // CREATE PLANT CARDS
 // =================================
 
-KINDS.forEach((plant, index) => {
+PLANTS.forEach((plant, index) => {
   // Create button.
   const card = document.createElement("button");
 
@@ -594,7 +318,7 @@ KINDS.forEach((plant, index) => {
       </h3>
 
       <p>
-        ${plant.d}
+        ${plant.desc}
       </p>
 
       <div class="plant-card-cost">
@@ -624,143 +348,131 @@ $("selectPlantBtn").addEventListener("click", () => {
     return;
   }
 
-  // Uses ORIGINAL send() function.
-  send(selectedPlantIndex);
+  deploy(selectedPlantIndex);
 });
 
 // =====================================================
 // HEALTH BAR
 // =====================================================
 
-function bar(x, y, w, v, m, c) {
+function healthBar(x, y, width, valueHp, maxHp, colour) {
   g.fillStyle = "rgba(0,0,0,.55)";
-  g.fillRect(x - w / 2, y, w, 4);
-  g.fillStyle = c;
-  g.fillRect(x - w / 2, y, w * Math.max(0, v / m), 4);
+  g.fillRect(x - width / 2, y, width, 4);
+  g.fillStyle = colour;
+  g.fillRect(x - width / 2, y, width * Math.max(0, valueHp / maxHp), 4);
 }
 
 // ============================
 // DRAW GAME
 // ============================
-
 function draw() {
-  // Clear canvas.
-  g.clearRect(0, 0, 960, 540);
-
-  // ==========================
-  // BACKGROUND
-  // ========================
-
-  const bg = g.createLinearGradient(0, 0, 0, 540);
+  // clear the canvas
+  g.clearRect(0, 0, canvas.width, canvas.height);
+  const bg = g.createLinearGradient(0, 0, 0, canvas.height);
   bg.addColorStop(0, "#16301f");
   bg.addColorStop(1, "#0f2217");
   g.fillStyle = bg;
-  g.fillRect(0, 0, 960, 540);
+  g.fillRect(0, 0, canvas.width, canvas.height);
 
-  // ==================
-  // PATH
-  // ==================
-
+  // draw the paths
   g.lineCap = "round";
   g.lineJoin = "round";
-  g.beginPath();
+  for (const path of state.map.paths) {
+    // get each path from the level paths
+    g.beginPath();
+    path.cells.forEach((cell, i) => {
+      const x = (cell.c + 0.5) * TILE;
+      const y = (cell.r + 0.5) * TILE;
+      if (i) g.lineTo(x, y);
+      else g.moveTo(x, y);
+    });
+    g.strokeStyle = "#4a3a28";
+    g.lineWidth = TILE * 0.65;
+    g.stroke();
+    g.strokeStyle = "#5d4a33";
+    g.lineWidth = TILE * 0.5;
+    g.stroke();
+  }
 
-  PATH.forEach((p, i) => {
-    if (i) {
-      g.lineTo(p[0], p[1]);
-    } else {
-      g.moveTo(p[0], p[1]);
-    }
-  });
-
-  g.strokeStyle = "#4a3a28";
-  g.lineWidth = 40;
-  g.stroke();
-  g.strokeStyle = "#5d4a33";
-  g.lineWidth = 30;
-  g.stroke();
-
-  // ============================
-  // TOWERS
-  // ============================
-
-  for (const t of S.towers) {
-    if (t.hp <= 0) {
+  // draw the enemies on the screen
+  for (const enemy of state.enemies) {
+    if (enemy.hp <= 0) {
       g.fillStyle = "#2b2f2a";
       g.beginPath();
-      g.arc(t.x, t.y, t.r * 0.8, 0, 7);
+      g.arc(enemy.x, enemy.y, enemy.radius * 0.8, 0, 7);
       g.fill();
       continue;
     }
-
-    // Tower attack range.
     g.strokeStyle = "rgba(255,200,160,.10)";
     g.lineWidth = 1;
     g.beginPath();
-    g.arc(t.x, t.y, t.rng, 0, 7);
+    g.arc(enemy.x, enemy.y, enemy.rng, 0, 7);
     g.stroke();
-    g.fillStyle = t.slow > 0 ? "#7f8fa3" : "#9aa0a6";
-
-    // Final keep.
-    if (t.keep) {
-      g.fillRect(t.x - t.r, t.y - t.r, t.r * 2, t.r * 2);
+    g.fillStyle = enemy.slow > 0 ? "#7f8fa3" : "#9aa0a6"; // if enemy slowed use first colour otherwise other
+    if (enemy.keep) {
+      g.fillRect(
+        enemy.x - enemy.radius,
+        enemy.y - enemy.radius,
+        enemy.radius * 2,
+        enemy.radius * 2,
+      );
       g.fillStyle = "#c0392b";
-      g.fillRect(t.x - 4, t.y - t.r - 14, 4, 14);
-      g.fillRect(t.x, t.y - t.r - 14, 14, 8);
-    }
-
-    // Normal tower.
-    else {
+      g.fillRect(enemy.x - 4, enemy.y - enemy.radius - 14, 4, 14);
+      g.fillRect(enemy.x, enemy.y - enemy.radius - 14, 14, 8);
+    } else {
       g.beginPath();
-      g.arc(t.x, t.y, t.r, 0, 7);
+      g.arc(enemy.x, enemy.y, enemy.radius, 0, 7);
       g.fill();
       g.fillStyle = "#6c7279";
-      g.fillRect(t.x - 5, t.y - t.r - 6, 10, 8);
+      g.fillRect(enemy.x - 5, enemy.y - enemy.radius - 6, 10, 8);
     }
-
-    // Tower health.
-    bar(t.x, t.y + t.r + 4, t.keep ? 60 : 34, t.hp, t.max, "#e05a4a");
+    healthBar(
+      enemy.x,
+      enemy.y + enemy.radius + 4,
+      enemy.keep ? 60 : 34,
+      enemy.hp,
+      enemy.max,
+      "#e05a4a",
+    );
   }
 
-  // ===================================================
-  // PLANTS
-  // ===================================================
+  // // draw the number of towers that are allowed in the level
+  // state.myTowers.forEach((tower) => {
+  //   const x = (tower.c + 0.5) * TILE;
+  //   const y = (tower.r + 0.5) * TILE;
+  //   const plant = PLANTS[tower.plant];
 
-  for (const p of S.plants) {
-    const k = KINDS[p.k];
+  //   g.fillStyle = plant.col;
+  //   g.fillRect(x - 16, y - 16, 32, 32);
+  //   g.strokeStyle = "#ffffff";
+  //   g.lineWidth = 2;
+  //   g.strokeRect(x - 16, y - 16, 32, 32);
+  // });
 
-    // Plant body.
+  // draw plants that are sent out -- plants above enemies/mytowers because drawn after
+  for (const p of state.plants) {
+    const k = PLANTS[p.plant];
     g.fillStyle = k.col;
     g.beginPath();
-    g.arc(p.x, p.y, k.r, 0, 7);
+    g.arc(p.x, p.y, k.radius, 0, 7);
     g.fill();
-    // Plant centre.
     g.fillStyle = "rgba(0,0,0,.45)";
     g.beginPath();
-    g.arc(p.x, p.y, k.r * 0.45, 0, 7);
+    g.arc(p.x, p.y, k.radius * 0.45, 0, 7);
     g.fill();
-
-    // Plant health bar.
-    bar(p.x, p.y - k.r - 8, 20, p.hp, k.hp, "#8fd45a");
+    healthBar(p.x, p.y - k.radius - 8, 20, p.hp, k.hp, "#8fd45a");
   }
 
-  // ==============================
-  // ATTACK EFFECTS
-  // =============================
-
-  for (const f of S.fx) {
-    g.strokeStyle = f.c;
+  // draw the effects
+  for (const f of state.fx) {
+    g.strokeStyle = f.colour;
     g.lineWidth = 2;
-    g.globalAlpha = Math.min(1, f.t * 6);
-
-    // Splash ring.
+    g.globalAlpha = Math.min(1, f.timer * 6);
     if (f.ring) {
       g.beginPath();
-      g.arc(f.x1, f.y1, f.ring * (1 - f.t / 0.3), 0, 7);
+      g.arc(f.x1, f.y1, f.ring * (1 - f.timer / 0.3), 0, 7);
       g.stroke();
-    }
-    // Normal attack line.
-    else {
+    } else {
       g.beginPath();
       g.moveTo(f.x1, f.y1);
       g.lineTo(f.x2, f.y2);
@@ -770,14 +482,19 @@ function draw() {
   }
 }
 
+let lastPhase = null;
+
+// store timestamp of previous frame
 let last = performance.now(),
+  // store currently displayed HUD value
   shown = {};
 
 function hud() {
   const v = {
-    sp: Math.floor(S.spores),
-    lv: S.level,
-    tw: S.towers.filter((t) => t.hp > 0).length,
+    sp: Math.floor(state.spores),
+    lv: state.level,
+    tw: state.enemies.filter((enemy) => enemy.hp > 0).length,
+    // tc: state.myTowers.length + " / " + maxTowers(),
   };
 
   // Update spores, level, and towers.
@@ -793,8 +510,9 @@ function hud() {
   // ===================================================
 
   if (selectedPlantIndex !== null) {
-    const plant = KINDS[selectedPlantIndex];
-    $("selectPlantBtn").disabled = S.state !== "play" || S.spores < plant.cost;
+    const plant = PLANTS[selectedPlantIndex];
+    $("selectPlantBtn").disabled =
+      state.phase !== "play" || state.spores < plant.cost;
   }
 }
 
@@ -802,11 +520,22 @@ function hud() {
 // GAME LOOP
 // =============================
 
-function loop(t) {
-  const dt = Math.min(0.05, (t - last) / 1000);
-  last = t;
-  if (S.state === "play") {
-    update(dt);
+function loop(timer) {
+  const deltaTime = Math.min(0.05, (timer - last) / 1000);
+  last = timer;
+  if (state.phase === "play") update(deltaTime);
+
+  // check if game is ended
+  if (state.phase !== lastPhase) {
+    if (state.phase == "won")
+      show("Keep breached", "Level " + state.level + " cleared.", "Next level");
+    if (state.phase === "lost")
+      show(
+        "The swarm withered",
+        "No plants left and not enough spores.",
+        "Retry",
+      );
+    lastPhase = state.phase;
   }
   draw();
   hud();
@@ -819,7 +548,7 @@ function loop(t) {
 // =====================================================
 
 build();
-S.state = "menu";
+state.phase = "menu";
 
 // =====================================================
 // Select Flytrap by default so that
