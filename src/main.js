@@ -9,6 +9,13 @@ import {
   deploySelected,
   maxTowers,
 } from "./game.js";
+import {
+  createBossLevelState,
+  spawnBossPlant,
+  updateBossLevel,
+  drawBossLevel,
+  KINDS as BOSS_KINDS,
+} from "./bossLevel.js";
 
 import { MAP_COLS, MAP_ROWS } from "./levels.js";
 
@@ -37,6 +44,25 @@ canvas.height = MAP_ROWS * TILE;
 // =====================================================
 
 let selectedPlantIndex = null;
+let mode = "td";
+let bossState = null;
+
+function activeBattle() {
+  return mode === "boss" ? bossState : state;
+}
+
+function activePlants() {
+  return mode === "boss" ? BOSS_KINDS : PLANTS;
+}
+
+function activePhase() {
+  return mode === "boss" ? bossState.state : state.phase;
+}
+
+function setActivePhase(phase) {
+  if (mode === "boss") bossState.state = phase;
+  else state.phase = phase;
+}
 
 const plantImages = [
   "./assets/plants/flytrap.png",
@@ -95,16 +121,16 @@ const plantProgression = [
 // added messages for the new user interface.
 // =====================================================
 function deploy(i) {
-  const k = PLANTS[i];
+  const k = activePlants()[i];
 
   // Player cannot deploy until the game starts.
-  if (state.phase !== "play") {
+  if (activePhase() !== "play") {
     showPlantMessage("Start the battle before deploying a plant.");
     return;
   }
 
-  // the plant needs a tower to come out of
-  if (!state.myTowers.some((t) => t.plant === i)) {
+  // Normal battles deploy from placed towers; boss plants use the moving front line.
+  if (mode === "td" && !state.myTowers.some((t) => t.plant === i)) {
     showPlantMessage(
       `Place a ${k.n} tower first then click a tile next to the path.`,
     );
@@ -112,12 +138,13 @@ function deploy(i) {
   }
 
   // Tell the player when they do not have enough spores.
-  if (state.spores < k.cost) {
+  if (activeBattle().spores < k.cost) {
     showPlantMessage(`You need ${k.cost} spores to deploy ${k.n}.`);
     return;
   }
 
-  deploySelected(i);
+  if (mode === "boss") spawnBossPlant(bossState, i);
+  else deploySelected(i);
   showPlantMessage(`${k.n} deployed!`);
 }
 
@@ -137,23 +164,45 @@ function show(t, m, b) {
 // =========================
 function startLevel() {
   // towerType = null;
-  build();
-  state.phase = "play";
+  if (mode === "boss") {
+    bossState = createBossLevelState();
+    canvas.width = 960;
+    canvas.height = 540;
+  } else {
+    build();
+    state.phase = "play";
+    canvas.width = MAP_COLS * TILE;
+    canvas.height = MAP_ROWS * TILE;
+  }
+  lastPhase = null;
   $("ov").classList.add("hide");
   showPlantMessage("Choose a plant and deploy it.");
+  hud();
+}
+
+function toggleMode() {
+  mode = mode === "td" ? "boss" : "td";
+  startLevel();
+  $("bm").textContent = mode === "boss" ? "Normal Battle" : "Boss Battle";
+  $("bm").setAttribute("aria-pressed", String(mode === "boss"));
+  setActiveTab("battle");
+  if (selectedPlantIndex !== null) showPlantDetails(selectedPlantIndex);
+  hud();
+  $("bm").focus();
 }
 
 // ====================
 // PAUSE
 // ==================
 function pause() {
-  if (state.phase === "play") {
-    state.phase = "pause";
+  if (activePhase() === "play") {
+    setActivePhase("pause");
     show("Paused", "Timers are frozen.", "Resume");
-  } else if (state.phase === "pause") {
-    state.phase = "play";
+  } else if (activePhase() === "pause") {
+    setActivePhase("play");
     $("ov").classList.add("hide");
   }
+  hud();
 }
 
 // ========================
@@ -161,8 +210,9 @@ function pause() {
 // ========================
 
 $("pz").onclick = pause;
+$("bm").onclick = toggleMode;
 $("rs").onclick = () => {
-  if (state.phase !== "menu") {
+  if (activePhase() !== "menu") {
     startLevel();
   }
 };
@@ -172,6 +222,12 @@ $("rs").onclick = () => {
 // =====================================================
 
 $("ob").onclick = () => {
+  if (mode === "boss") {
+    if (bossState.state === "pause") pause();
+    else startLevel();
+    return;
+  }
+
   // Start game.
   if (state.phase === "menu") {
     startLevel();
@@ -208,7 +264,7 @@ canvas.addEventListener("mouseleave", () => (hoverCell = null));
 
 // click to place a tower of the selected plant type
 canvas.addEventListener("click", (e) => {
-  if (state.phase !== "play") return;
+  if (mode !== "td" || state.phase !== "play") return;
   if (selectedPlantIndex === null) {
     showPlantMessage("Select a plant first.");
     return;
@@ -325,7 +381,7 @@ function showPlantMessage(message) {
 
 function showPlantDetails(index) {
   // Get selected plant.
-  const plant = PLANTS[index];
+  const plant = activePlants()[index];
 
   // Remember selected plant.
   selectedPlantIndex = index;
@@ -349,7 +405,7 @@ function showPlantDetails(index) {
   $("detailCost").textContent = plant.cost;
 
   // Update description.
-  $("detailDescription").textContent = plant.desc;
+  $("detailDescription").textContent = plant.desc ?? plant.d;
 
   // ==========================================
   //  Display the selected plant illustration
@@ -672,6 +728,7 @@ let last = performance.now(),
 
 let lastRenderedEvolutionLevel = null;
 function hud() {
+  const battle = activeBattle();
   // Refresh the collection when the level changes.
   if (lastRenderedEvolutionLevel !== state.level) {
     renderEvolutionCards();
@@ -679,10 +736,12 @@ function hud() {
   }
 
   const v = {
-    sp: Math.floor(state.spores),
-    lv: state.level,
-    tw: state.enemies.filter((enemy) => enemy.hp > 0).length,
-    tc: state.myTowers.length + " / " + maxTowers(),
+    sp: Math.floor(battle.spores),
+    lv: mode === "boss" ? "Boss" : state.level,
+    tw: (mode === "boss" ? battle.towers : battle.enemies).filter(
+      (enemy) => enemy.hp > 0,
+    ).length,
+    tc: mode === "boss" ? "—" : state.myTowers.length + " / " + maxTowers(),
   };
 
   // Update spores, level, and towers.
@@ -698,10 +757,12 @@ function hud() {
   // ===================================================
 
   if (selectedPlantIndex !== null) {
-    const plant = PLANTS[selectedPlantIndex];
-    const hasTower = state.myTowers.some((t) => t.plant === selectedPlantIndex);
+    const plant = activePlants()[selectedPlantIndex];
+    const hasTower =
+      mode === "boss" ||
+      state.myTowers.some((t) => t.plant === selectedPlantIndex);
     $("selectPlantBtn").disabled =
-      state.phase !== "play" || !hasTower || state.spores < plant.cost;
+      activePhase() !== "play" || !hasTower || battle.spores < plant.cost;
   }
 }
 
@@ -712,21 +773,36 @@ function hud() {
 function loop(timer) {
   const deltaTime = Math.min(0.05, (timer - last) / 1000);
   last = timer;
-  if (state.phase === "play") update(deltaTime);
+  if (activePhase() === "play") {
+    if (mode === "boss") updateBossLevel(bossState, deltaTime);
+    else update(deltaTime);
+  }
 
   // check if game is ended
-  if (state.phase !== lastPhase) {
-    if (state.phase == "won")
+  const phase = activePhase();
+  if (phase !== lastPhase) {
+    if (mode === "boss" && phase === "won")
+      show("Boss defeated", "Big Boss has fallen.", "Retry Boss");
+    else if (mode === "boss" && phase === "lost")
+      show(
+        "The swarm withered",
+        bossState.defeatReason === "overrun"
+          ? "The advancing killzone overran the battlefield."
+          : "No plants left and not enough spores to send more.",
+        "Retry Boss",
+      );
+    else if (phase === "won")
       show("Keep breached", "Level " + state.level + " cleared.", "Next level");
-    if (state.phase === "lost")
+    else if (phase === "lost")
       show(
         "The swarm withered",
         "No plants left and not enough spores.",
         "Retry",
       );
-    lastPhase = state.phase;
+    lastPhase = phase;
   }
-  draw();
+  if (mode === "boss") drawBossLevel(g, bossState, canvas.width);
+  else draw();
   hud();
 
   requestAnimationFrame(loop);
