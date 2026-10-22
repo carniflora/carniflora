@@ -30,6 +30,13 @@ canvas.height = MAP_ROWS * TILE;
 
 let selectedPlantIndex = null;
 
+const plantImages = [
+  "./assets/plants/flytrap.png",
+  "./assets/plants/sundew.png",
+  "./assets/plants/pitcher.png",
+  "./assets/plants/rafflesia.png",
+];
+
 // =====================================================
 // SEND / DEPLOY PLANT
 // added messages for the new user interface.
@@ -257,29 +264,71 @@ function showPlantDetails(index) {
   // Update description.
   $("detailDescription").textContent = plant.desc;
 
-  // Change plant colour circle.
-  $("detailColor").style.background = plant.col;
+  // ==========================================
+  //  Display the selected plant illustration
+  // ==========================================
 
-  // Allow Select Plant button.
+  const detailContainer = $("detailColor");
+
+  // Check whether the image already exists.
+  let detailImage = detailContainer.querySelector("img");
+
+  // Create an image if none exists.
+  if (!detailImage) {
+    detailImage = document.createElement("img");
+    detailContainer.appendChild(detailImage);
+  }
+
+  // Show the plant colour while loading.
+  detailContainer.style.backgroundColor = plant.col;
+  detailImage.style.display = "none";
+
+  // Set alternative text.
+  detailImage.alt = `${plant.n} illustration`;
+
+  // Show the image after loading.
+  detailImage.onload = () => {
+    detailImage.style.display = "block";
+    detailContainer.style.backgroundColor = "#eee9db";
+  };
+
+  // Use the plant colour if the image is missing.
+  detailImage.onerror = () => {
+    detailImage.style.display = "none";
+    detailContainer.style.backgroundColor = plant.col;
+  };
+
+  detailImage.src = plantImages[index];
+
   $("selectPlantBtn").disabled = false;
 
-  // Remove selected style
-  // from every plant card.
   document.querySelectorAll(".plant-option").forEach((card) => {
     card.classList.remove("selected");
   });
 
-  // Find selected plant card.
   const selectedCard = document.querySelector(`[data-plant-index="${index}"]`);
 
-  // Highlight it.
   if (selectedCard) {
     selectedCard.classList.add("selected");
   }
 
-  // Tell player what they selected.
-  showPlantMessage(`${plant.n} selected.`);
+  showPlantMessage(`${plant.n} selected`);
 }
+
+const plantRoles = [
+  "Strong Attacker", // Flytrap
+  "Slows Towers", // Sundew
+  "Protects & Heals", // Pitcher
+  "Splash Damage", // Rafflesia
+];
+
+// Lucide icons for each combat role
+const plantRoleIcons = [
+  "icon-shield", // Flytrap
+  "icon-crosshair", // Sundew
+  "icon-heart-pulse", // Pitcher
+  "icon-bomb", // Rafflesia
+];
 
 const plantGrid = $("plantGrid");
 
@@ -291,43 +340,78 @@ PLANTS.forEach((plant, index) => {
   // Create button.
   const card = document.createElement("button");
 
-  // CSS class.
+  card.type = "button";
   card.className = "plant-option";
 
   // Remember which plant
   // this button represents.
   card.dataset.plantIndex = index;
 
-  // Add information to card.
+  // ==========================================
+  // Plant card with image and information
+  // ==========================================
+
   card.innerHTML = `
-       <div class="plant-card-top">
+  <div class="plant-card-content">
 
-        <span
-          class="plant-card-color"
-          style="background:${plant.col}">
-        </span>
+    <div class="plant-card-top">
+      <span class="plant-number">
+        PLANT ${index + 1}
+      </span>
+    </div>
 
-        <span class="plant-number">
-          ${index + 1}
-        </span>
+    <div class="plant-card-layout">
 
+      <div class="plant-card-image">
+        <img
+          src="${plantImages[index]}"
+          alt="${plant.n} illustration"
+        />
       </div>
 
-      <h3>
-        ${plant.n}
-      </h3>
+      <div class="plant-card-info">
 
-      <p>
-        ${plant.desc}
-      </p>
+        <h3>${plant.n}</h3>
+        <p>${plant.desc}</p>
 
-      <div class="plant-card-cost">
-        ${plant.cost} spores
+    
+        <span class="plant-role plant-role-${index}">
+        <i class="${plantRoleIcons[index]}" aria-hidden="true"></i>
+        ${plantRoles[index]}
+        </span>
       </div>
-    `;
+    </div>
 
-  // When clicked:
-  // show information first.
+  <div class="plant-card-footer">
+  <span class="plant-card-cost">
+
+    <i class="icon-leaf spore-icon" aria-hidden="true"></i>
+    ${plant.cost} spores
+
+  </span>
+</div>
+
+  </div>
+`;
+
+  // Load the plant image.
+  const cardImage = card.querySelector(".plant-card-image img");
+
+  cardImage.onload = () => {
+    cardImage.style.display = "block";
+    cardImage.parentElement.style.backgroundColor = "#eee9db";
+  };
+
+  // Show why a plant picture failed to load.
+
+  cardImage.onerror = () => {
+    console.error(`Failed to load ${plant.n} image:`, cardImage.src);
+
+    cardImage.style.display = "none";
+    cardImage.parentElement.style.backgroundColor = plant.col;
+  };
+
+  cardImage.src = plantImages[index];
 
   card.addEventListener("click", () => {
     showPlantDetails(index);
@@ -377,6 +461,7 @@ function draw() {
   // draw the paths
   g.lineCap = "round";
   g.lineJoin = "round";
+
   for (const path of state.map.paths) {
     // get each path from the level paths
     g.beginPath();

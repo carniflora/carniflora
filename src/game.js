@@ -40,7 +40,7 @@ export const state = {
 export const PLANTS = [
   {
     n: "Flytrap",
-    cost: 40,
+    cost: 30,
     hp: 140,
     spd: 0.7,
     rng: 70,
@@ -48,11 +48,11 @@ export const PLANTS = [
     cooldown: 0.8,
     col: "#8fd45a",
     radius: 10,
-    desc: "Tough biter, short reach",
+    desc: "A tough plant that attacks enemies up close with powerful bites. Its high health helps it survive attacks and stay in battle longer.",
   },
   {
     n: "Sundew",
-    cost: 30,
+    cost: 40,
     hp: 55,
     spd: 1,
     rng: 115,
@@ -60,7 +60,7 @@ export const PLANTS = [
     cooldown: 0.7,
     col: "#e0457b",
     radius: 7,
-    desc: "Ranged, slows tower fire",
+    desc: "A ranged plant that attacks from a distance and slows down enemy towers. It helps other plants survive by giving them more time to move forward.",
   },
   {
     n: "Pitcher",
@@ -72,7 +72,7 @@ export const PLANTS = [
     cooldown: 1,
     col: "#e8b04a",
     radius: 12,
-    desc: "Soaks hits, heals allies",
+    desc: "A strong plant that can take a lot of damage while healing nearby friendly plants. It helps keep the group alive as they move toward the enemy keep.",
   },
   {
     n: "Rafflesia",
@@ -84,7 +84,7 @@ export const PLANTS = [
     cooldown: 2.4,
     col: "#b05cf0",
     radius: 9,
-    desc: "Splash blast on towers",
+    desc: "A powerful plant that releases splash attacks to damage multiple enemies in one area. It is useful when several targets are close together.",
   },
 ];
 
