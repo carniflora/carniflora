@@ -148,3 +148,4 @@ vite.config.ts.timestamp-*
 # IDE
 .vscode/*
 .idea
+EPIC-4-PLAN.md
