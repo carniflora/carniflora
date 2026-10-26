@@ -1,8 +1,8 @@
-import { loadLevel } from "./levels.js";
+import { loadLevel, LEVEL_PATHS, MAP_COLS, MAP_ROWS } from "./levels.js";
 
 const FINAL_MINION = 2; // final minion is this far from the enemy tower
 const DIST_BETWEEN_MINIONS = 0.75; // distance between the minions
-// const MAX_TOWER_DIST_TO_PATH = 1.25; // maximum distance tower can be from a path
+const MAX_TOWER_DIST_TO_PATH = 1.25; // maximum distance tower can be from a path
 export const TILE = 64;
 
 // get the current position, wrapper function of getPositionAtDistance in levels.js
@@ -153,104 +153,102 @@ export function build() {
   }
 }
 
-// TODO: Reinstate tower functionality at later sprint
+// ====================
+// TOWERS
+// ====================
 
-// // check if tower can be built on cell
-// function canBuildAt(c, r) {
-//   return !state.map.blockPath.has(c + "," + r);
-// }
+// check if a tower can be built on this cell
+function canBuildAt(c, r) {
+  if (c < 0 || r < 0 || c >= MAP_COLS || r >= MAP_ROWS) return false;
+  return !state.map.blockPath.has(c + "," + r);
+}
 
-// // check how far to nearest path cell
-// function distanceToPath(c1, r1, cell) {
-//   return Math.hypot(cell.c - c1, cell.r - r1);
-// }
+// find the closest path cell to the given cell
+function findClosestPathSpot(c, r) {
+  let closest = null;
+  let closestDist = Infinity;
 
-// // find closet path spot from designated cell
-// function findClosestPathSpot(c, r) {
-//   let closest = null; // empty until filled with closest
-//   let closestDist = Infinity; // if closer than infinity to start
+  state.map.paths.forEach((path, pathIndex) => {
+    path.cells.forEach((cell, cellIndex) => {
+      const distance = Math.hypot(cell.c - c, cell.r - r);
+      if (distance < closestDist) {
+        closestDist = distance;
+        closest = { pathIndex, cellIndex, distance: distance };
+      }
+    });
+  });
+  return closest;
+}
 
-//   state.map.paths.forEach((path, pathIndex) => {
-//     // for each path in the map
-//     path.cells.forEach((cell, cellIndex) => {
-//       // for each cell on the path
-//       const d = distanceToPath(c, r, cell); // find the closest path cell to the selected cell
-//       if (d < closestDist) {
-//         closestDist = d;
-//         closest = { pathIndex, cellIndex, distance: d };
-//       }
-//     });
-//   });
+// limit the number of towers that can be placed
+export function maxTowers() {
+  return LEVEL_PATHS[state.level - 1].maxTowers;
+}
 
-//   return closest;
-// }
+// can a tower of this plant type go on this cell?
+export function canPlaceTower(c, r, plantIndex) {
+  if (plantIndex == null) return false;
+  if (state.myTowers.length >= maxTowers()) return false;
+  if (!canBuildAt(c, r)) return false;
 
-// // limit the number of towers that can be placed
-// export function maxTowers() {
-//   return state.map.paths.length * 2;
-// }
+  // one tower per cell
+  if (state.myTowers.some((t) => t.c === c && t.r === r)) return false;
 
-// // place your tower beside a path
-// export function canPlaceTower(c, r, plantIndex) {
-//   if (plantIndex == null) return false;
-//   if (state.myTowers.length >= maxTowers()) return false; // maximum towers allowed
-//   if (!canBuildAt(c, r)) return false;
-//   // only allow one tower per plant type
-//   if (state.myTowers.some((tower) => tower.c === c && tower.r === r))
-//     return false;
-//   if (state.myTowers.some((tower) => tower.plant === plantIndex)) return false;
+  // one tower per plant type
+  if (state.myTowers.some((t) => t.plant === plantIndex)) return false;
 
-//   const spot = findClosestPathSpot(c, r);
-//   return !!spot && spot.distance <= MAX_TOWER_DIST_TO_PATH;
-// }
+  const spot = findClosestPathSpot(c, r);
+  return !!spot && spot.distance <= MAX_TOWER_DIST_TO_PATH;
+}
 
-// export function placeTower(c, r, plantIndex) {
-//   if (!canPlaceTower(c, r, plantIndex)) return false;
-//   const spot = findClosestPathSpot(c, r);
+// place a tower beside a path. Returns true if it was placed.
+export function placeTower(c, r, plantIndex) {
+  if (!canPlaceTower(c, r, plantIndex)) return false;
+  const spot = findClosestPathSpot(c, r);
 
-//   state.myTowers.push({
-//     c,
-//     r,
-//     pathIndex: spot.pathIndex,
-//     startDist: spot.cellIndex,
-//     plant: plantIndex,
-//   });
-//   return true;
-// }
+  state.myTowers.push({
+    c,
+    r,
+    pathIndex: spot.pathIndex,
+    startDist: spot.cellIndex,
+    plant: plantIndex,
+  });
+  return true;
+}
 
-// // update the plants when they are sent out (deployed from trees/towers)
-// export function sendOut(tower) {
-//   const plant = PLANTS[tower.plant];
-//   state.spores -= plant.cost;
-//   state.plants.push({
-//     plant: tower.plant,
-//     dist: tower.startDist,
-//     pathIndex: tower.pathIndex,
-//     x: 0,
-//     y: 0,
-//     hp: plant.hp,
-//     cooldown: 0,
-//   });
-// }
+// send a plant out of a tower, onto the tower path.
+export function sendOut(tower) {
+  const plant = PLANTS[tower.plant];
+  if (state.spores < plant.cost) return false;
 
-// update the plants when they are sent out
-export function sendOut(i) {
-  const k = PLANTS[i];
-  const paths = state.map.paths;
+  const path = state.map.paths[tower.pathIndex];
+  const [x, y] = posOf(path, tower.startDist);
 
-  const pathIndex = Math.floor(Math.random() * paths.length); // randomize the path it is spawned on
-  const [x, y] = posOf(paths[pathIndex], 0);
-
-  state.spores -= k.cost;
+  state.sports -= plant.cost;
   state.plants.push({
-    plant: i,
-    dist: 0,
-    pathIndex,
-    x: x,
-    y: y,
-    hp: k.hp,
+    plant: tower.plant,
+    dist: tower.startDist,
+    pathIndex: tower.pathIndex,
+    x,
+    y,
+    hp: plant.hp,
     cooldown: 0,
   });
+  return true; // return true if the plant was sent.
+}
+
+// send out the selected plant from its tower when the deploy button is pressed
+export function deploySelected(plantIndex) {
+  if (plantIndex == null) return false;
+
+  const towers = state.myTowers.filter((t) => t.plant === plantIndex);
+  if (!towers.length) return false;
+
+  let sent = false;
+  for (const tower of towers) {
+    if (sendOut(tower)) sent = true;
+  }
+  return sent;
 }
 
 // ============================
