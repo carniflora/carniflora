@@ -7,6 +7,7 @@ export const LEVEL_PATHS = [
   {
     name: "Level 1",
     goal: [13, 9],
+    maxTowers: 2,
     paths: [
       [
         [0, 0],
