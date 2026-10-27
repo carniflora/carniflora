@@ -502,6 +502,111 @@ canvas {
 }*/
 
 /* OVERLAY */
+.boss-controls[hidden] {
+  display: none;
+}
+
+.boss-briefing {
+  margin: 12px 0;
+  color: var(--mut);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.boss-briefing strong {
+  color: var(--acc);
+  margin-right: 6px;
+}
+
+.boss-deploy {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.boss-lanes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.boss-lane-button {
+  padding: 10px 6px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--btn);
+  color: var(--ink);
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.boss-lane-button[aria-pressed="true"] {
+  background: #213c29;
+  color: #daf3bc;
+  border-color: #6c9d51;
+  box-shadow: inset 0 -3px #8fd45a;
+}
+
+.boss-lane-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.boss-hazard {
+  min-height: 2.5em;
+  margin: 9px 0;
+  color: var(--acc);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.boss-deploy-button {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 5px 8px;
+  padding: 12px 10px;
+  background: #13271d;
+  color: #edf5e8;
+  border: 1px solid #476047;
+  border-top: 3px solid var(--plant-color);
+  border-radius: 5px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.boss-deploy-button kbd {
+  grid-row: span 2;
+  padding: 4px 6px;
+  color: var(--plant-color);
+  background: #22382a;
+  border-radius: 3px;
+}
+
+.boss-deploy-button strong {
+  font-size: 0.85rem;
+}
+
+.boss-deploy-button span {
+  color: #b6c9b4;
+  font-size: 0.75rem;
+}
+
+.boss-deploy-button:hover:not(:disabled) {
+  border-color: var(--plant-color);
+  background: #213c29;
+}
+
+.boss-deploy-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+button:focus-visible {
+  outline: 3px solid #1f9f77;
+  outline-offset: 3px;
+}
+
 #ov {
   position: absolute;
   inset: 0;
@@ -2006,6 +2111,11 @@ canvas {
     margin-top: 18px;
   }
 
+  .boss-deploy {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .stats {
   #plantsTab .plant-option {
     width: 100%;
     min-width: 0;
@@ -2021,4 +2131,5 @@ canvas {
   #plantsTab .plant-card-info p {
     max-width: 320px;
   }
+}
 }
