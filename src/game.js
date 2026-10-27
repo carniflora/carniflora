@@ -11,14 +11,6 @@ const posOf = (path, d) => {
   return [x * TILE, y * TILE];
 };
 
-// check whether enemy minions are too close together
-function tooCloseToOthers(distance, placedDistances) {
-  for (const other of placedDistances) {
-    if (Math.abs(other - distance) < DIST_BETWEEN_MINIONS) return true;
-  }
-  return false;
-}
-
 // ====================
 // GAME STATE
 // ====================
@@ -124,17 +116,26 @@ export function build() {
 
   // randomly spawn enemy minions along the path (starting at halfway along the path)
   const count = Math.min(4 + state.level, 7); // number of minions per path
-  for (const path of state.map.paths) {
-    // in case there is more than one path
-    const enemyPlaced = [];
-    for (let i = 0; enemyPlaced.length < count; i++) {
-      const firstMinion = path.pathLength * 0.5; // ensure that first minion is half way on the path
-      const lastMinion = Math.max(firstMinion, path.pathLength - FINAL_MINION); // ensure that last minion is the specified distance from the tower
-      const position = firstMinion + Math.random() * (lastMinion - firstMinion); // random position in between the first and last
-      if (tooCloseToOthers(position, enemyPlaced)) continue; // check that the positions aren't too close together
-      enemyPlaced.push(position);
+  const placedPoints = [];
 
+  for (const path of state.map.paths) {
+    const firstMinion = path.pathLength * 0.33; // ensure that first minion is half way on the path
+    const lastMinion = Math.max(firstMinion, path.pathLength - FINAL_MINION); // ensure that last minion is the specified distance from the tower
+    let placed = 0;
+
+    for (let attempts = 0; placed < count && attempts < 500; attempts++) {
+      const position = firstMinion + Math.random() * (lastMinion - firstMinion);
       const [x, y] = posOf(path, position);
+
+      // compare real positions along different paths
+      const tooClose = placedPoints.some(
+        ([px, py]) => Math.hypot(px - x, py - y) < DIST_BETWEEN_MINIONS * TILE,
+      );
+      if (tooClose) continue;
+
+      placedPoints.push([x, y]);
+      placed++;
+
       state.enemies.push({
         x,
         y,
@@ -223,7 +224,7 @@ export function sendOut(tower) {
   const path = state.map.paths[tower.pathIndex];
   const [x, y] = posOf(path, tower.startDist);
 
-  state.sports -= plant.cost;
+  state.spores -= plant.cost;
   state.plants.push({
     plant: tower.plant,
     dist: tower.startDist,
@@ -271,6 +272,13 @@ export function update(deltaTime) {
   state.spores += 6 * deltaTime; // spores regenerate 6 per time
   // check which enemies are still alive
   const alive = state.enemies.filter((enemy) => enemy.hp > 0);
+
+  // minions still alive (everything except the keep)
+  const minionsLeft = alive.some((e) => !e.keep);
+
+  // plants can only target the the keep once every minion is dead
+  const targets = minionsLeft ? alive.filter((e) => !e.keep) : alive;
+
   for (const p of state.plants) {
     // for each active plant
     // get the plant path index
@@ -280,7 +288,11 @@ export function update(deltaTime) {
     // UPDATE PLANTS
     // ====================
     const k = PLANTS[p.plant];
-    if (p.dist < path.pathLength) p.dist += k.spd * deltaTime; // the plant moves this speed over time
+
+    // stop and fight if there is an enemy
+    const target = nearest(targets, p.x, p.y, k.rng);
+
+    if (!target && p.dist < path.pathLength) p.dist += k.spd * deltaTime; // the plant moves this speed over time
     [p.x, p.y] = posOf(path, p.dist); // get plant position
     p.cooldown -= deltaTime; // plant cooldown reduces over time
 
@@ -300,7 +312,7 @@ export function update(deltaTime) {
     // =========================
     if (p.cooldown <= 0) {
       // check if enemies in range and cooldown complete
-      const enemy = nearest(alive, p.x, p.y, k.rng);
+      const enemy = target;
       if (enemy) {
         p.cooldown = k.cooldown;
         enemy.hp -= k.dmg;
