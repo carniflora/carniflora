@@ -224,7 +224,7 @@ export function sendOut(tower) {
   const path = state.map.paths[tower.pathIndex];
   const [x, y] = posOf(path, tower.startDist);
 
-  state.sports -= plant.cost;
+  state.spores -= plant.cost;
   state.plants.push({
     plant: tower.plant,
     dist: tower.startDist,
@@ -272,6 +272,13 @@ export function update(deltaTime) {
   state.spores += 6 * deltaTime; // spores regenerate 6 per time
   // check which enemies are still alive
   const alive = state.enemies.filter((enemy) => enemy.hp > 0);
+
+  // minions still alive (everything except the keep)
+  const minionsLeft = alive.some((e) => !e.keep);
+
+  // plants can only target the the keep once every minion is dead
+  const targets = minionsLeft ? alive.filter((e) => !e.keep) : alive;
+
   for (const p of state.plants) {
     // for each active plant
     // get the plant path index
@@ -281,7 +288,11 @@ export function update(deltaTime) {
     // UPDATE PLANTS
     // ====================
     const k = PLANTS[p.plant];
-    if (p.dist < path.pathLength) p.dist += k.spd * deltaTime; // the plant moves this speed over time
+
+    // stop and fight if there is an enemy
+    const target = nearest(targets, p.x, p.y, k.rng);
+
+    if (!target && p.dist < path.pathLength) p.dist += k.spd * deltaTime; // the plant moves this speed over time
     [p.x, p.y] = posOf(path, p.dist); // get plant position
     p.cooldown -= deltaTime; // plant cooldown reduces over time
 
@@ -301,7 +312,7 @@ export function update(deltaTime) {
     // =========================
     if (p.cooldown <= 0) {
       // check if enemies in range and cooldown complete
-      const enemy = nearest(alive, p.x, p.y, k.rng);
+      const enemy = target;
       if (enemy) {
         p.cooldown = k.cooldown;
         enemy.hp -= k.dmg;

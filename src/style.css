@@ -191,14 +191,15 @@ h1 {
 /* GAME CANVAS */
 .stage {
   position: relative;
-  margin-top: 10px;
+  width: 100%;
+  max-width: 896px;
+  margin: 0 auto;
 }
 
 canvas {
   display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 16 / 9;
   border: 1px solid var(--line);
   border-radius: 6px;
   background: #12251b;
