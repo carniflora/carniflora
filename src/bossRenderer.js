@@ -128,7 +128,7 @@ function drawHarvester(ctx, state) {
     ctx.strokeRect(tank.x - 37, tank.y - 26, 145, 52);
     text(
       ctx,
-      tank.lane === 0 ? "UPPER TANK" : "LOWER TANK",
+      `${tank.lane === 0 ? "UPPER" : "LOWER"} / ARMOUR ${tank.armour}`,
       tank.x + 34,
       tank.y - 8,
       "#e8c97d",
@@ -441,7 +441,7 @@ function drawHUD(ctx, state, width) {
     ctx,
     b.shielded
       ? "CORE SHIELDED — BREAK BOTH TANKS"
-      : `CORE EXPOSED / ${Math.ceil(b.hp)} HP`,
+      : `CORE EXPOSED / ${Math.ceil(b.hp)} HP / ARMOUR ${b.armour}`,
     width / 2,
     65,
     b.shielded ? "#9ac8b8" : "#ff9bb6",
@@ -476,7 +476,7 @@ function drawHUD(ctx, state, width) {
         ? state.notice
         : state.phase === "core"
           ? "All lanes converge on the furnace. Keep deploying."
-          : "Centre cannon destroyed = slower herbicide attacks.",
+          : "Rafflesia pierces armour. Sundew slows boss fire.",
       width / 2,
       92,
       state.noticeTime > 0 ? "#c2d7af" : MUTED,

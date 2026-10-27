@@ -25,6 +25,7 @@ export const BOSS_SEG = BOSS_PATH.slice(1).map((p, i) =>
 export const BOSS_TOTAL = BOSS_SEG.reduce((sum, length) => sum + length, 0);
 export const KILLZONE_OFFSET = 40;
 export const SPORE_CAP = 260;
+export const SPORE_REGEN = 7;
 const SPAWN_OFFSET = 85;
 const APPROACH_X = 1300;
 const MINION_SPAWN_X = 1680;
@@ -74,9 +75,9 @@ function tower(x, lane, hp, cannon = false) {
     max: hp,
     r: cannon ? 23 : 16,
     rng: cannon ? 420 : 115,
-    dmg: cannon ? 11 : 9,
+    dmg: cannon ? 16 : 11,
     cd: 0,
-    base: cannon ? 1.4 : 1.2,
+    base: 1.1,
     slow: 0,
   };
 }
@@ -117,7 +118,7 @@ export function createBossLevelState() {
     towers: LANE_Y.flatMap((_, lane) => [
       tower(500, lane, 80),
       tower(1000, lane, 100),
-    ]).concat(tower(1770, 1, 200, true)),
+    ]).concat(tower(1770, 1, 240, true)),
     minions: LANE_Y.map((_, lane) => createMinion(760, lane)),
     tanks: [0, 2].map((lane) => ({
       type: "tank",
@@ -126,20 +127,22 @@ export function createBossLevelState() {
       y: LANE_Y[lane],
       hp: 450,
       max: 450,
+      armour: 8,
       r: 34,
       slow: 0,
       flash: 0,
       rng: 180,
-      dmg: 10,
+      dmg: 12,
       cd: 0,
-      base: 1.4,
+      base: 1.2,
     })),
     boss: {
       name: "Apex Harvester",
       x: 1870,
       y: 290,
-      hp: 750,
-      maxHp: 750,
+      hp: 700,
+      maxHp: 700,
+      armour: 8,
       r: 40,
       shielded: true,
       active: false,
@@ -153,7 +156,8 @@ export function createBossLevelState() {
     spray: null,
     fx: [],
     damageNumbers: [],
-    notice: "Break both chemical tanks to expose the furnace.",
+    notice:
+      "Rafflesia pierces armour. Silence the centre cannon before grouping up.",
     noticeTime: 5,
     stats: { deployed: 0, lost: 0, mistLost: 0 },
   };
@@ -253,24 +257,39 @@ function beam(state, source, target, color) {
   });
 }
 
-function damageEnemy(state, target, amount) {
+function splashPlants(state, target, damage, color) {
+  for (const plant of state.plants) {
+    if (
+      plant !== target &&
+      plant.hp > 0 &&
+      Math.hypot(plant.x - target.x, plant.y - target.y) < 70
+    ) {
+      plant.hp -= damage;
+    }
+  }
+  state.fx.push({ x1: target.x, y1: target.y, c: color, t: 0.3, ring: 70 });
+}
+
+function damageEnemy(state, target, amount, piercesArmour = false) {
   if (target.hp <= 0 || (target === state.boss && state.boss.shielded)) return;
-  target.hp = Math.max(0, target.hp - amount);
+  const damage = Math.max(1, amount - (piercesArmour ? 0 : target.armour || 0));
+  target.hp = Math.max(0, target.hp - damage);
   if (target.flash !== undefined) target.flash = 0.12;
   if (target.hp > 0 || target === state.boss || target.looted) return;
   target.looted = true;
   const reward =
-    { minion: 18, tank: 55, cannon: 65, tower: 35 }[target.type] || 35;
+    { minion: 12, tank: 40, cannon: 60, tower: 25 }[target.type] || 25;
   state.spores = Math.min(SPORE_CAP, state.spores + reward);
   number(state, target.x, target.y - 32, `+${reward} SPORES`);
   if (target.type === "cannon") {
     state.notice =
-      "Cannon silenced. Herbicide attacks will recharge more slowly.";
+      "Cannon silenced. Splash fire stopped; herbicide recharges more slowly.";
     state.noticeTime = 4;
   }
 }
 
 function updatePlants(state, dt) {
+  const healed = new Set();
   for (const plant of state.plants) {
     if (plant.hp <= 0) continue;
     if (plant.x < state.leftEdge + KILLZONE_OFFSET) {
@@ -303,9 +322,11 @@ function updatePlants(state, dt) {
         if (
           ally !== plant &&
           ally.hp > 0 &&
+          !healed.has(ally) &&
           Math.hypot(ally.x - plant.x, ally.y - plant.y) < 80
         ) {
           ally.hp = Math.min(KINDS[ally.k].hp, ally.hp + 5 * dt);
+          healed.add(ally);
         }
       }
     }
@@ -317,7 +338,7 @@ function updatePlants(state, dt) {
     const target = nearest(targets, plant.x, plant.y, kind.rng);
     if (!target) continue;
     plant.cd = kind.cd;
-    damageEnemy(state, target, kind.dmg);
+    damageEnemy(state, target, kind.dmg, kind.n === "Rafflesia");
     beam(state, plant, target, kind.col);
     if (kind.n === "Sundew") target.slow = 2;
     if (kind.n === "Rafflesia") {
@@ -326,7 +347,7 @@ function updatePlants(state, dt) {
           other !== target &&
           Math.hypot(other.x - target.x, other.y - target.y) < 70
         ) {
-          damageEnemy(state, other, kind.dmg * 0.5);
+          damageEnemy(state, other, kind.dmg * 0.5, true);
         }
       }
       state.fx.push({
@@ -367,6 +388,9 @@ function updateDefenses(state, dt) {
       enemy.cd = enemy.base;
       target.hp -= enemy.dmg;
       beam(state, enemy, target, "#ffd9a0");
+      if (enemy.type === "cannon") {
+        splashPlants(state, target, 10, "#ffd9a0");
+      }
     }
   }
 }
@@ -380,7 +404,8 @@ function updateBoss(state, dt) {
   if (!boss.active && state.plants.some((p) => p.hp > 0 && p.x >= APPROACH_X)) {
     boss.active = true;
     state.phase = "shields";
-    state.notice = "Harvester engaged. Break the upper and lower tanks.";
+    state.notice =
+      "Harvester engaged. Armour absorbs 8 damage; Rafflesia pierces it.";
     state.noticeTime = 4;
   }
   if (boss.shielded && state.tanks.every((tank) => tank.hp <= 0)) {
@@ -400,9 +425,10 @@ function updateBoss(state, dt) {
     boss.attackCooldown -= dt * (boss.slow > 0 ? 0.55 : 1);
     const target = nearest(state.plants, boss.x, boss.y, 220);
     if (target && boss.attackCooldown <= 0) {
-      boss.attackCooldown = 0.9;
-      target.hp -= 14;
+      boss.attackCooldown = 0.8;
+      target.hp -= 18;
       beam(state, boss, target, "#f06891");
+      splashPlants(state, target, 10, "#f06891");
     }
   }
 
@@ -418,7 +444,7 @@ function updateBoss(state, dt) {
           plant.x >= spray.x1 &&
           plant.x <= spray.x2
         ) {
-          plant.hp -= (boss.enraged ? 30 : 24) * dt;
+          plant.hp -= (boss.enraged ? 40 : 32) * dt;
         }
       }
     }
@@ -433,10 +459,25 @@ function updateBoss(state, dt) {
     boss.sprayCooldown -= dt * (boss.slow > 0 ? 0.55 : 1);
     if (boss.sprayCooldown <= 0) {
       const x1 = state.leftEdge + 140;
-      const x2 = 1760;
+      // Include the attack positions around the tanks and exposed furnace.
+      const x2 = 1800;
       if (x1 < x2) {
+        const counts = LANE_Y.map(
+          (_, lane) =>
+            state.plants.filter(
+              (plant) =>
+                plant.hp > 0 &&
+                plant.lane === lane &&
+                plant.x >= x1 &&
+                plant.x <= x2,
+            ).length,
+        );
+        const largest = Math.max(...counts);
+        const lanes = counts.flatMap((count, lane) =>
+          count === largest ? [lane] : [],
+        );
         state.spray = {
-          lane: Math.floor(Math.random() * 3),
+          lane: lanes[Math.floor(Math.random() * lanes.length)],
           stage: "warning",
           timer: 2,
           x1,
@@ -446,7 +487,7 @@ function updateBoss(state, dt) {
       const cannonAlive = state.towers.some(
         (t) => t.type === "cannon" && t.hp > 0,
       );
-      boss.sprayCooldown = (boss.enraged ? 6 : 8) + (cannonAlive ? 0 : 4);
+      boss.sprayCooldown = (boss.enraged ? 4.5 : 6) + (cannonAlive ? 0 : 4);
     }
   }
   boss.summonCooldown -= dt;
@@ -489,7 +530,7 @@ export function updateBossLevel(state, dt) {
     const step = Math.min(0.05, remaining);
     remaining -= step;
     state.elapsed += step;
-    state.spores = Math.min(SPORE_CAP, state.spores + 8 * step);
+    state.spores = Math.min(SPORE_CAP, state.spores + SPORE_REGEN * step);
     const cameraStep = Math.min(SCROLL_SPEED * step, ARENA_X - state.cameraX);
     state.cameraX += cameraStep;
     // Scroll carries the world past the trailing wall, while the mist itself

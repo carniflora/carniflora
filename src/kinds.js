@@ -37,7 +37,7 @@ export const KINDS = [
     cd: 1.0,
     col: "#e8b04a",
     r: 12,
-    d: "Soaks hits, heals allies",
+    d: "Soaks hits; heals nearby allies. Healing auras do not stack.",
   },
   {
     n: "Rafflesia",
@@ -49,6 +49,6 @@ export const KINDS = [
     cd: 2.0,
     col: "#b05cf0",
     r: 9,
-    d: "Splash blast on towers",
+    d: "Armour-piercing splash blasts",
   },
 ];

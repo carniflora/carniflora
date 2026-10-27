@@ -875,13 +875,13 @@ function hud() {
     const tanksLeft = battle.tanks.filter((tank) => tank.hp > 0).length;
     const objective =
       battle.phase === "core"
-        ? "Core exposed. All three lanes now converge on the furnace. Mist speed +25%."
-        : `Break the chemical tanks (${2 - tanksLeft}/2 breached). The centre cannon can be silenced to slow herbicide attacks.`;
+        ? "Core exposed. All lanes converge. Use Rafflesia to pierce armour and keep healing support alive. Mist speed +25%."
+        : `Break the chemical tanks (${2 - tanksLeft}/2 breached). Rafflesia pierces their armour. Silence the centre cannon to stop splash fire and slow sprays.`;
     if ($("bossObjective").textContent !== objective)
       $("bossObjective").textContent = objective;
     const hazard = battle.spray
       ? `Lane ${battle.spray.lane + 1}: ${battle.spray.stage === "warning" ? "herbicide incoming — reinforce another lane" : "herbicide active"}.`
-      : "Select a lane below or click its path. ↑/↓ selects a lane; 1–4 deploys.";
+      : "Spray targets the largest lane group. Spread your waves. ↑/↓ selects a lane; 1–4 deploys.";
     if ($("bossHazard").textContent !== hazard)
       $("bossHazard").textContent = hazard;
   }

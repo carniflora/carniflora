@@ -132,7 +132,7 @@ describe("Three-lane Harvester breach", () => {
 
     expect(state.minions).toHaveLength(1);
     expect(state.minions[0].x).toBeGreaterThan(state.leftEdge + 85);
-    expect(state.spores).toBeCloseTo(148.4);
+    expect(state.spores).toBeCloseTo(147.35);
   });
 
   it("skips reinforcements when no path remains ahead of the deployment line", () => {
@@ -145,7 +145,7 @@ describe("Three-lane Harvester breach", () => {
     updateBossLevel(state, 1);
 
     expect(state.minions).toHaveLength(0);
-    expect(state.spores).toBeCloseTo(148);
+    expect(state.spores).toBeCloseTo(147);
     expect(state.boss.summonCooldown).toBeGreaterThan(0);
   });
 
@@ -167,6 +167,89 @@ describe("Three-lane Harvester breach", () => {
     updateBossLevel(state, 0.05);
     expect(state.towers[0].hp).toBe(100);
     expect(state.towers[1].hp).toBeLessThan(100);
+  });
+
+  it("absorbs ordinary hits with armour while Rafflesia blasts pierce it", () => {
+    const damage = [];
+    for (const k of [0, 1, 2, 3]) {
+      const state = quietBattle();
+      state.plants = [plantAt(1740, 0, k)];
+      const before = state.tanks[0].hp;
+      updateBossLevel(state, 0.05);
+      damage.push(before - state.tanks[0].hp);
+    }
+    expect(damage).toEqual([10, 1, 1, 38]);
+  });
+
+  it("caps overlapping Pitcher healing at one aura per ally", () => {
+    const state = quietBattle();
+    const ally = { ...plantAt(300, 0, 1, 20), cd: 100 };
+    state.plants = [ally, plantAt(305, 0, 2), plantAt(310, 0, 2)];
+    updateBossLevel(state, 0.05);
+    expect(ally.hp).toBeCloseTo(20.25);
+  });
+
+  it("splashes cannon damage onto nearby plants without hitting distant allies", () => {
+    const state = createBossLevelState();
+    state.minions = [];
+    state.towers = state.towers.filter((tower) => tower.type === "cannon");
+    state.plants = [1745, 1730, 1650].map((x) => ({
+      ...plantAt(x, 1),
+      cd: 100,
+    }));
+    updateBossLevel(state, 0.05);
+    expect(state.plants.map((plant) => plant.hp)).toEqual([134, 140, 150]);
+  });
+
+  it("punishes unsupported groups with splash pulses from the exposed core", () => {
+    const state = quietBattle();
+    state.phase = "core";
+    state.tanks.forEach((tank) => {
+      tank.hp = 0;
+    });
+    state.boss.shielded = false;
+    state.boss.active = true;
+    state.boss.attackCooldown = 0;
+    state.plants = [1769, 1777, 1785].map((x) => ({
+      ...plantAt(x, 1),
+      cd: 100,
+    }));
+    updateBossLevel(state, 0.05);
+    expect(state.plants.map((plant) => plant.hp)).toEqual([140, 140, 132]);
+  });
+
+  it("locks herbicide onto the largest group in its damage area", () => {
+    const state = quietBattle();
+    state.boss.active = true;
+    state.boss.sprayCooldown = 0;
+    state.plants = [
+      plantAt(600, 0),
+      plantAt(600, 1),
+      plantAt(620, 1),
+      plantAt(640, 1),
+      plantAt(600, 2),
+    ];
+    updateBossLevel(state, 0.05);
+    expect(state.spray.lane).toBe(1);
+    expect(state.spray.timer).toBe(2);
+  });
+
+  it("keeps plants attacking the core inside the herbicide damage area", () => {
+    const state = quietBattle();
+    state.phase = "core";
+    state.tanks.forEach((tank) => {
+      tank.hp = 0;
+    });
+    state.boss.shielded = false;
+    state.boss.active = true;
+    state.boss.attackCooldown = 100;
+    state.boss.sprayCooldown = 0;
+    state.plants = [{ ...plantAt(1785, 0), cd: 100 }];
+    updateBossLevel(state, 0.05);
+    expect(state.spray.lane).toBe(0);
+    expect(state.spray.x2).toBeGreaterThan(state.plants[0].x);
+    updateBossLevel(state, 2.2);
+    expect(state.plants[0].hp).toBeLessThan(150);
   });
 
   it("blocks direct and splash damage to the core while either tank survives", () => {
@@ -249,7 +332,7 @@ describe("Three-lane Harvester breach", () => {
     expect(offline.boss.sprayCooldown - online.boss.sprayCooldown).toBe(4);
   });
 
-  it.each([1620, 1680])(
+  it.each([1660, 1680])(
     "skips empty or inverted herbicide zones at mist position %s",
     (leftEdge) => {
       const state = quietBattle();
@@ -286,9 +369,9 @@ describe("Three-lane Harvester breach", () => {
     state.plants = [plantAt(300, 0, 3)];
     updateBossLevel(state, 0.05);
     expect(state.towers.every((tower) => tower.hp === 0)).toBe(true);
-    expect(state.spores).toBeCloseTo(70.4);
+    expect(state.spores).toBeCloseTo(50.35);
     updateBossLevel(state, 0.05);
-    expect(state.spores).toBeCloseTo(70.8);
+    expect(state.spores).toBeCloseTo(50.7);
   });
 
   it("does not allow defeated plants to attack or be revived by a Pitcher", () => {
@@ -306,7 +389,7 @@ describe("Three-lane Harvester breach", () => {
     state.leftEdge = 500;
     state.spores = 0;
     state.plants = [plantAt(200, 0, 0, 1)];
-    updateBossLevel(state, 4);
+    updateBossLevel(state, 5);
     expect(state.stats.mistLost).toBe(1);
     expect(state.stats.lost).toBe(1);
     expect(state.state).toBe("play");
@@ -415,6 +498,12 @@ describe("Three-lane Harvester breach", () => {
       cannon: true,
       result: "won",
     },
+    {
+      name: "unsupported Flytrap waves ignoring the cannon",
+      army: [0],
+      cannon: false,
+      result: "lost",
+    },
   ])(
     "ends with $result for $name across multiple attack patterns",
     ({ army, cannon, result }) => {
@@ -458,6 +547,7 @@ describe("Three-lane Harvester breach", () => {
             expect(state.tanks.every((tank) => tank.hp === 0)).toBe(true);
             expect(state.leftEdge).toBeLessThan(OVERRUN_X);
           } else expect(state.defeatReason).toBe("overrun");
+          expect(state.stats.lost).toBeGreaterThan(0);
           expect(state.spores).toBeGreaterThanOrEqual(0);
         }
       } finally {
