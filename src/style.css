@@ -6,19 +6,21 @@
   --acc: #8a6a45;
   --line: #d6cfbe;
   --btn: #ece6d8;
-
   --panel-2: #f1ebdc;
-
   --acc-dark: #6f5435;
-
   --green: #5e7d4b;
   --green-dark: #24372d;
   --green-darker: #1b2a22;
   --green-soft: #dfe8d7;
-
   --white: #ffffff;
   --shadow: 0 10px 30px rgba(34, 49, 40, 0.08);
   --radius: 14px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 html,
@@ -94,7 +96,6 @@ canvas {
 }
 
 /* MAIN LAYOUT */
-
 .game-layout {
   display: grid;
   grid-template-columns: 160px minmax(0, 1fr) 250px;
@@ -102,42 +103,21 @@ canvas {
   align-items: stretch;
 }
 
-/* LEFT NAVIGATION */
-.side-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-
-  background: linear-gradient(
-    180deg,
-    var(--green-dark) 0%,
-    var(--green-darker) 100%
-  );
-  border-radius: var(--radius);
-  padding: 14px;
-  box-shadow: var(--shadow);
-}
-
 .nav-btn {
   display: flex;
   align-items: center;
   gap: 12px;
-
   width: 100%;
   min-width: 0;
-
-  padding: 14px 12px;
-
+  box-sizing: border-box;
+  padding: 14px 16px;
   background: transparent;
   color: #edf3eb;
-
   border: 1px solid transparent;
   border-radius: 12px;
-
   text-align: left;
   font-size: 0.95rem;
   font-weight: 600;
-
   cursor: pointer;
 
   transition:
@@ -145,13 +125,15 @@ canvas {
     color 0.2s ease;
 }
 
+.nav-btn span {
+  white-space: nowrap;
+}
+
 .nav-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   flex-shrink: 0;
-
   width: 22px;
   font-size: 22px;
   line-height: 1;
@@ -234,7 +216,6 @@ canvas {
   overflow: hidden;
 }
 
-/* Style the actual image */
 .plant-card-image img {
   display: block;
   width: 100%;
@@ -260,11 +241,6 @@ canvas {
   font-size: 0.78rem;
   line-height: 1.4;
   margin: 0;
-}
-
-.plant-option {
-  min-height: 165px;
-  padding: 12px;
 }
 
 .plant-section-header {
@@ -294,9 +270,7 @@ canvas {
   font-weight: 400;
   letter-spacing: -0.8px;
   line-height: 1.12;
-
   color: #203b2a;
-
   margin: 4px 0 12px;
 }
 
@@ -449,7 +423,7 @@ canvas {
 .plant-option:hover {
   transform: translateY(-2px);
   border-color: #b6af9f;
-  box-shadow: 0 8px 24px rgba (34, 49, 40, 0.08);
+  box-shadow: 0 8px 24px rgba(34, 49, 40, 0.08);
 }
 
 .plant-option.selected {
@@ -573,7 +547,6 @@ canvas {
   min-height: 70px;
 }
 
-/* STATS */
 .stat-list {
   border-top: 1px solid var(--line);
   margin-top: 15px;
@@ -641,7 +614,6 @@ canvas {
   background: var(--acc-dark);
 }
 
-/* MESSAGE */
 .plant-message {
   min-height: 18px;
   margin-top: 10px;
@@ -655,11 +627,9 @@ canvas {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
   gap: 14px;
   margin-top: 16px;
   padding: 20px 16px;
-
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -669,6 +639,777 @@ canvas {
 .hint {
   color: var(--mut);
   font-size: 0.82rem;
+}
+/* Sidebar container */
+.side-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+
+  padding: 22px 14px;
+
+  background: linear-gradient(165deg, #243c2e 0%, #1b3025 48%, #14251c 100%);
+
+  border: 1px solid rgba(181, 214, 165, 0.12);
+  border-radius: 20px;
+
+  box-shadow: 0 12px 35px rgba(15, 35, 23, 0.15);
+  overflow: hidden;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 6px 5px 20px;
+}
+
+.nav-brand-icon {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(153, 193, 129, 0.14);
+  border: 1px solid rgba(177, 215, 156, 0.18);
+  border-radius: 12px;
+
+  color: #c5e4a7;
+  font-size: 22px;
+}
+
+.nav-brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.nav-brand-text strong {
+  color: #f5f4e8;
+  font-size: 0.83rem;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+}
+
+.nav-brand-text span {
+  color: #9db6a0;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.nav-divider {
+  height: 1px;
+  background: rgba(210, 229, 202, 0.13);
+  margin-bottom: 22px;
+}
+
+.nav-section-label {
+  margin: 0 10px 14px;
+  color: #8fa994;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 1.7px;
+}
+
+/* Navigation links */
+.nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.side-nav .nav-btn {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  gap: 13px;
+
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+
+  padding: 14px 12px;
+
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 12px;
+
+  color: #c5d6c5;
+  font-size: 0.91rem;
+  font-weight: 600;
+  text-align: left;
+
+  cursor: pointer;
+  transform: none;
+
+  transition:
+    background 0.22s ease,
+    color 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.side-nav .nav-btn span {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+/* Icons */
+.side-nav .nav-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 22px;
+  flex-shrink: 0;
+
+  color: #adc6ad;
+  font-size: 20px;
+}
+
+.nav-arrow {
+  opacity: 0;
+  font-size: 15px;
+  flex-shrink: 0;
+  transition: opacity 0.2s ease;
+}
+
+.side-nav .nav-btn:hover:not(.active) {
+  background: rgba(194, 225, 176, 0.09);
+  border-color: rgba(194, 225, 176, 0.1);
+  color: #ffffff;
+}
+
+.side-nav .nav-btn.active {
+  background: linear-gradient(110deg, #5d864f 0%, #476e42 100%);
+
+  border-color: rgba(189, 231, 169, 0.2);
+  color: #ffffff;
+
+  box-shadow:
+    0 5px 16px rgba(7, 25, 12, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.side-nav .nav-btn.active .nav-icon {
+  color: #ffffff;
+}
+
+.side-nav .nav-btn.active .nav-arrow {
+  opacity: 1;
+  color: #ffffff;
+}
+
+/* Keyboard accessibility */
+.side-nav .nav-btn:focus-visible {
+  outline: 2px solid #c5e4a7;
+  outline-offset: 3px;
+}
+
+/* Sidebar footer */
+.nav-footer {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  margin-top: auto;
+  padding: 22px 10px 4px;
+
+  color: #a7c1aa;
+  font-size: 0.75rem;
+
+  border-top: 1px solid rgba(210, 229, 202, 0.13);
+}
+
+/* Green status indicator */
+.nav-status-dot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+
+  background: #a4d68c;
+  border-radius: 50%;
+
+  box-shadow: 0 0 9px rgba(164, 214, 140, 0.45);
+}
+
+.game-layout:has(#upgradesTab.active) .plant-details {
+  display: none;
+}
+
+.main-panel:has(#upgradesTab.active) {
+  padding: 0;
+  overflow: hidden;
+  background: #f7f3e8;
+}
+
+.evolution-page {
+  min-height: 600px;
+  padding: 26px;
+  background: #f7f3e8;
+  color: #213229;
+}
+
+.evolution-header {
+  text-align: left;
+  margin-bottom: 24px;
+}
+
+.evolution-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  color: #71875c;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 1.8px;
+}
+
+.evolution-header h2 {
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: clamp(2rem, 3vw, 2.8rem);
+  font-weight: 400;
+  color: #203b2a;
+  margin: 6px 0 8px;
+}
+
+.evolution-header p {
+  color: #748075;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.guide-title i {
+  color: #5e7d4b;
+}
+
+/* Individual step colours */
+
+.guide-step:nth-child(1) .guide-number {
+  background: #315f3a;
+  border-color: #719f65;
+}
+
+.guide-step:nth-child(2) .guide-number {
+  background: #875360;
+  border-color: #b36a81;
+}
+
+.guide-step:nth-child(3) .guide-number {
+  background: #8a6a38;
+  border-color: #c8a45c;
+}
+
+.guide-step:nth-child(4) .guide-number {
+  background: #90574c;
+  border-color: #b97b6f;
+}
+
+.evolution-message {
+  min-height: 20px;
+  margin-top: 18px;
+  color: #bcd5a6;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.evolution-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.evolution-heading > div:first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.evolution-header {
+  margin-bottom: 28px;
+}
+
+.evolution-header h2 {
+  margin: 8px 0 10px;
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: clamp(2rem, 3vw, 2.7rem);
+  font-weight: 400;
+  letter-spacing: -0.6px;
+  line-height: 1.15;
+  color: #203b2a;
+}
+
+.evolution-header p {
+  max-width: 850px;
+  color: #69786b;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.evolution-progress {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  flex-shrink: 0;
+
+  padding: 10px 15px;
+  background: #e8eddf;
+  border: 1px solid #d5dfcb;
+  border-radius: 999px;
+
+  color: #496d43;
+  font-size: 0.77rem;
+  font-weight: 700;
+}
+
+/* Four-column collection */
+.evolution-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 16px;
+  margin-top: 0;
+}
+
+.evolution-card {
+  --card-accent: #567449;
+
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+
+  background: #f3eee3;
+  border: 1px solid #d9d2c3;
+  border-top: 3px solid var(--card-accent);
+  border-radius: 12px;
+
+  box-shadow: 0 3px 12px rgba(34, 49, 40, 0.04);
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.evolution-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--card-accent);
+  box-shadow: 0 10px 24px rgba(34, 49, 40, 0.09);
+}
+
+.evolution-card:nth-child(1) {
+  --card-accent: #567449;
+  background: #f3eee3;
+}
+
+.evolution-card:nth-child(2) {
+  --card-accent: #9b6674;
+  background: #f3eee3;
+}
+
+.evolution-card:nth-child(3) {
+  --card-accent: #a18049;
+  background: #f3eee3;
+}
+
+.evolution-card:nth-child(4) {
+  --card-accent: #986359;
+  background: #f3eee3;
+}
+
+.evolution-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 15px;
+}
+
+.evolution-level {
+  color: var(--card-accent);
+  font-size: 0.69rem;
+  font-weight: 800;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+}
+
+.evolution-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+
+  color: #857e72;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+
+.evolution-card.is-unlocked .evolution-status {
+  background: transparent;
+  border: none;
+  color: #477344;
+}
+
+.evolution-image {
+  height: 165px;
+  overflow: hidden;
+  background: #e7e2d5;
+}
+
+.evolution-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.35s ease;
+}
+
+.evolution-card:hover .evolution-image img {
+  transform: scale(1.035);
+}
+
+.evolution-card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1;
+  gap: 0;
+
+  padding: 19px 16px 16px;
+  text-align: left;
+}
+
+.evolution-card-body h3 {
+  margin: 0 0 5px;
+  color: #24372d;
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: 1.6rem;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.evolution-role {
+  display: inline-block;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+
+  color: var(--card-accent);
+  font-size: 0.67rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.evolution-description {
+  flex: 1;
+  margin: 14px 0 20px;
+  color: #637064;
+  font-size: 0.79rem;
+  line-height: 1.6;
+}
+
+.evolution-action {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+
+  width: 100%;
+  min-height: 0;
+  margin-top: auto;
+  padding: 13px 0 0;
+
+  background: transparent;
+  border: none;
+  border-top: 1px solid #d9d2c3;
+  border-radius: 0;
+
+  color: #72766c;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-align: left;
+  cursor: default;
+}
+
+.evolution-action:disabled {
+  opacity: 1;
+  cursor: default;
+}
+
+.evolution-action:hover:not(:disabled) {
+  background: transparent;
+  color: #477344;
+}
+
+.evolution-card.is-unlocked .evolution-action {
+  color: #477344;
+}
+
+.evolution-guide {
+  margin-top: 24px;
+  padding: 17px 20px;
+
+  background: #f1ebdc;
+  border: 1px solid #d9d2c3;
+  border-radius: 12px;
+}
+
+.guide-title {
+  margin-bottom: 15px;
+  font-size: 0.8rem;
+  font-weight: 750;
+}
+
+.guide-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.guide-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  color: #58685b;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.guide-number {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+
+  width: 28px;
+  height: 28px;
+
+  background: #e0e7d8;
+  border: 1px solid #cbd8c1;
+  border-radius: 50%;
+
+  color: #426b3e;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.guide-step:nth-child(n) .guide-number {
+  background: #e0e7d8;
+  border-color: #cbd8c1;
+  color: #426b3e;
+}
+
+.evolution-message {
+  min-height: 0;
+  margin: 12px 0 0;
+  color: #637064;
+  text-align: left;
+  font-size: 0.8rem;
+}
+
+.guide-step:nth-child(1) .guide-number {
+  background: #567449;
+  border-color: #567449;
+  color: #ffffff;
+}
+
+.guide-step:nth-child(2) .guide-number {
+  background: #9b6674;
+  border-color: #9b6674;
+  color: #ffffff;
+}
+
+.guide-step:nth-child(3) .guide-number {
+  background: #a18049;
+  border-color: #a18049;
+  color: #ffffff;
+}
+
+.guide-step:nth-child(4) .guide-number {
+  background: #986359;
+  border-color: #986359;
+  color: #ffffff;
+}
+
+/* ==========================================
+   UPGRADES
+   ========================================== */
+
+.evolution-action {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  width: 100%;
+  min-height: 70px;
+  margin-top: auto;
+  padding: 13px 14px;
+
+  background: #e2eadb;
+  border: 1px solid #bfd0b5;
+  border-radius: 9px;
+
+  color: #315e34;
+  text-align: left;
+  cursor: default;
+}
+
+.evolution-action > i {
+  flex-shrink: 0;
+  font-size: 20px;
+  color: inherit;
+}
+
+.evolution-action-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.evolution-action-text strong {
+  font-size: 0.87rem;
+  font-weight: 750;
+  line-height: 1.3;
+}
+
+.evolution-action-text span {
+  font-size: 0.73rem;
+  line-height: 1.4;
+}
+
+.evolution-card:nth-child(1) .evolution-action {
+  background: #e2eadb;
+  border-color: #bfd0b5;
+  color: #315e34;
+}
+
+.evolution-card:nth-child(2) .evolution-action {
+  background: #f0e2e5;
+  border-color: #d6b9c1;
+  color: #85505e;
+}
+
+.evolution-card:nth-child(3) .evolution-action {
+  background: #efe5d2;
+  border-color: #dac6a2;
+  color: #80622f;
+}
+
+.evolution-card:nth-child(4) .evolution-action {
+  background: #eedfda;
+  border-color: #d6b8b0;
+  color: #85544a;
+}
+
+.evolution-heading > div:first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.evolution-heading {
+  gap: 16px;
+}
+.side-nav {
+  justify-content: flex-start;
+  align-self: stretch;
+  gap: 0;
+  padding: 22px 14px;
+}
+
+.nav-brand {
+  margin-bottom: 0;
+}
+
+.nav-section-label {
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+.nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.side-nav .nav-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  color: #c5d6c5;
+  font-size: 0.91rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background 0.22s ease,
+    color 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.side-nav .nav-icon {
+  width: 22px;
+  flex: 0 0 22px;
+  text-align: center;
+}
+
+.side-nav .nav-btn span {
+  flex: 1;
+  text-align: left;
+}
+
+.side-nav .nav-arrow {
+  margin-left: auto;
+}
+
+.nav-footer {
+  margin-top: auto;
+}
+
+/* Upgrades panel */
+#upgradesTab.active {
+  min-height: 100%;
+  background: #f7f3e8;
+  border-radius: 16px;
+  color: #213229;
+}
+
+/* Hide controls on Plants, Upgrades, and Map */
+#app .game-controls {
+  display: none;
+}
+
+/* Show controls only when Battle is active */
+#app:has(#battleTab.active) .game-controls {
+  display: flex;
 }
 
 #plantsTab .plant-card-info {
@@ -687,9 +1428,10 @@ canvas {
   color: #213a2a;
 }
 #app {
-  max-width: 1450px;
+  width: 100%;
+  max-width: 1800px;
   margin: 0 auto;
-  padding: 10px 15px;
+  padding: 16px 24px;
 }
 
 #detailColor {
@@ -738,13 +1480,13 @@ canvas {
     box-shadow 0.2s ease,
     border-color 0.2s ease;
 }
-#platnsTab .plant-card-layout {
+#plantsTab .plant-card-layout {
   grid-template-columns: 125px minmax(0, 1fr);
   align-items: center;
   gap: 20px;
 }
 
-#plantTab .plant-card-info h3 {
+#plantsTab .plant-card-info h3 {
   font-size: 0.83rem;
   line-height: 1.5;
 }
@@ -760,12 +1502,12 @@ canvas {
   margin-top: 12px;
 }
 
-#plantTab .plant-option:hover {
+#plantsTab .plant-option:hover {
   transform: translateY(-3px);
   box-shadow: 0 12px 25px rgba(32, 59, 42, 0.1);
 }
 
-#plantTab .plant-option.selected {
+#plantsTab .plant-option.selected {
   border-color: #648b56;
   background: #f6f8f1;
   box-shadow:
@@ -780,13 +1522,6 @@ canvas {
   height: 100%;
   width: 100%;
   gap: 14px;
-}
-
-#plantsTab .plant-card-layout {
-  display: grid;
-  grid-template-columns: 115px minmax(0, 1fr);
-  align-items: center;
-  gap: 16px;
 }
 
 #plantsTab .plant-card-info {
@@ -908,7 +1643,7 @@ canvas {
   gap: 16px;
   flex: 1;
 }
-/* OVERLAY */
+
 #ov {
   position: absolute;
   inset: 0;
@@ -923,60 +1658,50 @@ canvas {
   display: none;
 }
 
-/* TABLET */
-@media (max-width: 1000px) {
+/* ==========================================
+   1. DESKTOP — 1251px AND ABOVE
+   ========================================== */
+
+@media (min-width: 1251px) {
   .game-layout {
-    grid-template-columns: 160px minmax(0, 1fr);
-    gap: 14px;
-  }
-  .side-nav {
-    padding: 12px;
-  }
-  .nav-btn {
-    width: 100%;
-    padding: 14px;
-    font-size: 0.95rem;
+    grid-template-columns: 220px minmax(0, 1fr) 250px;
   }
 
-  .plant-details {
-    grid-column: 1 / -1;
-  }
-  .plant-card-layout {
-    grid-template-columns: 95px minmax(0, 1fr);
-    gap: 12px;
-  }
-  .plant-card-image {
-    width: 95px;
-    height: 95px;
+  .game-layout:has(#upgradesTab.active) {
+    grid-template-columns: 220px minmax(0, 1fr);
   }
 
-  #plantsTab.active {
-    height: auto;
+  .evolution-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
+}
 
-  #plantsTab .plant-grid {
-    flex: 0 0 auto;
-    display: grid;
+/* ==========================================
+   2. TABLET + PHONE — SHARED STYLES
+   ========================================== */
+
+@media (max-width: 1250px) {
+  .evolution-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: auto;
-    align-content: start;
-    gap: 14px;
-    margin-top: 18px;
   }
 
+  .evolution-header p {
+    white-space: normal;
+  }
   #plantsTab .plant-card-layout {
-    grid-template-columns: 90px minmax(0, 1fr);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     gap: 12px;
+    width: 100%;
   }
 
   #plantsTab .plant-card-image {
-    width: 90px;
-    height: 90px;
-  }
-
-  #plantsTab .plant-option {
-    min-height: 225px;
-    padding: 14px;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+    flex-shrink: 0;
   }
 
   #plantsTab .plant-card-image img {
@@ -986,75 +1711,176 @@ canvas {
     object-position: center;
     border-radius: 50%;
   }
+
+  #plantsTab .plant-card-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
+    text-align: center;
+  }
+
+  #plantsTab .plant-card-info h3 {
+    width: 100%;
+    margin: 0;
+    text-align: center;
+  }
+
+  #plantsTab .plant-card-info p {
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  #plantsTab .plant-role {
+    align-self: center;
+    justify-content: center;
+    width: fit-content;
+    margin: 4px auto 0;
+    text-align: center;
+  }
+
+  #plantsTab .plant-card-footer {
+    justify-content: center;
+    margin-top: auto;
+  }
+
+  #plantsTab .plant-option {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+  }
+
+  #plantsTab.active {
+    height: auto;
+  }
+
+  #plantsTab .plant-grid {
+    flex: 0 0 auto;
+    grid-template-rows: auto;
+    align-content: start;
+  }
 }
 
-/*DESKTOP*/
+/* ==========================================
+   3. IPAD / TABLET — 651px TO 1250px
+   ========================================== */
 
-@media (min-width: 1001px) {
-  .side-nav {
-    justify-content: center;
+@media (min-width: 651px) and (max-width: 1250px) {
+  .game-layout,
+  .game-layout:has(#plantsTab.active),
+  .game-layout:has(#upgradesTab.active) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+  }
+
+  /* Top navigation */
+
+  .game-layout .side-nav {
+    grid-column: 1;
+    grid-row: 1;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    padding: 16px 20px;
+    align-self: start;
+  }
+
+  .side-nav .nav-links {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    width: 100%;
   }
 
   .side-nav .nav-btn {
-    transform: translateY(-35px);
+    justify-content: center;
+    min-width: 0;
+    padding: 12px 8px;
+    gap: 8px;
+  }
+
+  .game-layout .main-panel {
+    grid-column: 1;
+    grid-row: 2;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .game-layout .plant-details {
+    grid-column: 1;
+    grid-row: 3;
+    width: 100%;
+    min-width: 0;
+  }
+
+  #plantsTab .plant-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 18px;
+  }
+
+  #plantsTab .plant-option {
+    padding: 14px;
   }
 }
 
-/* MOBILE */
-@media (max-width: 650px) {
-  #app {
-    padding: 7px;
-  }
+/* ==========================================
+   4. IPHONE / MOBILE — 650px AND BELOW
+   ========================================== */
 
+@media (max-width: 650px) {
   .game-layout {
     display: flex;
     flex-direction: column;
     gap: 12px;
   }
 
+  /* Top navigation */
+
   .side-nav {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px;
-    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+    padding: 14px;
   }
 
-  .nav-btn {
+  .side-nav .nav-links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .side-nav .nav-btn {
     justify-content: center;
+    min-height: 44px;
     gap: 8px;
     padding: 12px 8px;
   }
 
-  .nav-icon {
+  .side-nav .nav-btn span {
+    flex: 0 1 auto;
+  }
+
+  .side-nav .nav-icon {
     width: 19px;
     font-size: 19px;
-  }
-
-  .plant-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  .stats {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .plant-card-layout {
-    grid-template-columns: 100px minmax(0, 1fr);
-    gap: 12px;
-  }
-
-  .plant-card-image {
-    width: 100px;
-    height: 100px;
   }
 
   .plant-section-header {
     align-items: flex-start;
     gap: 12px;
   }
+
   .plant-count {
     padding: 7px 9px;
     font-size: 0.62rem;
@@ -1078,69 +1904,95 @@ canvas {
   .control-instructions {
     flex-wrap: wrap;
   }
-  #plantsTab .plant-grid {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
+
+  .evolution-page {
+    padding: 22px 14px;
   }
-  #plantsTab .plant-card-layout {
-    grid-template-columns: 95px minmax(0, 1fr);
+
+  .evolution-heading {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .evolution-header h2 {
+    font-size: 2rem;
+  }
+
+  .evolution-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .evolution-image {
+    height: 190px;
+  }
+
+  .guide-steps {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .evolution-guide {
+    padding: 16px;
+  }
+
+  #app {
+    padding: 7px;
+  }
+
+  #app > header {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
     gap: 12px;
   }
 
+  #app > header .stats {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+    min-width: 0;
+  }
+
+  #app > header .stats > span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: none;
+    gap: 4px;
+    padding: 8px 7px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+
+  #app > header .stats > span b {
+    font-size: 0.8rem;
+  }
+
+  #plantsTab .plant-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+    gap: 14px;
+    margin-top: 18px;
+  }
+
   #plantsTab .plant-option {
-    min-height: 205px;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
     padding: 14px;
   }
 
   #plantsTab .plant-card-image {
-    width: 95px;
-    height: 95px;
-  }
-}
-
-@media (min-width: 651px) and (max-width: 1250px) {
-  #plantsTab .plant-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: auto;
-  }
-
-  #plantsTab .plant-card-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto auto auto auto;
-    gap: 12px;
-    align-content: start;
-  }
-
-  #plantsTab .plant-card-info {
-    display: contents;
-  }
-
-  #plantsTab .plant-card-info h3 {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  #plantsTab .plant-card-image {
-    grid-column: 1;
-    grid-row: 2;
-    width: 120px;
-    height: 120px;
-    justify-self: center;
+    width: 100px;
+    height: 100px;
   }
 
   #plantsTab .plant-card-info p {
-    grid-column: 1;
-    grid-row: 3;
-  }
-
-  #plantsTab .plant-role {
-    grid-column: 1;
-    grid-row: 4;
-  }
-
-  #plantsTab .plant-option {
-    min-height: 0;
-    height: auto;
+    max-width: 320px;
   }
 }

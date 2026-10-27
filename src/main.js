@@ -37,6 +37,51 @@ const plantImages = [
   "./assets/plants/rafflesia.png",
 ];
 
+//==========================================
+//   PLANT PROGRESSION DATA
+//==========================================
+
+const plantProgression = [
+  {
+    name: "Flytrap",
+    level: 1,
+    role: "Frontline",
+    description:
+      "A tough plant that attacks enemies up close and can withstand damage.",
+    image: "./assets/plants/flytrap.png",
+    cost: 0,
+  },
+
+  {
+    name: "Sundew",
+    level: 2,
+    role: "Support",
+    description:
+      "A specialized plant that helps control enemies during battle.",
+    image: "./assets/plants/sundew.png",
+    cost: 200,
+  },
+
+  {
+    name: "Pitcher",
+    level: 3,
+    role: "Defender",
+    description:
+      "A resilient plant that strengthens your strategy as levels progress.",
+    image: "./assets/plants/pitcher.png",
+    cost: 300,
+  },
+  {
+    name: "Rafflesia",
+    level: 4,
+    role: "Boss",
+    description:
+      "A powerful plant with abilities designed for tougher battles.",
+    image: "./assets/plants/rafflesia.png",
+    cost: 400,
+  },
+];
+
 // =====================================================
 // SEND / DEPLOY PLANT
 // added messages for the new user interface.
@@ -574,7 +619,14 @@ let last = performance.now(),
   // store currently displayed HUD value
   shown = {};
 
+let lastRenderedEvolutionLevel = null;
 function hud() {
+  // Refresh the collection when the level changes.
+  if (lastRenderedEvolutionLevel !== state.level) {
+    renderEvolutionCards();
+    lastRenderedEvolutionLevel = state.level;
+  }
+
   const v = {
     sp: Math.floor(state.spores),
     lv: state.level,
@@ -651,3 +703,107 @@ show(
 );
 
 requestAnimationFrame(loop);
+
+//===================================
+// RENDER PLANT PROGRESSION CARDS
+//==================================
+
+function renderEvolutionCards() {
+  const evolutionGrid = document.getElementById("evolutionGrid");
+  const unlockedCount = document.getElementById("unlockedPlantCount");
+
+  if (!evolutionGrid) {
+    return;
+  }
+
+  // The current game level determines which plants
+  // appear unlocked in the collection.
+  const currentLevel = state.level;
+
+  const totalUnlocked = plantProgression.filter(
+    (plant) => currentLevel >= plant.level,
+  ).length;
+
+  // Update the collection counter.
+  if (unlockedCount) {
+    unlockedCount.textContent = `${totalUnlocked} of ${plantProgression.length} unlocked`;
+  }
+
+  // Clear the previous cards before rebuilding them.
+  evolutionGrid.innerHTML = "";
+
+  plantProgression.forEach((plant) => {
+    const unlocked = currentLevel >= plant.level;
+
+    const card = document.createElement("article");
+    card.className = "evolution-card";
+
+    if (unlocked) {
+      card.classList.add("is-unlocked");
+    }
+
+    if (plant.level === 4) {
+      card.classList.add("is-boss");
+    }
+
+    // Create the card content.
+    card.innerHTML = `
+      <div class="evolution-card-top">
+        <span class="evolution-level">
+          LEVEL ${plant.level}
+        </span>
+
+        <span class="evolution-status">
+          <i
+            class="${unlocked ? "icon-check-circle-2" : "icon-lock-keyhole"}"
+            aria-hidden="true"
+          ></i>
+          ${unlocked ? "UNLOCKED" : "LOCKED"}
+        </span>
+      </div>
+
+      <div class="evolution-image">
+        <img
+          src="${plant.image}"
+          alt="${plant.name}"
+        />
+      </div>
+
+      <div class="evolution-card-body">
+        <h3>${plant.name}</h3>
+
+        <span class="evolution-role">
+          ${plant.role}
+        </span>
+
+        <p class="evolution-description">
+          ${plant.description}
+        </p>
+
+      <div class="evolution-action">
+        <i
+          class="${unlocked ? "icon-check-circle-2" : "icon-lock-keyhole"}"
+          aria-hidden="true"
+        ></i>
+
+        <div class="evolution-action-text">
+          <strong>${unlocked ? "Available" : "Locked"}</strong>
+
+          <span>
+            ${
+              unlocked
+                ? "Ready to use in battle"
+                : `Unlocks at Level ${plant.level}`
+            }
+          </span>
+        </div>
+      </div>
+
+    </div>
+    `;
+
+    evolutionGrid.appendChild(card);
+  });
+}
+
+renderEvolutionCards();

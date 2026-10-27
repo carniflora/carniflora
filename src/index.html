@@ -48,26 +48,57 @@
       <!-- MAIN 3-COLUMN LAYOUT -->
       <main class="game-layout">
         <!-- LEFT NAVIGATION -->
+
+        <!-- SIDEBAR -->
         <aside class="side-nav">
-          <button class="nav-btn active" data-tab="plants">
-            <i class="icon-leaf nav-icon" aria-hidden="true"></i>
-            <span>Plants</span>
-          </button>
+          <!-- Brand -->
+          <div class="nav-brand">
+            <div class="nav-brand-icon">
+              <i class="icon-sprout" aria-hidden="true"></i>
+            </div>
 
-          <button class="nav-btn" data-tab="upgrades">
-            <i class="icon-arrow-big-up-dash nav-icon" aria-hidden="true"></i>
-            <span> Upgrades </span>
-          </button>
+            <div class="nav-brand-text">
+              <strong>GAME MENU</strong>
+              <span>EXPLORE & PLAY</span>
+            </div>
+          </div>
 
-          <button class="nav-btn" data-tab="battle">
-            <i class="icon-swords nav-icon" aria-hidden="true"> </i>
-            <span> Battle </span>
-          </button>
+          <div class="nav-divider"></div>
 
-          <button class="nav-btn" data-tab="map">
-            <i class="icon-map nav-ico" aria-hidden="true"></i>
-            <span> Map</span>
-          </button>
+          <p class="nav-section-label">NAVIGATION</p>
+
+          <!-- Navigation -->
+          <div class="nav-links">
+            <button class="nav-btn active" data-tab="plants">
+              <i class="icon-leaf nav-icon" aria-hidden="true"></i>
+              <span>Plants</span>
+              <i class="icon-chevron-right nav-arrow" aria-hidden="true"></i>
+            </button>
+
+            <button class="nav-btn" data-tab="upgrades">
+              <i class="icon-arrow-big-up-dash nav-icon" aria-hidden="true"></i>
+              <span>Upgrades</span>
+              <i class="icon-chevron-right nav-arrow" aria-hidden="true"></i>
+            </button>
+
+            <button class="nav-btn" data-tab="battle">
+              <i class="icon-swords nav-icon" aria-hidden="true"></i>
+              <span>Battle</span>
+              <i class="icon-chevron-right nav-arrow" aria-hidden="true"></i>
+            </button>
+
+            <button class="nav-btn" data-tab="map">
+              <i class="icon-map nav-icon" aria-hidden="true"></i>
+              <span>Map</span>
+              <i class="icon-chevron-right nav-arrow" aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <!-- Bottom status -->
+          <div class="nav-footer">
+            <span class="nav-status-dot"></span>
+            <span>Ready to grow</span>
+          </div>
         </aside>
 
         <!-- CENTER PANEL -->
@@ -94,8 +125,72 @@
 
           <!-- UPGRADES TAB -->
           <div id="upgradesTab" class="tab-content">
-            <h2>Upgrades</h2>
-            <p>Plant upgrades will appear here.</p>
+            <div class="evolution-page">
+              <div class="evolution-header">
+                <div class="evolution-heading">
+                  <div>
+                    <span class="evolution-eyebrow">
+                      <i class="icon-sprout" aria-hidden="true"></i>
+                      PLANT COLLECTION / PROGRESSION
+                    </span>
+
+                    <h2>Unlock New Plants</h2>
+
+                    <p>
+                      Discover new plants as you progress through the game. Each
+                      one brings a different ability to your strategy.
+                    </p>
+                  </div>
+
+                  <div class="evolution-progress">
+                    <i class="icon-leaf" aria-hidden="true"></i>
+                    <span id="unlockedPlantCount">1 of 4 unlocked</span>
+                  </div>
+                </div>
+              </div>
+
+              <!--FOUR LEVEL CARDS-->
+              <div id="evolutionGrid" class="evolution-grid"></div>
+
+              <!--PROGRRESSION GUIDE -->
+              <div class="evolution-guide">
+                <div class="guide-title">
+                  <i class="icon-route" aria-hidden="true"></i>
+                  Your Progression
+                </div>
+
+                <div class="guide-steps">
+                  <div class="guide-step">
+                    <span class="guide-number">1</span>
+                    <span>Complete the current level</span>
+                  </div>
+
+                  <div class="guide-step">
+                    <span class="guide-number">2</span>
+                    <span>Earn spores from battles</span>
+                  </div>
+
+                  <div class="guide-step">
+                    <span class="guide-number">3</span>
+                    <span>Unlock the next plant</span>
+                  </div>
+
+                  <div class="guide-step">
+                    <span class="guide-number">4</span>
+                    <span>Build your plant strategy</span>
+                  </div>
+                </div>
+              </div>
+
+              <!--STATUS MESSAGE-->
+
+              <p
+                id="evolutionMessage"
+                class="evolution-message"
+                role="status"
+                aria-live="polite"
+              ></p>
+            </div>
           </div>
 
           <!-- BATTLE TAB -->
