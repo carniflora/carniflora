@@ -1,4 +1,5 @@
 https://fabiensanglard.net/agent.md/index.html
+
 # FAB's AGENT.MD
 
 - When writing something intended for human consumption, (comment, commit message, reply to prompt) use as few words as possible. Pick every word meticulously to reduce the volume to a strict minimum. Be down to the point. Less is more.
@@ -15,7 +16,7 @@ https://fabiensanglard.net/agent.md/index.html
 
 - Let the reader of the code breathe. Add empty lines between logical blocks of code.
 
-- Add a small, to the point, comment to explain *what* the block does and *why*. Use examples when possible. Propose ASCII drawings to explain complete systems.
+- Add a small, to the point, comment to explain _what_ the block does and _why_. Use examples when possible. Propose ASCII drawings to explain complete systems.
 
 - Treat member visibility changes as a breaking design shift. Keep all fields and functions private unless external access is strictly required by the design. Prompt the user for explicit approval before changing any access modifier from private to internal or public.
 
@@ -39,4 +40,80 @@ Rule 6: Wrap the body text manually at 72 characters to prevent Git formatting i
 Rule 7: Use the body to explain what and why vs. how. Assume the code explains the how;
 the message must explain the context and reasoning.
 
-- If the prompt indicates that a bug is being fixed, don't write the fix right away. First write the test. Observe it failing. Then write the fix. And observe the test passing.     
+- If the prompt indicates that a bug is being fixed, don't write the fix right away. First write the test. Observe it failing. Then write the fix. And observe the test passing.
+
+---
+
+## Setup and commands
+
+Use Node.js 24 and npm, matching the README and CI. Run commands from the
+repository root.
+
+| Command                                     | Purpose                                          |
+| ------------------------------------------- | ------------------------------------------------ |
+| `npm ci`                                    | Install dependencies from the committed lockfile |
+| `npm test`                                  | Run all tests once                               |
+| `npm test -- tests/path.test.js`            | Run a specific test file                         |
+| `npm run test:watch`                        | Run tests interactively                          |
+| `npm run lint`                              | Run ESLint                                       |
+| `npm run format:check`                      | Check formatting without changing files          |
+| `npx --no-install prettier --write <files>` | Format only the files you changed                |
+
+## Testing instructions
+
+- Find the CI plan in the .github/workflows folder.
+- Run `pnpm turbo run test --filter <project_name>` to run every check defined for that package.
+- From the package root you can just call `pnpm test`. The commit should pass all tests before you merge.
+- To focus on one step, add the Vitest pattern: `pnpm vitest run -t "<test name>"`.
+- Fix any test or type errors until the whole suite is green.
+- After moving files or changing imports, run `pnpm lint --filter <project_name>` to be sure ESLint and TypeScript rules still pass.
+- Add or update tests for the code you change, even if nobody asked.
+
+## Implementation conventions
+
+- Follow nearby code and let Prettier handle formatting. Use ES module imports
+  with explicit `.js` extensions.
+- Keep simulation rules testable independently of the DOM and canvas. Put
+  browser interaction in the UI layer and rendering in the appropriate renderer.
+- Reuse existing state, plant definitions, path helpers, and placement checks.
+  Avoid duplicating gameplay rules in UI handlers.
+- Respect coordinate units: map/path coordinates and canvas pixels differ.
+  Use existing map dimensions and `TILE` conversions rather than new magic values.
+- Preserve normal and boss battle behavior when changing shared controls or UI.
+- Keep gameplay balance, costs, timing, and level geometry unchanged unless the
+  task calls for those changes.
+- Keep controls usable with existing input methods, preserve accessible labels,
+  and check layout at narrow and wide viewport sizes when changing the UI.
+- Add dependencies only when they materially simplify the requested work. Use
+  npm and update `package-lock.json` together with `package.json`.
+- Treat `src/` as publicly served content. Never place secrets, private data,
+  or development-only artifacts there.
+
+## Validation
+
+- Add or update focused Vitest tests for changed game behavior and bug fixes.
+  Prefer observable outcomes and edge cases over tests that copy implementation.
+- Reset shared mutable state between tests. Control randomness or time when a
+  test depends on them so results are repeatable.
+- For code changes, run the relevant tests, then the CI checks:
+  `npm run lint`, `npm run format:check`, and `npm test`.
+- For UI or rendering changes, also check the game in a browser: look for console
+  errors and exercise the affected controls and battle modes. Automated rule
+  tests do not verify canvas appearance.
+- For documentation-only changes, check the edited document's formatting;
+  gameplay tests are unnecessary.
+- Report checks actually run and any failures or unavailable checks. Distinguish
+  existing failures from regressions; do not change unrelated files to make
+  checks pass.
+
+## Working practices
+
+- Inspect `git status` and relevant code before editing. Preserve existing user
+  changes, including untracked files; never reset or overwrite unrelated work.
+- Make focused changes. Avoid broad refactors, repository-wide formatting, and
+  generated or dependency-directory edits unless required by the task.
+- Update documentation when commands, setup, controls, or behavior change.
+- Do not commit, push, or deploy unless requested. Pushing to `main` triggers
+  production deployment after CI succeeds.
+- Finish with a concise description of the change, validation results, and any
+  remaining limitations.
