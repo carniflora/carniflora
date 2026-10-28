@@ -9,6 +9,16 @@ import {
   deploySelected,
   maxTowers,
 } from "./game.js";
+import {
+  createBossLevelState,
+  spawnBossPlant,
+  updateBossLevel,
+  drawBossLevel,
+  selectBossLane,
+  LANE_Y,
+  LANE_NAMES,
+  KINDS as BOSS_KINDS,
+} from "./bossLevel.js";
 
 import { MAP_COLS, MAP_ROWS } from "./levels.js";
 
@@ -37,6 +47,25 @@ canvas.height = MAP_ROWS * TILE;
 // =====================================================
 
 let selectedPlantIndex = null;
+let mode = "td";
+let bossState = null;
+
+function activeBattle() {
+  return mode === "boss" ? bossState : state;
+}
+
+function activePlants() {
+  return mode === "boss" ? BOSS_KINDS : PLANTS;
+}
+
+function activePhase() {
+  return mode === "boss" ? bossState.state : state.phase;
+}
+
+function setActivePhase(phase) {
+  if (mode === "boss") bossState.state = phase;
+  else state.phase = phase;
+}
 
 const plantImages = [
   "./assets/plants/flytrap.png",
@@ -95,16 +124,16 @@ const plantProgression = [
 // added messages for the new user interface.
 // =====================================================
 function deploy(i) {
-  const k = PLANTS[i];
+  const k = activePlants()[i];
 
   // Player cannot deploy until the game starts.
-  if (state.phase !== "play") {
+  if (activePhase() !== "play") {
     showPlantMessage("Start the battle before deploying a plant.");
     return;
   }
 
-  // the plant needs a tower to come out of
-  if (!state.myTowers.some((t) => t.plant === i)) {
+  // Normal battles deploy from placed towers; boss plants use the moving front line.
+  if (mode === "td" && !state.myTowers.some((t) => t.plant === i)) {
     showPlantMessage(
       `Place a ${k.n} tower first then click a tile next to the path.`,
     );
@@ -112,13 +141,18 @@ function deploy(i) {
   }
 
   // Tell the player when they do not have enough spores.
-  if (state.spores < k.cost) {
+  if (activeBattle().spores < k.cost) {
     showPlantMessage(`You need ${k.cost} spores to deploy ${k.n}.`);
     return;
   }
 
-  deploySelected(i);
-  showPlantMessage(`${k.n} deployed!`);
+  if (mode === "boss") spawnBossPlant(bossState, i);
+  else deploySelected(i);
+  showPlantMessage(
+    mode === "boss"
+      ? `${k.n} deployed to lane ${bossState.selectedLane + 1}.`
+      : `${k.n} deployed!`,
+  );
 }
 
 // ======================
@@ -137,23 +171,56 @@ function show(t, m, b) {
 // =========================
 function startLevel() {
   // towerType = null;
-  build();
-  state.phase = "play";
+  if (mode === "boss") {
+    bossState = createBossLevelState();
+    canvas.width = 960;
+    canvas.height = 540;
+  } else {
+    build();
+    state.phase = "play";
+    canvas.width = MAP_COLS * TILE;
+    canvas.height = MAP_ROWS * TILE;
+  }
+  lastPhase = null;
+  $("bossControls").hidden = mode !== "boss";
+  $("battleTitle").textContent =
+    mode === "boss" ? "Battle / Harvester Breach" : "Battle";
+  $("battleHint").textContent =
+    mode === "boss"
+      ? "Click a lane or use ↑/↓ to choose it. Keys 1–4 deploy plants. P pauses."
+      : "Click a plant (or press 1–4), click a tile beside the path to place its tower, then deploy.";
   $("ov").classList.add("hide");
-  showPlantMessage("Choose a plant and deploy it.");
+  showPlantMessage(
+    mode === "boss"
+      ? "Choose a lane, then deploy plants to break the chemical tanks."
+      : "Choose a plant and deploy it.",
+  );
+  hud();
+}
+
+function toggleMode() {
+  mode = mode === "td" ? "boss" : "td";
+  startLevel();
+  $("bm").textContent = mode === "boss" ? "Normal Battle" : "Boss Battle";
+  $("bm").setAttribute("aria-pressed", String(mode === "boss"));
+  setActiveTab("battle");
+  if (selectedPlantIndex !== null) showPlantDetails(selectedPlantIndex);
+  hud();
+  $("bm").focus();
 }
 
 // ====================
 // PAUSE
 // ==================
 function pause() {
-  if (state.phase === "play") {
-    state.phase = "pause";
+  if (activePhase() === "play") {
+    setActivePhase("pause");
     show("Paused", "Timers are frozen.", "Resume");
-  } else if (state.phase === "pause") {
-    state.phase = "play";
+  } else if (activePhase() === "pause") {
+    setActivePhase("play");
     $("ov").classList.add("hide");
   }
+  hud();
 }
 
 // ========================
@@ -161,8 +228,9 @@ function pause() {
 // ========================
 
 $("pz").onclick = pause;
+$("bm").onclick = toggleMode;
 $("rs").onclick = () => {
-  if (state.phase !== "menu") {
+  if (activePhase() !== "menu") {
     startLevel();
   }
 };
@@ -172,6 +240,12 @@ $("rs").onclick = () => {
 // =====================================================
 
 $("ob").onclick = () => {
+  if (mode === "boss") {
+    if (bossState.state === "pause") pause();
+    else startLevel();
+    return;
+  }
+
   // Start game.
   if (state.phase === "menu") {
     startLevel();
@@ -208,6 +282,19 @@ canvas.addEventListener("mouseleave", () => (hoverCell = null));
 
 // click to place a tower of the selected plant type
 canvas.addEventListener("click", (e) => {
+  if (mode === "boss") {
+    const rect = canvas.getBoundingClientRect();
+    const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+    if (y >= 120 && y <= 455) {
+      const lane = LANE_Y.reduce(
+        (best, laneY, i) =>
+          Math.abs(laneY - y) < Math.abs(LANE_Y[best] - y) ? i : best,
+        0,
+      );
+      setBossLane(lane);
+    }
+    return;
+  }
   if (state.phase !== "play") return;
   if (selectedPlantIndex === null) {
     showPlantMessage("Select a plant first.");
@@ -235,6 +322,16 @@ canvas.addEventListener("click", (e) => {
 // =========================
 
 addEventListener("keydown", (e) => {
+  if (mode === "boss" && (e.key === "ArrowUp" || e.key === "ArrowDown")) {
+    e.preventDefault();
+    setBossLane(
+      Math.max(
+        0,
+        Math.min(2, bossState.selectedLane + (e.key === "ArrowUp" ? -1 : 1)),
+      ),
+    );
+    return;
+  }
   if (e.code === "KeyP" || e.code === "Escape") {
     pause();
   }
@@ -325,7 +422,7 @@ function showPlantMessage(message) {
 
 function showPlantDetails(index) {
   // Get selected plant.
-  const plant = PLANTS[index];
+  const plant = activePlants()[index];
 
   // Remember selected plant.
   selectedPlantIndex = index;
@@ -349,7 +446,7 @@ function showPlantDetails(index) {
   $("detailCost").textContent = plant.cost;
 
   // Update description.
-  $("detailDescription").textContent = plant.desc;
+  $("detailDescription").textContent = plant.desc ?? plant.d;
 
   // ==========================================
   //  Display the selected plant illustration
@@ -522,6 +619,40 @@ $("selectPlantBtn").addEventListener("click", () => {
   deploy(selectedPlantIndex);
 });
 
+function setBossLane(lane) {
+  if (mode !== "boss" || !selectBossLane(bossState, lane)) return;
+  showPlantMessage(
+    `Lane ${lane + 1} selected. Deploy with keys 1–4 or the plant buttons.`,
+  );
+  hud();
+}
+
+const bossLaneButtons = LANE_NAMES.map((name, lane) => {
+  const button = document.createElement("button");
+  button.className = "boss-lane-button";
+  button.textContent = `${lane + 1} / ${name}`;
+  button.setAttribute("aria-pressed", "false");
+  button.addEventListener("click", () => setBossLane(lane));
+  $("bossLanes").appendChild(button);
+  return button;
+});
+
+// Keep all four deployment choices within reach while watching the boss fight.
+const bossDeployButtons = BOSS_KINDS.map((plant, index) => {
+  const button = document.createElement("button");
+  button.className = "boss-deploy-button";
+  button.style.setProperty("--plant-color", plant.col);
+  button.title = `${plant.d}. Deploy with ${index + 1}.`;
+  button.setAttribute("aria-label", `Deploy ${plant.n}, ${plant.cost} spores`);
+  button.innerHTML = `<kbd>${index + 1}</kbd><strong>${plant.n}</strong><span>${plant.cost} spores</span>`;
+  button.addEventListener("click", () => {
+    showPlantDetails(index);
+    deploy(index);
+  });
+  $("bossDeploy").appendChild(button);
+  return button;
+});
+
 // =====================================================
 // HEALTH BAR
 // =====================================================
@@ -672,6 +803,7 @@ let last = performance.now(),
 
 let lastRenderedEvolutionLevel = null;
 function hud() {
+  const battle = activeBattle();
   // Refresh the collection when the level changes.
   if (lastRenderedEvolutionLevel !== state.level) {
     renderEvolutionCards();
@@ -679,10 +811,13 @@ function hud() {
   }
 
   const v = {
-    sp: Math.floor(state.spores),
-    lv: state.level,
-    tw: state.enemies.filter((enemy) => enemy.hp > 0).length,
-    tc: state.myTowers.length + " / " + maxTowers(),
+    sp: Math.floor(battle.spores),
+    lv: mode === "boss" ? "Boss" : state.level,
+    tw: (mode === "boss"
+      ? [...battle.towers, ...battle.minions, ...battle.tanks, battle.boss]
+      : battle.enemies
+    ).filter((enemy) => enemy.hp > 0).length,
+    tc: mode === "boss" ? "—" : state.myTowers.length + " / " + maxTowers(),
   };
 
   // Update spores, level, and towers.
@@ -698,11 +833,60 @@ function hud() {
   // ===================================================
 
   if (selectedPlantIndex !== null) {
-    const plant = PLANTS[selectedPlantIndex];
-    const hasTower = state.myTowers.some((t) => t.plant === selectedPlantIndex);
+    const plant = activePlants()[selectedPlantIndex];
+    const hasTower =
+      mode === "boss" ||
+      state.myTowers.some((t) => t.plant === selectedPlantIndex);
     $("selectPlantBtn").disabled =
-      state.phase !== "play" || !hasTower || state.spores < plant.cost;
+      activePhase() !== "play" || !hasTower || battle.spores < plant.cost;
   }
+
+  bossDeployButtons.forEach((button, index) => {
+    button.disabled =
+      mode !== "boss" ||
+      activePhase() !== "play" ||
+      battle.spores < BOSS_KINDS[index].cost;
+  });
+  bossLaneButtons.forEach((button, lane) => {
+    button.disabled =
+      mode !== "boss" || !["play", "pause"].includes(activePhase());
+    button.setAttribute(
+      "aria-pressed",
+      String(mode === "boss" && lane === bossState.selectedLane),
+    );
+    if (mode === "boss") {
+      const tank = battle.tanks.find((target) => target.lane === lane);
+      const target =
+        battle.phase === "core"
+          ? "Furnace core"
+          : tank?.hp === 0
+            ? "Tank breached"
+            : lane === 1 &&
+                !battle.towers.some(
+                  (tower) => tower.type === "cannon" && tower.hp > 0,
+                )
+              ? "Centre staging"
+              : LANE_NAMES[lane];
+      const label = `${lane + 1} / ${target}`;
+      if (button.textContent !== label) button.textContent = label;
+    }
+  });
+  if (mode === "boss") {
+    const tanksLeft = battle.tanks.filter((tank) => tank.hp > 0).length;
+    const objective =
+      battle.phase === "core"
+        ? "Core exposed. All lanes converge. Use Rafflesia to pierce armour and keep healing support alive. Mist speed +25%."
+        : `Break the chemical tanks (${2 - tanksLeft}/2 breached). Rafflesia pierces their armour. Silence the centre cannon to stop splash fire and slow sprays.`;
+    if ($("bossObjective").textContent !== objective)
+      $("bossObjective").textContent = objective;
+    const hazard = battle.spray
+      ? `Lane ${battle.spray.lane + 1}: ${battle.spray.stage === "warning" ? "herbicide incoming — reinforce another lane" : "herbicide active"}.`
+      : "Spray targets the largest lane group. Spread your waves. ↑/↓ selects a lane; 1–4 deploys.";
+    if ($("bossHazard").textContent !== hazard)
+      $("bossHazard").textContent = hazard;
+  }
+  $("pz").textContent = activePhase() === "pause" ? "Resume (P)" : "Pause (P)";
+  $("pz").setAttribute("aria-pressed", String(activePhase() === "pause"));
 }
 
 // =============================
@@ -712,21 +896,36 @@ function hud() {
 function loop(timer) {
   const deltaTime = Math.min(0.05, (timer - last) / 1000);
   last = timer;
-  if (state.phase === "play") update(deltaTime);
+  if (mode === "boss") updateBossLevel(bossState, deltaTime);
+  else if (activePhase() === "play") update(deltaTime);
 
   // check if game is ended
-  if (state.phase !== lastPhase) {
-    if (state.phase == "won")
+  const phase = activePhase();
+  if (phase !== lastPhase) {
+    if (mode === "boss" && phase === "won")
+      show(
+        "Harvester breached",
+        `The garden is reclaimed in ${Math.ceil(bossState.elapsed)} seconds. ${bossState.stats.deployed} plants deployed; ${bossState.stats.lost} lost (${bossState.stats.mistLost} to mist).`,
+        "Retry Boss",
+      );
+    else if (mode === "boss" && phase === "lost")
+      show(
+        "The mist caught up",
+        `The battlefield was overrun with ${Math.ceil(bossState.boss.hp)} boss HP remaining. Deploy early and combine plant abilities to push farther.`,
+        "Retry Boss",
+      );
+    else if (phase === "won")
       show("Keep breached", "Level " + state.level + " cleared.", "Next level");
-    if (state.phase === "lost")
+    else if (phase === "lost")
       show(
         "The swarm withered",
         "No plants left and not enough spores.",
         "Retry",
       );
-    lastPhase = state.phase;
+    lastPhase = phase;
   }
-  draw();
+  if (mode === "boss") drawBossLevel(g, bossState, canvas.width);
+  else draw();
   hud();
 
   requestAnimationFrame(loop);
