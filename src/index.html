@@ -130,71 +130,174 @@
 
           <!-- UPGRADES TAB -->
           <div id="upgradesTab" class="tab-content">
-            <div class="evolution-page">
-              <div class="evolution-header">
-                <div class="evolution-heading">
-                  <div>
-                    <span class="evolution-eyebrow">
-                      <i class="icon-sprout" aria-hidden="true"></i>
-                      PLANT COLLECTION / PROGRESSION
-                    </span>
+            <div class="upgrade-world">
+              <!--PAGE HEADER-->
+              <div class="upgrade-heading">
+                <div>
+                  <span class="upgrades-eyebrow"> Watch You Garden Grow </span>
 
-                    <h2>Unlock New Plants</h2>
-
-                    <p>
-                      Discover new plants as you progress through the game. Each
-                      one brings a different ability to your strategy.
-                    </p>
-                  </div>
-
-                  <div class="evolution-progress">
-                    <i class="icon-leaf" aria-hidden="true"></i>
-                    <span id="unlockedPlantCount">1 of 4 unlocked</span>
-                  </div>
+                  <h2>Plant Upgrades</h2>
+                  <p>
+                    Follow the winding path, discover new plants along the way,
+                    and get ready to take down the castle.
+                  </p>
                 </div>
+
+                <span id="unlockedPlantCount" class="upgrade-level-badge">
+                  Level 1 of 4
+                </span>
               </div>
 
-              <!--FOUR LEVEL CARDS-->
-              <div id="evolutionGrid" class="evolution-grid"></div>
+              <!--UPGRADE MAP-->
+              <div class="upgrade-map">
+                <!--Purple Winding Road-->
+                <!--Create an SVG drawing area for the purple winding road on the Upgrades page-->
+                <!--class="upgrade-path": Connects the SVG to CSS , allowing to controll the road's size, position, and styling-->
+                <!--ViewBox: "0 0 1600 650": Sets the SVG coordinate system, starting at (0,0), with a width of 1600 units and a height of 650 units -->
+                <!--preserveAspectRatio:"none": Allows the road to stretch horizontally and vertically to fit its container without maintaining its origianl proportions-->
+                <!--araia-hidden="true": Hides the decorative SVG from screen readers becasue it does not provide essentail information-->
 
-              <!--PROGRRESSION GUIDE -->
-              <div class="evolution-guide">
-                <div class="guide-title">
-                  <i class="icon-route" aria-hidden="true"></i>
-                  Your Progression
+                <svg
+                  class="upgrade-path"
+                  viewBox="0 0 1600 650"
+                  preserveAspectRatio="none"
+                  aria-hidden="true"
+                >
+                  <!--
+                1. <path> used to draw the purple winding road on the Carniflora Upgrades page. it allows 
+                  to create custome shapes and curves that connect the different plant progression stages
+                
+                2. d="M -100 520: d attribute defines the shape and direction of the road. The M command sets the starting position of the road 
+                at X= -100 and Y=520. The negative X-coordinate allows the road to begin outside the left edge of the SVG
+
+                3. C 100 520, 160 250, 400 290 : The C command creates the first curved section of the road using two control points and endpoint. The 
+                control points determine how the road bends, while the endpoint (400, 290) determines where the curve finishes
+
+                4. S 750 470, 930 310: The S command continues the road with a smooth curve connected to the previous section. It uses the previous curve's direction to create a 
+                natraul transition, with (750, 470) as the second control point and (930, 310) as the endpoint
+
+                5. S 1150 190, 1300 260: This command creates another smooth curved section of the road.It uses (1150, 190) as the second control point and ends at (1300, 260), allowing the road
+                to contniue winding across the page.
+
+                6. S 1500 210, 1700 20: This command creates the final curved section of the road. It uses (1500, 210) as the second control point
+                and ends at (1700, 20), extending the road beyond the right edge of the SVG
+
+                7. fill="none" : the fill attribute is set to none to prevent the path from having a filled interior. This ensures that only the purple strok is visible,
+                creating the appearance of a road rather than a filled page
+
+                8. stroke="#8d6bc9": The stroke attribute controls the colour of the road. The hexadecimal colour #8d6bc9 creates the purple appearence that matches the Carinflora Upgrades page design
+
+                9. stroke-width="86": The stroke-width determines the thickness of the purpule road. Setting it to 86 makes the road 86 SVG coordinate units wide, giving it a thick and noticable appearence.
+
+                10. stroke-linecap="round" The stroke-linecap attribute controls how the ends of the road appear. Setting it to round gives both ends a rounded shape instead of flat edge, making the road look smoother
+
+                -->
+                  <path
+                    d="M -100 520
+                  C 100 520, 160 250, 400 290
+                  S 750 470, 930 310
+                  S 1150 190, 1300 260
+                  S 1500 210, 1700 20"
+                    fill="none"
+                    stroke="#8d6bc9"
+                    stroke-width="86"
+                    stroke-linecap="round"
+                  />
+
+                  <path
+                    d="M -100 520
+                  C 100 520, 160 250, 400 290
+                  S 750 470, 930 310
+                  S 1150 190, 1300 260
+                  S 1500 210, 1700 20"
+                    fill="none"
+                    stroke="#d7c5f7"
+                    stroke-width="73"
+                    stroke-linecap="round"
+                  />
+
+                  <path
+                    d="M -100 520
+                  C 100 520, 160 250, 400 290
+                  S 750 470, 930 310
+                  S 1150 190, 1300 260
+                  S 1500 210, 1700 20"
+                    fill="none"
+                    stroke="#9272d0"
+                    stroke-width="3"
+                    stroke-dasharray="15 22"
+                    stroke-linecap="round"
+                  />
+                </svg>
+
+                <!--PLANT CHECKPOINT-->
+                <div id="evolutionGrid" class="upgrade-stages">
+                  <!--ROAD INSTRUCTION-->
+                  <p class="upgrade-map-hint">CHOOSE AN ISLAND TO EXAPLORE</p>
                 </div>
 
-                <div class="guide-steps">
-                  <div class="guide-step">
-                    <span class="guide-number">1</span>
-                    <span>Complete the current level</span>
-                  </div>
+                <!--BOTTOM PLANT COLLECTION-->
+                <div
+                  id="upgradePlantSeclector"
+                  class="upgrade-collection"
+                  aria-label="Choose a plant"
+                ></div>
 
-                  <div class="guide-step">
-                    <span class="guide-number">2</span>
-                    <span>Earn spores from battles</span>
-                  </div>
+                <aside class="upgrade-info">
+                  <div class="upgrade-info-header">PLANT GROWTH</div>
+                  <div class="upgrade-info-content">
+                    <img
+                      id="upgradePreview"
+                      class="upgrade-preview"
+                      alt="Selected plant"
+                    />
+                    <span id="upgradeRole" class="upgrade-role"> </span>
+                    <h3 id="upgradeName"></h3>
+                    <p id="upgradeDescription" class="upgrade-description"></p>
+                    <div class="upgrade-level-row">
+                      <span>PLANT LEVEL</span>
+                      <strong id="upgradeStage">01</strong>
+                    </div>
 
-                  <div class="guide-step">
-                    <span class="guide-number">3</span>
-                    <span>Unlock the next plant</span>
-                  </div>
+                    <div class="upgrade-stat-row">
+                      <span>Attack Power</span>
+                      <strong id="upgradeDamage">--</strong>
+                    </div>
 
-                  <div class="guide-step">
-                    <span class="guide-number">4</span>
-                    <span>Build your plant strategy</span>
+                    <div class="upgrade-stat-row">
+                      <span>Range</span>
+                      <strong id="upgradeRange">--</strong>
+                    </div>
+
+                    <div class="upgrade-stat-row">
+                      <span>Attack Speed</span>
+                      <strong id="upgradeSpeed">--</strong>
+                    </div>
+
+                    <div class="upgrade-mission">
+                      <span>SPECIAL ABILITY / MISSION</span>
+                      <strong id="upgradeMission"></strong>
+                      <p id="upgradeMissionDescription"></p>
+                    </div>
+
+                    <button
+                      id="upgradeGoBattle"
+                      class="upgrade-battle-button"
+                      type="button"
+                    >
+                      GO TO BATTLE
+                    </button>
                   </div>
-                </div>
+                </aside>
+
+                <!--STATUS MESSAGE-->
+                <p
+                  id="evolutionMessage"
+                  class="evolution-message"
+                  role="status"
+                  aria-live="polite"
+                ></p>
               </div>
-
-              <!--STATUS MESSAGE-->
-
-              <p
-                id="evolutionMessage"
-                class="evolution-message"
-                role="status"
-                aria-live="polite"
-              ></p>
             </div>
           </div>
 
