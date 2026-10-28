@@ -1,8 +1,8 @@
-import { loadLevel } from "./levels.js";
+import { loadLevel, LEVEL_PATHS, MAP_COLS, MAP_ROWS } from "./levels.js";
 
 const FINAL_MINION = 2; // final minion is this far from the enemy tower
 const DIST_BETWEEN_MINIONS = 0.75; // distance between the minions
-// const MAX_TOWER_DIST_TO_PATH = 1.25; // maximum distance tower can be from a path
+const MAX_TOWER_DIST_TO_PATH = 1.25; // maximum distance tower can be from a path
 export const TILE = 64;
 
 // get the current position, wrapper function of getPositionAtDistance in levels.js
@@ -10,14 +10,6 @@ const posOf = (path, d) => {
   const [x, y] = path.positionAtDistance(Math.min(d, path.pathLength));
   return [x * TILE, y * TILE];
 };
-
-// check whether enemy minions are too close together
-function tooCloseToOthers(distance, placedDistances) {
-  for (const other of placedDistances) {
-    if (Math.abs(other - distance) < DIST_BETWEEN_MINIONS) return true;
-  }
-  return false;
-}
 
 // ====================
 // GAME STATE
@@ -124,17 +116,26 @@ export function build() {
 
   // randomly spawn enemy minions along the path (starting at halfway along the path)
   const count = Math.min(4 + state.level, 7); // number of minions per path
-  for (const path of state.map.paths) {
-    // in case there is more than one path
-    const enemyPlaced = [];
-    for (let i = 0; enemyPlaced.length < count; i++) {
-      const firstMinion = path.pathLength * 0.5; // ensure that first minion is half way on the path
-      const lastMinion = Math.max(firstMinion, path.pathLength - FINAL_MINION); // ensure that last minion is the specified distance from the tower
-      const position = firstMinion + Math.random() * (lastMinion - firstMinion); // random position in between the first and last
-      if (tooCloseToOthers(position, enemyPlaced)) continue; // check that the positions aren't too close together
-      enemyPlaced.push(position);
+  const placedPoints = [];
 
+  for (const path of state.map.paths) {
+    const firstMinion = path.pathLength * 0.33; // ensure that first minion is half way on the path
+    const lastMinion = Math.max(firstMinion, path.pathLength - FINAL_MINION); // ensure that last minion is the specified distance from the tower
+    let placed = 0;
+
+    for (let attempts = 0; placed < count && attempts < 500; attempts++) {
+      const position = firstMinion + Math.random() * (lastMinion - firstMinion);
       const [x, y] = posOf(path, position);
+
+      // compare real positions along different paths
+      const tooClose = placedPoints.some(
+        ([px, py]) => Math.hypot(px - x, py - y) < DIST_BETWEEN_MINIONS * TILE,
+      );
+      if (tooClose) continue;
+
+      placedPoints.push([x, y]);
+      placed++;
+
       state.enemies.push({
         x,
         y,
@@ -152,104 +153,102 @@ export function build() {
   }
 }
 
-// TODO: Reinstate tower functionality at later sprint
+// ====================
+// TOWERS
+// ====================
 
-// // check if tower can be built on cell
-// function canBuildAt(c, r) {
-//   return !state.map.blockPath.has(c + "," + r);
-// }
+// check if a tower can be built on this cell
+function canBuildAt(c, r) {
+  if (c < 0 || r < 0 || c >= MAP_COLS || r >= MAP_ROWS) return false;
+  return !state.map.blockPath.has(c + "," + r);
+}
 
-// // check how far to nearest path cell
-// function distanceToPath(c1, r1, cell) {
-//   return Math.hypot(cell.c - c1, cell.r - r1);
-// }
+// find the closest path cell to the given cell
+function findClosestPathSpot(c, r) {
+  let closest = null;
+  let closestDist = Infinity;
 
-// // find closet path spot from designated cell
-// function findClosestPathSpot(c, r) {
-//   let closest = null; // empty until filled with closest
-//   let closestDist = Infinity; // if closer than infinity to start
+  state.map.paths.forEach((path, pathIndex) => {
+    path.cells.forEach((cell, cellIndex) => {
+      const distance = Math.hypot(cell.c - c, cell.r - r);
+      if (distance < closestDist) {
+        closestDist = distance;
+        closest = { pathIndex, cellIndex, distance: distance };
+      }
+    });
+  });
+  return closest;
+}
 
-//   state.map.paths.forEach((path, pathIndex) => {
-//     // for each path in the map
-//     path.cells.forEach((cell, cellIndex) => {
-//       // for each cell on the path
-//       const d = distanceToPath(c, r, cell); // find the closest path cell to the selected cell
-//       if (d < closestDist) {
-//         closestDist = d;
-//         closest = { pathIndex, cellIndex, distance: d };
-//       }
-//     });
-//   });
+// limit the number of towers that can be placed
+export function maxTowers() {
+  return LEVEL_PATHS[state.level - 1].maxTowers;
+}
 
-//   return closest;
-// }
+// can a tower of this plant type go on this cell?
+export function canPlaceTower(c, r, plantIndex) {
+  if (plantIndex == null) return false;
+  if (state.myTowers.length >= maxTowers()) return false;
+  if (!canBuildAt(c, r)) return false;
 
-// // limit the number of towers that can be placed
-// export function maxTowers() {
-//   return state.map.paths.length * 2;
-// }
+  // one tower per cell
+  if (state.myTowers.some((t) => t.c === c && t.r === r)) return false;
 
-// // place your tower beside a path
-// export function canPlaceTower(c, r, plantIndex) {
-//   if (plantIndex == null) return false;
-//   if (state.myTowers.length >= maxTowers()) return false; // maximum towers allowed
-//   if (!canBuildAt(c, r)) return false;
-//   // only allow one tower per plant type
-//   if (state.myTowers.some((tower) => tower.c === c && tower.r === r))
-//     return false;
-//   if (state.myTowers.some((tower) => tower.plant === plantIndex)) return false;
+  // one tower per plant type
+  if (state.myTowers.some((t) => t.plant === plantIndex)) return false;
 
-//   const spot = findClosestPathSpot(c, r);
-//   return !!spot && spot.distance <= MAX_TOWER_DIST_TO_PATH;
-// }
+  const spot = findClosestPathSpot(c, r);
+  return !!spot && spot.distance <= MAX_TOWER_DIST_TO_PATH;
+}
 
-// export function placeTower(c, r, plantIndex) {
-//   if (!canPlaceTower(c, r, plantIndex)) return false;
-//   const spot = findClosestPathSpot(c, r);
+// place a tower beside a path. Returns true if it was placed.
+export function placeTower(c, r, plantIndex) {
+  if (!canPlaceTower(c, r, plantIndex)) return false;
+  const spot = findClosestPathSpot(c, r);
 
-//   state.myTowers.push({
-//     c,
-//     r,
-//     pathIndex: spot.pathIndex,
-//     startDist: spot.cellIndex,
-//     plant: plantIndex,
-//   });
-//   return true;
-// }
+  state.myTowers.push({
+    c,
+    r,
+    pathIndex: spot.pathIndex,
+    startDist: spot.cellIndex,
+    plant: plantIndex,
+  });
+  return true;
+}
 
-// // update the plants when they are sent out (deployed from trees/towers)
-// export function sendOut(tower) {
-//   const plant = PLANTS[tower.plant];
-//   state.spores -= plant.cost;
-//   state.plants.push({
-//     plant: tower.plant,
-//     dist: tower.startDist,
-//     pathIndex: tower.pathIndex,
-//     x: 0,
-//     y: 0,
-//     hp: plant.hp,
-//     cooldown: 0,
-//   });
-// }
+// send a plant out of a tower, onto the tower path.
+export function sendOut(tower) {
+  const plant = PLANTS[tower.plant];
+  if (state.spores < plant.cost) return false;
 
-// update the plants when they are sent out
-export function sendOut(i) {
-  const k = PLANTS[i];
-  const paths = state.map.paths;
+  const path = state.map.paths[tower.pathIndex];
+  const [x, y] = posOf(path, tower.startDist);
 
-  const pathIndex = Math.floor(Math.random() * paths.length); // randomize the path it is spawned on
-  const [x, y] = posOf(paths[pathIndex], 0);
-
-  state.spores -= k.cost;
+  state.spores -= plant.cost;
   state.plants.push({
-    plant: i,
-    dist: 0,
-    pathIndex,
-    x: x,
-    y: y,
-    hp: k.hp,
+    plant: tower.plant,
+    dist: tower.startDist,
+    pathIndex: tower.pathIndex,
+    x,
+    y,
+    hp: plant.hp,
     cooldown: 0,
   });
+  return true; // return true if the plant was sent.
+}
+
+// send out the selected plant from its tower when the deploy button is pressed
+export function deploySelected(plantIndex) {
+  if (plantIndex == null) return false;
+
+  const towers = state.myTowers.filter((t) => t.plant === plantIndex);
+  if (!towers.length) return false;
+
+  let sent = false;
+  for (const tower of towers) {
+    if (sendOut(tower)) sent = true;
+  }
+  return sent;
 }
 
 // ============================
@@ -273,6 +272,13 @@ export function update(deltaTime) {
   state.spores += 6 * deltaTime; // spores regenerate 6 per time
   // check which enemies are still alive
   const alive = state.enemies.filter((enemy) => enemy.hp > 0);
+
+  // minions still alive (everything except the keep)
+  const minionsLeft = alive.some((e) => !e.keep);
+
+  // plants can only target the the keep once every minion is dead
+  const targets = minionsLeft ? alive.filter((e) => !e.keep) : alive;
+
   for (const p of state.plants) {
     // for each active plant
     // get the plant path index
@@ -282,7 +288,11 @@ export function update(deltaTime) {
     // UPDATE PLANTS
     // ====================
     const k = PLANTS[p.plant];
-    if (p.dist < path.pathLength) p.dist += k.spd * deltaTime; // the plant moves this speed over time
+
+    // stop and fight if there is an enemy
+    const target = nearest(targets, p.x, p.y, k.rng);
+
+    if (!target && p.dist < path.pathLength) p.dist += k.spd * deltaTime; // the plant moves this speed over time
     [p.x, p.y] = posOf(path, p.dist); // get plant position
     p.cooldown -= deltaTime; // plant cooldown reduces over time
 
@@ -302,7 +312,7 @@ export function update(deltaTime) {
     // =========================
     if (p.cooldown <= 0) {
       // check if enemies in range and cooldown complete
-      const enemy = nearest(alive, p.x, p.y, k.rng);
+      const enemy = target;
       if (enemy) {
         p.cooldown = k.cooldown;
         enemy.hp -= k.dmg;

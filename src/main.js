@@ -1,4 +1,14 @@
-import { state, build, update, PLANTS, sendOut, TILE } from "./game.js";
+import {
+  state,
+  build,
+  update,
+  PLANTS,
+  TILE,
+  placeTower,
+  canPlaceTower,
+  deploySelected,
+  maxTowers,
+} from "./game.js";
 
 import { MAP_COLS, MAP_ROWS } from "./levels.js";
 
@@ -13,8 +23,6 @@ const canvas = document.getElementById("c"),
 // set canvas size
 canvas.width = MAP_COLS * TILE;
 canvas.height = MAP_ROWS * TILE;
-
-// let towerType = null;
 
 // =====================================================
 //
@@ -95,13 +103,21 @@ function deploy(i) {
     return;
   }
 
+  // the plant needs a tower to come out of
+  if (!state.myTowers.some((t) => t.plant === i)) {
+    showPlantMessage(
+      `Place a ${k.n} tower first then click a tile next to the path.`,
+    );
+    return;
+  }
+
   // Tell the player when they do not have enough spores.
   if (state.spores < k.cost) {
     showPlantMessage(`You need ${k.cost} spores to deploy ${k.n}.`);
     return;
   }
 
-  sendOut(i);
+  deploySelected(i);
   showPlantMessage(`${k.n} deployed!`);
 }
 
@@ -177,18 +193,42 @@ $("ob").onclick = () => {
   startLevel();
 };
 
-// // click to add a Tower
-// addEventListener("click", (e) => {
-//   if (state.phase !== "play") return;
-//   const rect = canvas.getBoundingClientRect();
-//   const c = Math.floor((e.clientX - rect.left) / TILE);
-//   const r = Math.floor((e.clientY - rect.top) / TILE);
+// convert a mouse event to a grid cell
+function cellFromEvent(e) {
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+  const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+  return [Math.floor(x / TILE), Math.floor(y / TILE)];
+}
 
-//   const existing = state.myTowers.find(
-//     (tower) => tower.c === c && tower.r === r,
-//   );
-//   placeTower(c, r, towerType);
-// });
+// hover preview
+let hoverCell = null;
+canvas.addEventListener("mousemove", (e) => (hoverCell = cellFromEvent(e)));
+canvas.addEventListener("mouseleave", () => (hoverCell = null));
+
+// click to place a tower of the selected plant type
+canvas.addEventListener("click", (e) => {
+  if (state.phase !== "play") return;
+  if (selectedPlantIndex === null) {
+    showPlantMessage("Select a plant first.");
+    return;
+  }
+
+  const [c, r] = cellFromEvent(e);
+  const plant = PLANTS[selectedPlantIndex];
+
+  if (placeTower(c, r, selectedPlantIndex)) {
+    showPlantMessage(
+      `${plant.n} tower placed. Press deploy to send out plants.`,
+    );
+  } else if (state.myTowers.some((t) => t.plant === selectedPlantIndex)) {
+    showPlantMessage(`You already have a ${plant.n} tower.`);
+  } else if (state.myTowers.length >= maxTowers()) {
+    showPlantMessage(`Tower limit reached (${maxTowers()}) on this level`);
+  } else {
+    showPlantMessage(`Towerss go on a free tile next to the path.`);
+  }
+});
 
 // ==========================
 // KEYBOARD CONTROLS
@@ -199,9 +239,11 @@ addEventListener("keydown", (e) => {
     pause();
   }
 
+  // place a plant tower using the number keys 1-4
   const n = parseInt(e.key, 10);
 
   if (n >= 1 && n <= 4) {
+    showPlantDetails(n - 1); // select the plant so clicks place it.
     deploy(n - 1);
   }
 });
@@ -566,18 +608,27 @@ function draw() {
     );
   }
 
-  // // draw the number of towers that are allowed in the level
-  // state.myTowers.forEach((tower) => {
-  //   const x = (tower.c + 0.5) * TILE;
-  //   const y = (tower.r + 0.5) * TILE;
-  //   const plant = PLANTS[tower.plant];
+  // draw the number of towers that are allowed in the level
+  state.myTowers.forEach((tower) => {
+    const x = (tower.c + 0.5) * TILE;
+    const y = (tower.r + 0.5) * TILE;
+    const plant = PLANTS[tower.plant];
 
-  //   g.fillStyle = plant.col;
-  //   g.fillRect(x - 16, y - 16, 32, 32);
-  //   g.strokeStyle = "#ffffff";
-  //   g.lineWidth = 2;
-  //   g.strokeRect(x - 16, y - 16, 32, 32);
-  // });
+    g.fillStyle = plant.col;
+    g.fillRect(x - 16, y - 16, 32, 32);
+    g.strokeStyle = "#ffffff";
+    g.lineWidth = 2;
+    g.strokeRect(x - 16, y - 16, 32, 32);
+  });
+
+  // placement preview: green if allowed, red if not
+  if (hoverCell && state.phase === "play" && selectedPlantIndex !== null) {
+    const [c, r] = hoverCell;
+    g.fillStyle = canPlaceTower(c, r, selectedPlantIndex)
+      ? "rgba(143,212,90,.35)"
+      : "rgba(224,69,123,.35)";
+    g.fillRect(c * TILE, r * TILE, TILE, TILE);
+  }
 
   // draw plants that are sent out -- plants above enemies/mytowers because drawn after
   for (const p of state.plants) {
@@ -631,7 +682,7 @@ function hud() {
     sp: Math.floor(state.spores),
     lv: state.level,
     tw: state.enemies.filter((enemy) => enemy.hp > 0).length,
-    // tc: state.myTowers.length + " / " + maxTowers(),
+    tc: state.myTowers.length + " / " + maxTowers(),
   };
 
   // Update spores, level, and towers.
@@ -648,8 +699,9 @@ function hud() {
 
   if (selectedPlantIndex !== null) {
     const plant = PLANTS[selectedPlantIndex];
+    const hasTower = state.myTowers.some((t) => t.plant === selectedPlantIndex);
     $("selectPlantBtn").disabled =
-      state.phase !== "play" || state.spores < plant.cost;
+      state.phase !== "play" || !hasTower || state.spores < plant.cost;
   }
 }
 
