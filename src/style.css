@@ -1976,7 +1976,6 @@ button:focus-visible {
   }
 
   /* Top navigation */
-
   .side-nav {
     display: flex;
     flex-direction: column;
@@ -2116,20 +2115,20 @@ button:focus-visible {
   }
 
   .stats {
-  #plantsTab .plant-option {
-    width: 100%;
-    min-width: 0;
-    min-height: 0;
-    padding: 14px;
-  }
+    #plantsTab .plant-option {
+      width: 100%;
+      min-width: 0;
+      min-height: 0;
+      padding: 14px;
+    }
 
-  #plantsTab .plant-card-image {
-    width: 100px;
-    height: 100px;
-  }
+    #plantsTab .plant-card-image {
+      width: 100px;
+      height: 100px;
+    }
 
-  #plantsTab .plant-card-info p {
-    max-width: 320px;
+    #plantsTab .plant-card-info p {
+      max-width: 320px;
+    }
   }
-}
 }
