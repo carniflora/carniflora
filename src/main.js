@@ -38,6 +38,58 @@ canvas.height = MAP_ROWS * TILE;
 
 let selectedPlantIndex = null;
 
+const plantImages = [
+  "./assets/plants/flytrap.png",
+  "./assets/plants/sundew.png",
+  "./assets/plants/pitcher.png",
+  "./assets/plants/rafflesia.png",
+];
+
+//==========================================
+//   PLANT PROGRESSION DATA
+//==========================================
+
+const plantProgression = [
+  {
+    name: "Flytrap",
+    level: 1,
+    role: "Frontline",
+    description:
+      "A tough plant that attacks enemies up close and can withstand damage.",
+    image: "./assets/plants/flytrap.png",
+    cost: 0,
+  },
+
+  {
+    name: "Sundew",
+    level: 2,
+    role: "Support",
+    description:
+      "A specialized plant that helps control enemies during battle.",
+    image: "./assets/plants/sundew.png",
+    cost: 200,
+  },
+
+  {
+    name: "Pitcher",
+    level: 3,
+    role: "Defender",
+    description:
+      "A resilient plant that strengthens your strategy as levels progress.",
+    image: "./assets/plants/pitcher.png",
+    cost: 300,
+  },
+  {
+    name: "Rafflesia",
+    level: 4,
+    role: "Boss",
+    description:
+      "A powerful plant with abilities designed for tougher battles.",
+    image: "./assets/plants/rafflesia.png",
+    cost: 400,
+  },
+];
+
 // =====================================================
 // SEND / DEPLOY PLANT
 // added messages for the new user interface.
@@ -299,29 +351,71 @@ function showPlantDetails(index) {
   // Update description.
   $("detailDescription").textContent = plant.desc;
 
-  // Change plant colour circle.
-  $("detailColor").style.background = plant.col;
+  // ==========================================
+  //  Display the selected plant illustration
+  // ==========================================
 
-  // Allow Select Plant button.
+  const detailContainer = $("detailColor");
+
+  // Check whether the image already exists.
+  let detailImage = detailContainer.querySelector("img");
+
+  // Create an image if none exists.
+  if (!detailImage) {
+    detailImage = document.createElement("img");
+    detailContainer.appendChild(detailImage);
+  }
+
+  // Show the plant colour while loading.
+  detailContainer.style.backgroundColor = plant.col;
+  detailImage.style.display = "none";
+
+  // Set alternative text.
+  detailImage.alt = `${plant.n} illustration`;
+
+  // Show the image after loading.
+  detailImage.onload = () => {
+    detailImage.style.display = "block";
+    detailContainer.style.backgroundColor = "#eee9db";
+  };
+
+  // Use the plant colour if the image is missing.
+  detailImage.onerror = () => {
+    detailImage.style.display = "none";
+    detailContainer.style.backgroundColor = plant.col;
+  };
+
+  detailImage.src = plantImages[index];
+
   $("selectPlantBtn").disabled = false;
 
-  // Remove selected style
-  // from every plant card.
   document.querySelectorAll(".plant-option").forEach((card) => {
     card.classList.remove("selected");
   });
 
-  // Find selected plant card.
   const selectedCard = document.querySelector(`[data-plant-index="${index}"]`);
 
-  // Highlight it.
   if (selectedCard) {
     selectedCard.classList.add("selected");
   }
 
-  // Tell player what they selected.
-  showPlantMessage(`${plant.n} selected.`);
+  showPlantMessage(`${plant.n} selected`);
 }
+
+const plantRoles = [
+  "Strong Attacker", // Flytrap
+  "Slows Towers", // Sundew
+  "Protects & Heals", // Pitcher
+  "Splash Damage", // Rafflesia
+];
+
+// Lucide icons for each combat role
+const plantRoleIcons = [
+  "icon-shield", // Flytrap
+  "icon-crosshair", // Sundew
+  "icon-heart-pulse", // Pitcher
+  "icon-bomb", // Rafflesia
+];
 
 const plantGrid = $("plantGrid");
 
@@ -333,43 +427,78 @@ PLANTS.forEach((plant, index) => {
   // Create button.
   const card = document.createElement("button");
 
-  // CSS class.
+  card.type = "button";
   card.className = "plant-option";
 
   // Remember which plant
   // this button represents.
   card.dataset.plantIndex = index;
 
-  // Add information to card.
+  // ==========================================
+  // Plant card with image and information
+  // ==========================================
+
   card.innerHTML = `
-       <div class="plant-card-top">
+  <div class="plant-card-content">
 
-        <span
-          class="plant-card-color"
-          style="background:${plant.col}">
-        </span>
+    <div class="plant-card-top">
+      <span class="plant-number">
+        PLANT ${index + 1}
+      </span>
+    </div>
 
-        <span class="plant-number">
-          ${index + 1}
-        </span>
+    <div class="plant-card-layout">
 
+      <div class="plant-card-image">
+        <img
+          src="${plantImages[index]}"
+          alt="${plant.n} illustration"
+        />
       </div>
 
-      <h3>
-        ${plant.n}
-      </h3>
+      <div class="plant-card-info">
 
-      <p>
-        ${plant.desc}
-      </p>
+        <h3>${plant.n}</h3>
+        <p>${plant.desc}</p>
 
-      <div class="plant-card-cost">
-        ${plant.cost} spores
+    
+        <span class="plant-role plant-role-${index}">
+        <i class="${plantRoleIcons[index]}" aria-hidden="true"></i>
+        ${plantRoles[index]}
+        </span>
       </div>
-    `;
+    </div>
 
-  // When clicked:
-  // show information first.
+  <div class="plant-card-footer">
+  <span class="plant-card-cost">
+
+    <i class="icon-leaf spore-icon" aria-hidden="true"></i>
+    ${plant.cost} spores
+
+  </span>
+</div>
+
+  </div>
+`;
+
+  // Load the plant image.
+  const cardImage = card.querySelector(".plant-card-image img");
+
+  cardImage.onload = () => {
+    cardImage.style.display = "block";
+    cardImage.parentElement.style.backgroundColor = "#eee9db";
+  };
+
+  // Show why a plant picture failed to load.
+
+  cardImage.onerror = () => {
+    console.error(`Failed to load ${plant.n} image:`, cardImage.src);
+
+    cardImage.style.display = "none";
+    cardImage.parentElement.style.backgroundColor = plant.col;
+  };
+
+  cardImage.src = plantImages[index];
 
   card.addEventListener("click", () => {
     showPlantDetails(index);
@@ -419,6 +548,7 @@ function draw() {
   // draw the paths
   g.lineCap = "round";
   g.lineJoin = "round";
+
   for (const path of state.map.paths) {
     // get each path from the level paths
     g.beginPath();
@@ -540,7 +670,14 @@ let last = performance.now(),
   // store currently displayed HUD value
   shown = {};
 
+let lastRenderedEvolutionLevel = null;
 function hud() {
+  // Refresh the collection when the level changes.
+  if (lastRenderedEvolutionLevel !== state.level) {
+    renderEvolutionCards();
+    lastRenderedEvolutionLevel = state.level;
+  }
+
   const v = {
     sp: Math.floor(state.spores),
     lv: state.level,
@@ -618,3 +755,107 @@ show(
 );
 
 requestAnimationFrame(loop);
+
+//===================================
+// RENDER PLANT PROGRESSION CARDS
+//==================================
+
+function renderEvolutionCards() {
+  const evolutionGrid = document.getElementById("evolutionGrid");
+  const unlockedCount = document.getElementById("unlockedPlantCount");
+
+  if (!evolutionGrid) {
+    return;
+  }
+
+  // The current game level determines which plants
+  // appear unlocked in the collection.
+  const currentLevel = state.level;
+
+  const totalUnlocked = plantProgression.filter(
+    (plant) => currentLevel >= plant.level,
+  ).length;
+
+  // Update the collection counter.
+  if (unlockedCount) {
+    unlockedCount.textContent = `${totalUnlocked} of ${plantProgression.length} unlocked`;
+  }
+
+  // Clear the previous cards before rebuilding them.
+  evolutionGrid.innerHTML = "";
+
+  plantProgression.forEach((plant) => {
+    const unlocked = currentLevel >= plant.level;
+
+    const card = document.createElement("article");
+    card.className = "evolution-card";
+
+    if (unlocked) {
+      card.classList.add("is-unlocked");
+    }
+
+    if (plant.level === 4) {
+      card.classList.add("is-boss");
+    }
+
+    // Create the card content.
+    card.innerHTML = `
+      <div class="evolution-card-top">
+        <span class="evolution-level">
+          LEVEL ${plant.level}
+        </span>
+
+        <span class="evolution-status">
+          <i
+            class="${unlocked ? "icon-check-circle-2" : "icon-lock-keyhole"}"
+            aria-hidden="true"
+          ></i>
+          ${unlocked ? "UNLOCKED" : "LOCKED"}
+        </span>
+      </div>
+
+      <div class="evolution-image">
+        <img
+          src="${plant.image}"
+          alt="${plant.name}"
+        />
+      </div>
+
+      <div class="evolution-card-body">
+        <h3>${plant.name}</h3>
+
+        <span class="evolution-role">
+          ${plant.role}
+        </span>
+
+        <p class="evolution-description">
+          ${plant.description}
+        </p>
+
+      <div class="evolution-action">
+        <i
+          class="${unlocked ? "icon-check-circle-2" : "icon-lock-keyhole"}"
+          aria-hidden="true"
+        ></i>
+
+        <div class="evolution-action-text">
+          <strong>${unlocked ? "Available" : "Locked"}</strong>
+
+          <span>
+            ${
+              unlocked
+                ? "Ready to use in battle"
+                : `Unlocks at Level ${plant.level}`
+            }
+          </span>
+        </div>
+      </div>
+
+    </div>
+    `;
+
+    evolutionGrid.appendChild(card);
+  });
+}
+
+renderEvolutionCards();
