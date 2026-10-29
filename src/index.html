@@ -8,6 +8,14 @@
     />
     <title>Carniflora: Breach</title>
     <link rel="stylesheet" href="./style.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/lucide-static@latest/font/lucide.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap"
+      rel="stylesheet"
+    />
   </head>
 
   <body>
@@ -15,20 +23,29 @@
       <!-- HEADER -->
       <header>
         <h1>Carniflora: Breach</h1>
+
         <div class="stats">
           <span>
+            <i class="icon-leaf hud-icon" aria-hidden="true"></i>
             Spores
             <b id="sp">0</b>
           </span>
 
           <span>
+            <i class="icon-layers hud-icon" aria-hidden="true"></i>
             Level
             <b id="lv">1</b>
           </span>
 
           <span>
-            Towers
+            <i class="icon-castle hud-icon" aria-hidden="true"></i>
+            Enemies
             <b id="tw">0</b>
+          </span>
+
+          <span>
+            Towers
+            <b id="tc">0 / 0</b>
           </span>
         </div>
       </header>
@@ -36,32 +53,154 @@
       <!-- MAIN 3-COLUMN LAYOUT -->
       <main class="game-layout">
         <!-- LEFT NAVIGATION -->
+
+        <!-- SIDEBAR -->
         <aside class="side-nav">
-          <button class="nav-btn active" data-tab="plants">Plants</button>
-          <button class="nav-btn" data-tab="upgrades">Upgrades</button>
-          <button class="nav-btn" data-tab="battle">Battle</button>
-          <button class="nav-btn" data-tab="map">Map</button>
+          <!-- Brand -->
+          <div class="nav-brand">
+            <div class="nav-brand-icon">
+              <i class="icon-sprout" aria-hidden="true"></i>
+            </div>
+
+            <div class="nav-brand-text">
+              <strong>GAME MENU</strong>
+              <span>EXPLORE & PLAY</span>
+            </div>
+          </div>
+
+          <div class="nav-divider"></div>
+
+          <p class="nav-section-label">NAVIGATION</p>
+
+          <!-- Navigation -->
+          <div class="nav-links">
+            <button class="nav-btn active" data-tab="plants">
+              <i class="icon-leaf nav-icon" aria-hidden="true"></i>
+              <span>Plants</span>
+              <i class="icon-chevron-right nav-arrow" aria-hidden="true"></i>
+            </button>
+
+            <button class="nav-btn" data-tab="upgrades">
+              <i class="icon-arrow-big-up-dash nav-icon" aria-hidden="true"></i>
+              <span>Upgrades</span>
+              <i class="icon-chevron-right nav-arrow" aria-hidden="true"></i>
+            </button>
+
+            <button class="nav-btn" data-tab="battle">
+              <i class="icon-swords nav-icon" aria-hidden="true"></i>
+              <span>Battle</span>
+              <i class="icon-chevron-right nav-arrow" aria-hidden="true"></i>
+            </button>
+
+            <button class="nav-btn" data-tab="map">
+              <i class="icon-map nav-icon" aria-hidden="true"></i>
+              <span>Map</span>
+              <i class="icon-chevron-right nav-arrow" aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <!-- Bottom status -->
+          <div class="nav-footer">
+            <span class="nav-status-dot"></span>
+            <span>Ready to grow</span>
+          </div>
         </aside>
 
         <!-- CENTER PANEL -->
         <section class="main-panel">
           <!-- PLANTS TAB -->
           <div id="plantsTab" class="tab-content active">
-            <h2>Select a Plant</h2>
+            <div class="plant-section-header">
+              <div class="plant-heading-text">
+                <span class="section-eyebrow">MEET YOUR PLANTS</span>
+                <h2>Select Your Plant</h2>
+                <p class="tab-description">
+                  Pick a plant and discover what it can do
+                </p>
+              </div>
 
-            <p class="tab-description">Choose a plant to view its stats.</p>
+              <div class="plant-count">
+                <i class="icon-leaf" aria-hidden="true"></i>
+                <span>4 PLANT TYPES</span>
+              </div>
+            </div>
+
             <div id="plantGrid" class="plant-grid"></div>
           </div>
 
           <!-- UPGRADES TAB -->
           <div id="upgradesTab" class="tab-content">
-            <h2>Upgrades</h2>
-            <p>Plant upgrades will appear here.</p>
+            <div class="evolution-page">
+              <div class="evolution-header">
+                <div class="evolution-heading">
+                  <div>
+                    <span class="evolution-eyebrow">
+                      <i class="icon-sprout" aria-hidden="true"></i>
+                      PLANT COLLECTION / PROGRESSION
+                    </span>
+
+                    <h2>Unlock New Plants</h2>
+
+                    <p>
+                      Discover new plants as you progress through the game. Each
+                      one brings a different ability to your strategy.
+                    </p>
+                  </div>
+
+                  <div class="evolution-progress">
+                    <i class="icon-leaf" aria-hidden="true"></i>
+                    <span id="unlockedPlantCount">1 of 4 unlocked</span>
+                  </div>
+                </div>
+              </div>
+
+              <!--FOUR LEVEL CARDS-->
+              <div id="evolutionGrid" class="evolution-grid"></div>
+
+              <!--PROGRRESSION GUIDE -->
+              <div class="evolution-guide">
+                <div class="guide-title">
+                  <i class="icon-route" aria-hidden="true"></i>
+                  Your Progression
+                </div>
+
+                <div class="guide-steps">
+                  <div class="guide-step">
+                    <span class="guide-number">1</span>
+                    <span>Complete the current level</span>
+                  </div>
+
+                  <div class="guide-step">
+                    <span class="guide-number">2</span>
+                    <span>Earn spores from battles</span>
+                  </div>
+
+                  <div class="guide-step">
+                    <span class="guide-number">3</span>
+                    <span>Unlock the next plant</span>
+                  </div>
+
+                  <div class="guide-step">
+                    <span class="guide-number">4</span>
+                    <span>Build your plant strategy</span>
+                  </div>
+                </div>
+              </div>
+
+              <!--STATUS MESSAGE-->
+
+              <p
+                id="evolutionMessage"
+                class="evolution-message"
+                role="status"
+                aria-live="polite"
+              ></p>
+            </div>
           </div>
 
           <!-- BATTLE TAB -->
           <div id="battleTab" class="tab-content">
-            <h2>Battle</h2>
+            <h2 id="battleTitle">Battle</h2>
             <div class="stage">
               <canvas
                 id="c"
@@ -77,6 +216,28 @@
                   <button class="ctl" id="ob"></button>
                 </div>
               </div>
+            </div>
+            <div id="bossControls" class="boss-controls" hidden>
+              <p class="boss-briefing">
+                <strong>Harvester breach</strong>
+                <span id="bossObjective"
+                  >Break both armoured tanks to expose the furnace. Rafflesia
+                  blasts pierce armour.</span
+                >
+              </p>
+              <div
+                id="bossLanes"
+                class="boss-lanes"
+                role="group"
+                aria-label="Choose deployment lane"
+              ></div>
+              <p id="bossHazard" class="boss-hazard" role="status"></p>
+              <div
+                id="bossDeploy"
+                class="boss-deploy"
+                role="group"
+                aria-label="Deploy plants in the boss battle"
+              ></div>
             </div>
           </div>
 
@@ -101,36 +262,60 @@
 
           <div class="stat-list">
             <div class="stat-row">
-              <span>Health</span>
+              <span class="stat-label">
+                <i
+                  class="icon-heart stat-icon health-icon"
+                  aria-hidden="true"
+                ></i>
+                Health
+              </span>
 
-              <strong id="detailHealth"> -- </strong>
+              <strong id="detailHealth">--</strong>
             </div>
 
             <div class="stat-row">
-              <span>Damage</span>
+              <span class="stat-label">
+                <i
+                  class="icon-swords stat-icon damage-icon"
+                  aria-hidden="true"
+                ></i>
+                Damage
+              </span>
 
-              <strong id="detailDamage"> -- </strong>
+              <strong id="detailDamage">--</strong>
             </div>
 
             <div class="stat-row">
-              <span>Range</span>
+              <span class="stat-label">
+                <i
+                  class="icon-crosshair stat-icon range-icon"
+                  aria-hidden="true"
+                ></i>
+                Range
+              </span>
 
-              <strong id="detailRange"> -- </strong>
+              <strong id="detailRange">--</strong>
             </div>
 
             <div class="stat-row">
-              <span>Speed</span>
+              <span class="stat-label">
+                <i class="icon-zap stat-icon speed-icon" aria-hidden="true"></i>
+                Speed
+              </span>
 
-              <strong id="detailSpeed"> -- </strong>
+              <strong id="detailSpeed">--</strong>
             </div>
 
             <div class="stat-row">
-              <span>Cost</span>
+              <span class="stat-label">
+                <i
+                  class="icon-sprout stat-icon cost-icon"
+                  aria-hidden="true"
+                ></i>
+                Cost
+              </span>
 
-              <strong>
-                <span id="detailCost"> -- </span>
-                spores
-              </strong>
+              <strong> <span id="detailCost">--</span> spores </strong>
             </div>
           </div>
 
@@ -138,19 +323,35 @@
             Deploy Plant
           </button>
 
-          <p id="plantMessage" class="plant-message"></p>
+          <p id="plantMessage" class="plant-message" role="status"></p>
         </aside>
       </main>
 
-      <!-- BOTTOM CONTROLS -->
       <div class="game-controls">
-        <button class="ctl" id="pz">Pause (P)</button>
+        <div class="control-buttons">
+          <!-- Pause button -->
+          <button class="ctl" id="pz">
+            <i class="icon-pause" aria-hidden="true"></i>
+            <span>Pause (P)</span>
+          </button>
 
-        <button class="ctl" id="rs">Restart Level</button>
+          <!-- Restart button -->
+          <button class="ctl" id="rs">
+            <i class="icon-rotate-ccw" aria-hidden="true"></i>
+            <span>Restart Level</span>
+          </button>
+        </div>
 
-        <span class="hint">
-          Keys 1-4 also deploy plants. Spores regenerate over time.
-        </span>
+        <div class="control-instructions">
+          <i class="icon-keyboard" aria-hidden="true"></i>
+
+          <button class="ctl" id="bm" aria-pressed="false">Boss Battle</button>
+
+          <span id="battleHint" class="hint">
+            Click a plant (or press 1-4), click a tile beside the path to place
+            its tower, then deploy.
+          </span>
+        </div>
       </div>
     </div>
 

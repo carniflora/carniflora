@@ -1,4 +1,24 @@
-import { state, build, update, PLANTS, sendOut, TILE } from "./game.js";
+import {
+  state,
+  build,
+  update,
+  PLANTS,
+  TILE,
+  placeTower,
+  canPlaceTower,
+  deploySelected,
+  maxTowers,
+} from "./game.js";
+import {
+  createBossLevelState,
+  spawnBossPlant,
+  updateBossLevel,
+  drawBossLevel,
+  selectBossLane,
+  LANE_Y,
+  LANE_NAMES,
+  KINDS as BOSS_KINDS,
+} from "./bossLevel.js";
 import { effects } from "./effects.js";
 
 import { MAP_COLS, MAP_ROWS } from "./levels.js";
@@ -15,8 +35,6 @@ const canvas = document.getElementById("c"),
 canvas.width = MAP_COLS * TILE;
 canvas.height = MAP_ROWS * TILE;
 
-// let towerType = null;
-
 // =====================================================
 //
 // Keeps track of which plant the player selected.
@@ -30,28 +48,112 @@ canvas.height = MAP_ROWS * TILE;
 // =====================================================
 
 let selectedPlantIndex = null;
+let mode = "td";
+let bossState = null;
+
+function activeBattle() {
+  return mode === "boss" ? bossState : state;
+}
+
+function activePlants() {
+  return mode === "boss" ? BOSS_KINDS : PLANTS;
+}
+
+function activePhase() {
+  return mode === "boss" ? bossState.state : state.phase;
+}
+
+function setActivePhase(phase) {
+  if (mode === "boss") bossState.state = phase;
+  else state.phase = phase;
+}
+
+const plantImages = [
+  "./assets/plants/flytrap.png",
+  "./assets/plants/sundew.png",
+  "./assets/plants/pitcher.png",
+  "./assets/plants/rafflesia.png",
+];
+
+//==========================================
+//   PLANT PROGRESSION DATA
+//==========================================
+
+const plantProgression = [
+  {
+    name: "Flytrap",
+    level: 1,
+    role: "Frontline",
+    description:
+      "A tough plant that attacks enemies up close and can withstand damage.",
+    image: "./assets/plants/flytrap.png",
+    cost: 0,
+  },
+
+  {
+    name: "Sundew",
+    level: 2,
+    role: "Support",
+    description:
+      "A specialized plant that helps control enemies during battle.",
+    image: "./assets/plants/sundew.png",
+    cost: 200,
+  },
+
+  {
+    name: "Pitcher",
+    level: 3,
+    role: "Defender",
+    description:
+      "A resilient plant that strengthens your strategy as levels progress.",
+    image: "./assets/plants/pitcher.png",
+    cost: 300,
+  },
+  {
+    name: "Rafflesia",
+    level: 4,
+    role: "Boss",
+    description:
+      "A powerful plant with abilities designed for tougher battles.",
+    image: "./assets/plants/rafflesia.png",
+    cost: 400,
+  },
+];
 
 // =====================================================
 // SEND / DEPLOY PLANT
 // added messages for the new user interface.
 // =====================================================
 function deploy(i) {
-  const k = PLANTS[i];
+  const k = activePlants()[i];
 
   // Player cannot deploy until the game starts.
-  if (state.phase !== "play") {
+  if (activePhase() !== "play") {
     showPlantMessage("Start the battle before deploying a plant.");
     return;
   }
 
+  // Normal battles deploy from placed towers; boss plants use the moving front line.
+  if (mode === "td" && !state.myTowers.some((t) => t.plant === i)) {
+    showPlantMessage(
+      `Place a ${k.n} tower first then click a tile next to the path.`,
+    );
+    return;
+  }
+
   // Tell the player when they do not have enough spores.
-  if (state.spores < k.cost) {
+  if (activeBattle().spores < k.cost) {
     showPlantMessage(`You need ${k.cost} spores to deploy ${k.n}.`);
     return;
   }
 
-  sendOut(i);
-  showPlantMessage(`${k.n} deployed!`);
+  if (mode === "boss") spawnBossPlant(bossState, i);
+  else deploySelected(i);
+  showPlantMessage(
+    mode === "boss"
+      ? `${k.n} deployed to lane ${bossState.selectedLane + 1}.`
+      : `${k.n} deployed!`,
+  );
 }
 
 // ======================
@@ -70,23 +172,56 @@ function show(t, m, b) {
 // =========================
 function startLevel() {
   // towerType = null;
-  build();
-  state.phase = "play";
+  if (mode === "boss") {
+    bossState = createBossLevelState();
+    canvas.width = 960;
+    canvas.height = 540;
+  } else {
+    build();
+    state.phase = "play";
+    canvas.width = MAP_COLS * TILE;
+    canvas.height = MAP_ROWS * TILE;
+  }
+  lastPhase = null;
+  $("bossControls").hidden = mode !== "boss";
+  $("battleTitle").textContent =
+    mode === "boss" ? "Battle / Harvester Breach" : "Battle";
+  $("battleHint").textContent =
+    mode === "boss"
+      ? "Click a lane or use ↑/↓ to choose it. Keys 1–4 deploy plants. P pauses."
+      : "Click a plant (or press 1–4), click a tile beside the path to place its tower, then deploy.";
   $("ov").classList.add("hide");
-  showPlantMessage("Choose a plant and deploy it.");
+  showPlantMessage(
+    mode === "boss"
+      ? "Choose a lane, then deploy plants to break the chemical tanks."
+      : "Choose a plant and deploy it.",
+  );
+  hud();
+}
+
+function toggleMode() {
+  mode = mode === "td" ? "boss" : "td";
+  startLevel();
+  $("bm").textContent = mode === "boss" ? "Normal Battle" : "Boss Battle";
+  $("bm").setAttribute("aria-pressed", String(mode === "boss"));
+  setActiveTab("battle");
+  if (selectedPlantIndex !== null) showPlantDetails(selectedPlantIndex);
+  hud();
+  $("bm").focus();
 }
 
 // ====================
 // PAUSE
 // ==================
 function pause() {
-  if (state.phase === "play") {
-    state.phase = "pause";
+  if (activePhase() === "play") {
+    setActivePhase("pause");
     show("Paused", "Timers are frozen.", "Resume");
-  } else if (state.phase === "pause") {
-    state.phase = "play";
+  } else if (activePhase() === "pause") {
+    setActivePhase("play");
     $("ov").classList.add("hide");
   }
+  hud();
 }
 
 // ========================
@@ -94,8 +229,9 @@ function pause() {
 // ========================
 
 $("pz").onclick = pause;
+$("bm").onclick = toggleMode;
 $("rs").onclick = () => {
-  if (state.phase !== "menu") {
+  if (activePhase() !== "menu") {
     startLevel();
   }
 };
@@ -105,6 +241,12 @@ $("rs").onclick = () => {
 // =====================================================
 
 $("ob").onclick = () => {
+  if (mode === "boss") {
+    if (bossState.state === "pause") pause();
+    else startLevel();
+    return;
+  }
+
   // Start game.
   if (state.phase === "menu") {
     startLevel();
@@ -126,31 +268,80 @@ $("ob").onclick = () => {
   startLevel();
 };
 
-// // click to add a Tower
-// addEventListener("click", (e) => {
-//   if (state.phase !== "play") return;
-//   const rect = canvas.getBoundingClientRect();
-//   const c = Math.floor((e.clientX - rect.left) / TILE);
-//   const r = Math.floor((e.clientY - rect.top) / TILE);
+// convert a mouse event to a grid cell
+function cellFromEvent(e) {
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+  const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+  return [Math.floor(x / TILE), Math.floor(y / TILE)];
+}
 
-//   const existing = state.myTowers.find(
-//     (tower) => tower.c === c && tower.r === r,
-//   );
-//   placeTower(c, r, towerType);
-// });
+// hover preview
+let hoverCell = null;
+canvas.addEventListener("mousemove", (e) => (hoverCell = cellFromEvent(e)));
+canvas.addEventListener("mouseleave", () => (hoverCell = null));
+
+// click to place a tower of the selected plant type
+canvas.addEventListener("click", (e) => {
+  if (mode === "boss") {
+    const rect = canvas.getBoundingClientRect();
+    const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+    if (y >= 120 && y <= 455) {
+      const lane = LANE_Y.reduce(
+        (best, laneY, i) =>
+          Math.abs(laneY - y) < Math.abs(LANE_Y[best] - y) ? i : best,
+        0,
+      );
+      setBossLane(lane);
+    }
+    return;
+  }
+  if (state.phase !== "play") return;
+  if (selectedPlantIndex === null) {
+    showPlantMessage("Select a plant first.");
+    return;
+  }
+
+  const [c, r] = cellFromEvent(e);
+  const plant = PLANTS[selectedPlantIndex];
+
+  if (placeTower(c, r, selectedPlantIndex)) {
+    showPlantMessage(
+      `${plant.n} tower placed. Press deploy to send out plants.`,
+    );
+  } else if (state.myTowers.some((t) => t.plant === selectedPlantIndex)) {
+    showPlantMessage(`You already have a ${plant.n} tower.`);
+  } else if (state.myTowers.length >= maxTowers()) {
+    showPlantMessage(`Tower limit reached (${maxTowers()}) on this level`);
+  } else {
+    showPlantMessage(`Towerss go on a free tile next to the path.`);
+  }
+});
 
 // ==========================
 // KEYBOARD CONTROLS
 // =========================
 
 addEventListener("keydown", (e) => {
+  if (mode === "boss" && (e.key === "ArrowUp" || e.key === "ArrowDown")) {
+    e.preventDefault();
+    setBossLane(
+      Math.max(
+        0,
+        Math.min(2, bossState.selectedLane + (e.key === "ArrowUp" ? -1 : 1)),
+      ),
+    );
+    return;
+  }
   if (e.code === "KeyP" || e.code === "Escape") {
     pause();
   }
 
+  // place a plant tower using the number keys 1-4
   const n = parseInt(e.key, 10);
 
   if (n >= 1 && n <= 4) {
+    showPlantDetails(n - 1); // select the plant so clicks place it.
     deploy(n - 1);
   }
 });
@@ -232,7 +423,7 @@ function showPlantMessage(message) {
 
 function showPlantDetails(index) {
   // Get selected plant.
-  const plant = PLANTS[index];
+  const plant = activePlants()[index];
 
   // Remember selected plant.
   selectedPlantIndex = index;
@@ -256,31 +447,73 @@ function showPlantDetails(index) {
   $("detailCost").textContent = plant.cost;
 
   // Update description.
-  $("detailDescription").textContent = plant.desc;
+  $("detailDescription").textContent = plant.desc ?? plant.d;
 
-  // Change plant colour circle.
-  $("detailColor").style.background = plant.col;
+  // ==========================================
+  //  Display the selected plant illustration
+  // ==========================================
 
-  // Allow Select Plant button.
+  const detailContainer = $("detailColor");
+
+  // Check whether the image already exists.
+  let detailImage = detailContainer.querySelector("img");
+
+  // Create an image if none exists.
+  if (!detailImage) {
+    detailImage = document.createElement("img");
+    detailContainer.appendChild(detailImage);
+  }
+
+  // Show the plant colour while loading.
+  detailContainer.style.backgroundColor = plant.col;
+  detailImage.style.display = "none";
+
+  // Set alternative text.
+  detailImage.alt = `${plant.n} illustration`;
+
+  // Show the image after loading.
+  detailImage.onload = () => {
+    detailImage.style.display = "block";
+    detailContainer.style.backgroundColor = "#eee9db";
+  };
+
+  // Use the plant colour if the image is missing.
+  detailImage.onerror = () => {
+    detailImage.style.display = "none";
+    detailContainer.style.backgroundColor = plant.col;
+  };
+
+  detailImage.src = plantImages[index];
+
   $("selectPlantBtn").disabled = false;
 
-  // Remove selected style
-  // from every plant card.
   document.querySelectorAll(".plant-option").forEach((card) => {
     card.classList.remove("selected");
   });
 
-  // Find selected plant card.
   const selectedCard = document.querySelector(`[data-plant-index="${index}"]`);
 
-  // Highlight it.
   if (selectedCard) {
     selectedCard.classList.add("selected");
   }
 
-  // Tell player what they selected.
-  showPlantMessage(`${plant.n} selected.`);
+  showPlantMessage(`${plant.n} selected`);
 }
+
+const plantRoles = [
+  "Strong Attacker", // Flytrap
+  "Slows Towers", // Sundew
+  "Protects & Heals", // Pitcher
+  "Splash Damage", // Rafflesia
+];
+
+// Lucide icons for each combat role
+const plantRoleIcons = [
+  "icon-shield", // Flytrap
+  "icon-crosshair", // Sundew
+  "icon-heart-pulse", // Pitcher
+  "icon-bomb", // Rafflesia
+];
 
 const plantGrid = $("plantGrid");
 
@@ -292,43 +525,78 @@ PLANTS.forEach((plant, index) => {
   // Create button.
   const card = document.createElement("button");
 
-  // CSS class.
+  card.type = "button";
   card.className = "plant-option";
 
   // Remember which plant
   // this button represents.
   card.dataset.plantIndex = index;
 
-  // Add information to card.
+  // ==========================================
+  // Plant card with image and information
+  // ==========================================
+
   card.innerHTML = `
-       <div class="plant-card-top">
+  <div class="plant-card-content">
 
-        <span
-          class="plant-card-color"
-          style="background:${plant.col}">
-        </span>
+    <div class="plant-card-top">
+      <span class="plant-number">
+        PLANT ${index + 1}
+      </span>
+    </div>
 
-        <span class="plant-number">
-          ${index + 1}
-        </span>
+    <div class="plant-card-layout">
 
+      <div class="plant-card-image">
+        <img
+          src="${plantImages[index]}"
+          alt="${plant.n} illustration"
+        />
       </div>
 
-      <h3>
-        ${plant.n}
-      </h3>
+      <div class="plant-card-info">
 
-      <p>
-        ${plant.desc}
-      </p>
+        <h3>${plant.n}</h3>
+        <p>${plant.desc}</p>
 
-      <div class="plant-card-cost">
-        ${plant.cost} spores
+    
+        <span class="plant-role plant-role-${index}">
+        <i class="${plantRoleIcons[index]}" aria-hidden="true"></i>
+        ${plantRoles[index]}
+        </span>
       </div>
-    `;
+    </div>
 
-  // When clicked:
-  // show information first.
+  <div class="plant-card-footer">
+  <span class="plant-card-cost">
+
+    <i class="icon-leaf spore-icon" aria-hidden="true"></i>
+    ${plant.cost} spores
+
+  </span>
+</div>
+
+  </div>
+`;
+
+  // Load the plant image.
+  const cardImage = card.querySelector(".plant-card-image img");
+
+  cardImage.onload = () => {
+    cardImage.style.display = "block";
+    cardImage.parentElement.style.backgroundColor = "#eee9db";
+  };
+
+  // Show why a plant picture failed to load.
+
+  cardImage.onerror = () => {
+    console.error(`Failed to load ${plant.n} image:`, cardImage.src);
+
+    cardImage.style.display = "none";
+    cardImage.parentElement.style.backgroundColor = plant.col;
+  };
+
+  cardImage.src = plantImages[index];
 
   card.addEventListener("click", () => {
     showPlantDetails(index);
@@ -350,6 +618,40 @@ $("selectPlantBtn").addEventListener("click", () => {
   }
 
   deploy(selectedPlantIndex);
+});
+
+function setBossLane(lane) {
+  if (mode !== "boss" || !selectBossLane(bossState, lane)) return;
+  showPlantMessage(
+    `Lane ${lane + 1} selected. Deploy with keys 1–4 or the plant buttons.`,
+  );
+  hud();
+}
+
+const bossLaneButtons = LANE_NAMES.map((name, lane) => {
+  const button = document.createElement("button");
+  button.className = "boss-lane-button";
+  button.textContent = `${lane + 1} / ${name}`;
+  button.setAttribute("aria-pressed", "false");
+  button.addEventListener("click", () => setBossLane(lane));
+  $("bossLanes").appendChild(button);
+  return button;
+});
+
+// Keep all four deployment choices within reach while watching the boss fight.
+const bossDeployButtons = BOSS_KINDS.map((plant, index) => {
+  const button = document.createElement("button");
+  button.className = "boss-deploy-button";
+  button.style.setProperty("--plant-color", plant.col);
+  button.title = `${plant.d}. Deploy with ${index + 1}.`;
+  button.setAttribute("aria-label", `Deploy ${plant.n}, ${plant.cost} spores`);
+  button.innerHTML = `<kbd>${index + 1}</kbd><strong>${plant.n}</strong><span>${plant.cost} spores</span>`;
+  button.addEventListener("click", () => {
+    showPlantDetails(index);
+    deploy(index);
+  });
+  $("bossDeploy").appendChild(button);
+  return button;
 });
 
 // =====================================================
@@ -378,6 +680,7 @@ function draw() {
   // draw the paths
   g.lineCap = "round";
   g.lineJoin = "round";
+
   for (const path of state.map.paths) {
     // get each path from the level paths
     g.beginPath();
@@ -437,18 +740,27 @@ function draw() {
     );
   }
 
-  // // draw the number of towers that are allowed in the level
-  // state.myTowers.forEach((tower) => {
-  //   const x = (tower.c + 0.5) * TILE;
-  //   const y = (tower.r + 0.5) * TILE;
-  //   const plant = PLANTS[tower.plant];
+  // draw the number of towers that are allowed in the level
+  state.myTowers.forEach((tower) => {
+    const x = (tower.c + 0.5) * TILE;
+    const y = (tower.r + 0.5) * TILE;
+    const plant = PLANTS[tower.plant];
 
-  //   g.fillStyle = plant.col;
-  //   g.fillRect(x - 16, y - 16, 32, 32);
-  //   g.strokeStyle = "#ffffff";
-  //   g.lineWidth = 2;
-  //   g.strokeRect(x - 16, y - 16, 32, 32);
-  // });
+    g.fillStyle = plant.col;
+    g.fillRect(x - 16, y - 16, 32, 32);
+    g.strokeStyle = "#ffffff";
+    g.lineWidth = 2;
+    g.strokeRect(x - 16, y - 16, 32, 32);
+  });
+
+  // placement preview: green if allowed, red if not
+  if (hoverCell && state.phase === "play" && selectedPlantIndex !== null) {
+    const [c, r] = hoverCell;
+    g.fillStyle = canPlaceTower(c, r, selectedPlantIndex)
+      ? "rgba(143,212,90,.35)"
+      : "rgba(224,69,123,.35)";
+    g.fillRect(c * TILE, r * TILE, TILE, TILE);
+  }
 
   // draw plants that are sent out -- plants above enemies/mytowers because drawn after
   for (const p of state.plants) {
@@ -505,12 +817,23 @@ let last = performance.now(),
   // store currently displayed HUD value
   shown = {};
 
+let lastRenderedEvolutionLevel = null;
 function hud() {
+  const battle = activeBattle();
+  // Refresh the collection when the level changes.
+  if (lastRenderedEvolutionLevel !== state.level) {
+    renderEvolutionCards();
+    lastRenderedEvolutionLevel = state.level;
+  }
+
   const v = {
-    sp: Math.floor(state.spores),
-    lv: state.level,
-    tw: state.enemies.filter((enemy) => enemy.hp > 0).length,
-    // tc: state.myTowers.length + " / " + maxTowers(),
+    sp: Math.floor(battle.spores),
+    lv: mode === "boss" ? "Boss" : state.level,
+    tw: (mode === "boss"
+      ? [...battle.towers, ...battle.minions, ...battle.tanks, battle.boss]
+      : battle.enemies
+    ).filter((enemy) => enemy.hp > 0).length,
+    tc: mode === "boss" ? "—" : state.myTowers.length + " / " + maxTowers(),
   };
 
   // Update spores, level, and towers.
@@ -526,10 +849,60 @@ function hud() {
   // ===================================================
 
   if (selectedPlantIndex !== null) {
-    const plant = PLANTS[selectedPlantIndex];
+    const plant = activePlants()[selectedPlantIndex];
+    const hasTower =
+      mode === "boss" ||
+      state.myTowers.some((t) => t.plant === selectedPlantIndex);
     $("selectPlantBtn").disabled =
-      state.phase !== "play" || state.spores < plant.cost;
+      activePhase() !== "play" || !hasTower || battle.spores < plant.cost;
   }
+
+  bossDeployButtons.forEach((button, index) => {
+    button.disabled =
+      mode !== "boss" ||
+      activePhase() !== "play" ||
+      battle.spores < BOSS_KINDS[index].cost;
+  });
+  bossLaneButtons.forEach((button, lane) => {
+    button.disabled =
+      mode !== "boss" || !["play", "pause"].includes(activePhase());
+    button.setAttribute(
+      "aria-pressed",
+      String(mode === "boss" && lane === bossState.selectedLane),
+    );
+    if (mode === "boss") {
+      const tank = battle.tanks.find((target) => target.lane === lane);
+      const target =
+        battle.phase === "core"
+          ? "Furnace core"
+          : tank?.hp === 0
+            ? "Tank breached"
+            : lane === 1 &&
+                !battle.towers.some(
+                  (tower) => tower.type === "cannon" && tower.hp > 0,
+                )
+              ? "Centre staging"
+              : LANE_NAMES[lane];
+      const label = `${lane + 1} / ${target}`;
+      if (button.textContent !== label) button.textContent = label;
+    }
+  });
+  if (mode === "boss") {
+    const tanksLeft = battle.tanks.filter((tank) => tank.hp > 0).length;
+    const objective =
+      battle.phase === "core"
+        ? "Core exposed. All lanes converge. Use Rafflesia to pierce armour and keep healing support alive. Mist speed +25%."
+        : `Break the chemical tanks (${2 - tanksLeft}/2 breached). Rafflesia pierces their armour. Silence the centre cannon to stop splash fire and slow sprays.`;
+    if ($("bossObjective").textContent !== objective)
+      $("bossObjective").textContent = objective;
+    const hazard = battle.spray
+      ? `Lane ${battle.spray.lane + 1}: ${battle.spray.stage === "warning" ? "herbicide incoming — reinforce another lane" : "herbicide active"}.`
+      : "Spray targets the largest lane group. Spread your waves. ↑/↓ selects a lane; 1–4 deploys.";
+    if ($("bossHazard").textContent !== hazard)
+      $("bossHazard").textContent = hazard;
+  }
+  $("pz").textContent = activePhase() === "pause" ? "Resume (P)" : "Pause (P)";
+  $("pz").setAttribute("aria-pressed", String(activePhase() === "pause"));
 }
 
 // =============================
@@ -539,21 +912,36 @@ function hud() {
 function loop(timer) {
   const deltaTime = Math.min(0.05, (timer - last) / 1000);
   last = timer;
-  if (state.phase === "play") update(deltaTime);
+  if (mode === "boss") updateBossLevel(bossState, deltaTime);
+  else if (activePhase() === "play") update(deltaTime);
 
   // check if game is ended
-  if (state.phase !== lastPhase) {
-    if (state.phase == "won")
+  const phase = activePhase();
+  if (phase !== lastPhase) {
+    if (mode === "boss" && phase === "won")
+      show(
+        "Harvester breached",
+        `The garden is reclaimed in ${Math.ceil(bossState.elapsed)} seconds. ${bossState.stats.deployed} plants deployed; ${bossState.stats.lost} lost (${bossState.stats.mistLost} to mist).`,
+        "Retry Boss",
+      );
+    else if (mode === "boss" && phase === "lost")
+      show(
+        "The mist caught up",
+        `The battlefield was overrun with ${Math.ceil(bossState.boss.hp)} boss HP remaining. Deploy early and combine plant abilities to push farther.`,
+        "Retry Boss",
+      );
+    else if (phase === "won")
       show("Keep breached", "Level " + state.level + " cleared.", "Next level");
-    if (state.phase === "lost")
+    else if (phase === "lost")
       show(
         "The swarm withered",
         "No plants left and not enough spores.",
         "Retry",
       );
-    lastPhase = state.phase;
+    lastPhase = phase;
   }
-  draw();
+  if (mode === "boss") drawBossLevel(g, bossState, canvas.width);
+  else draw();
   hud();
 
   requestAnimationFrame(loop);
@@ -582,3 +970,107 @@ show(
 );
 
 requestAnimationFrame(loop);
+
+//===================================
+// RENDER PLANT PROGRESSION CARDS
+//==================================
+
+function renderEvolutionCards() {
+  const evolutionGrid = document.getElementById("evolutionGrid");
+  const unlockedCount = document.getElementById("unlockedPlantCount");
+
+  if (!evolutionGrid) {
+    return;
+  }
+
+  // The current game level determines which plants
+  // appear unlocked in the collection.
+  const currentLevel = state.level;
+
+  const totalUnlocked = plantProgression.filter(
+    (plant) => currentLevel >= plant.level,
+  ).length;
+
+  // Update the collection counter.
+  if (unlockedCount) {
+    unlockedCount.textContent = `${totalUnlocked} of ${plantProgression.length} unlocked`;
+  }
+
+  // Clear the previous cards before rebuilding them.
+  evolutionGrid.innerHTML = "";
+
+  plantProgression.forEach((plant) => {
+    const unlocked = currentLevel >= plant.level;
+
+    const card = document.createElement("article");
+    card.className = "evolution-card";
+
+    if (unlocked) {
+      card.classList.add("is-unlocked");
+    }
+
+    if (plant.level === 4) {
+      card.classList.add("is-boss");
+    }
+
+    // Create the card content.
+    card.innerHTML = `
+      <div class="evolution-card-top">
+        <span class="evolution-level">
+          LEVEL ${plant.level}
+        </span>
+
+        <span class="evolution-status">
+          <i
+            class="${unlocked ? "icon-check-circle-2" : "icon-lock-keyhole"}"
+            aria-hidden="true"
+          ></i>
+          ${unlocked ? "UNLOCKED" : "LOCKED"}
+        </span>
+      </div>
+
+      <div class="evolution-image">
+        <img
+          src="${plant.image}"
+          alt="${plant.name}"
+        />
+      </div>
+
+      <div class="evolution-card-body">
+        <h3>${plant.name}</h3>
+
+        <span class="evolution-role">
+          ${plant.role}
+        </span>
+
+        <p class="evolution-description">
+          ${plant.description}
+        </p>
+
+      <div class="evolution-action">
+        <i
+          class="${unlocked ? "icon-check-circle-2" : "icon-lock-keyhole"}"
+          aria-hidden="true"
+        ></i>
+
+        <div class="evolution-action-text">
+          <strong>${unlocked ? "Available" : "Locked"}</strong>
+
+          <span>
+            ${
+              unlocked
+                ? "Ready to use in battle"
+                : `Unlocks at Level ${plant.level}`
+            }
+          </span>
+        </div>
+      </div>
+
+    </div>
+    `;
+
+    evolutionGrid.appendChild(card);
+  });
+}
+
+renderEvolutionCards();
