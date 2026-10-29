@@ -1,8 +1,10 @@
-import { loadLevel, LEVEL_PATHS, MAP_COLS, MAP_ROWS } from "./levels.js";
+import { loadLevel, MAP_COLS, MAP_ROWS } from "./levels.js";
+import { LEVEL_PATHS } from "./path.js";
 
 const FINAL_MINION = 2; // final minion is this far from the enemy tower
 const DIST_BETWEEN_MINIONS = 0.75; // distance between the minions
 const MAX_TOWER_DIST_TO_PATH = 1.25; // maximum distance tower can be from a path
+const PLANT_BLOCK = 0.5;
 export const TILE = 64;
 
 // get the current position, wrapper function of getPositionAtDistance in levels.js
@@ -17,6 +19,7 @@ const posOf = (path, d) => {
 export const state = {
   phase: "menu",
   level: 1,
+  players: 1,
   spores: 0,
   map: null,
   enemies: [],
@@ -25,6 +28,8 @@ export const state = {
   myTowers: [],
   fx: [],
 };
+
+export const maxSpores = () => (state.players === 2 ? 180 : 120); // set the number of spores available for the level (180 for 2 players or 120 for 1)
 
 // ===============
 // PLANT TYPES
@@ -85,12 +90,12 @@ export const PLANTS = [
 // ================
 export function build() {
   // load the map
-  state.map = loadLevel(state.level - 1);
+  state.map = loadLevel(state.level - 1, state.players);
   state.myTowers = [];
   state.plants = [];
   state.enemies = [];
   state.fx = [];
-  state.spores = 120; // set the number of spores available for the level
+  state.spores = maxSpores();
 
   // create the enemy tower at the end of all paths
   const firstPath = state.map.paths[0];
@@ -182,33 +187,41 @@ function findClosestPathSpot(c, r) {
 
 // limit the number of towers that can be placed
 export function maxTowers() {
-  return LEVEL_PATHS[state.level - 1].maxTowers;
+  const def = LEVEL_PATHS[state.level - 1];
+  return state.players === 2
+    ? (def.maxTowers2p ?? def.maxTowers)
+    : def.maxTowers;
 }
 
+export const towersOf = (player) =>
+  state.myTowers.filter((t) => t.owner === player);
+
 // can a tower of this plant type go on this cell?
-export function canPlaceTower(c, r, plantIndex) {
+export function canPlaceTower(c, r, plantIndex, player = 0) {
   if (plantIndex == null) return false;
-  if (state.myTowers.length >= maxTowers()) return false;
+  const pl = towersOf(player);
+  if (pl.length >= maxTowers()) return false; // limit max towers per player
   if (!canBuildAt(c, r)) return false;
 
   // one tower per cell
   if (state.myTowers.some((t) => t.c === c && t.r === r)) return false;
 
   // one tower per plant type
-  if (state.myTowers.some((t) => t.plant === plantIndex)) return false;
+  if (pl.some((t) => t.plant === plantIndex)) return false;
 
   const spot = findClosestPathSpot(c, r);
   return !!spot && spot.distance <= MAX_TOWER_DIST_TO_PATH;
 }
 
 // place a tower beside a path. Returns true if it was placed.
-export function placeTower(c, r, plantIndex) {
-  if (!canPlaceTower(c, r, plantIndex)) return false;
+export function placeTower(c, r, plantIndex, player = 0) {
+  if (!canPlaceTower(c, r, plantIndex, player)) return false;
   const spot = findClosestPathSpot(c, r);
 
   state.myTowers.push({
     c,
     r,
+    owner: player,
     pathIndex: spot.pathIndex,
     startDist: spot.cellIndex,
     plant: plantIndex,
@@ -227,6 +240,7 @@ export function sendOut(tower) {
   state.spores -= plant.cost;
   state.plants.push({
     plant: tower.plant,
+    owner: tower.owner,
     dist: tower.startDist,
     pathIndex: tower.pathIndex,
     x,
@@ -238,12 +252,12 @@ export function sendOut(tower) {
 }
 
 // send out the selected plant from its tower when the deploy button is pressed
-export function deploySelected(plantIndex) {
+export function deploySelected(plantIndex, player = 0) {
   if (plantIndex == null) return false;
 
-  const towers = state.myTowers.filter((t) => t.plant === plantIndex);
-  if (!towers.length) return false;
-
+  const towers = state.myTowers.filter(
+    (t) => t.plant === plantIndex && t.owner === player,
+  );
   let sent = false;
   for (const tower of towers) {
     if (sendOut(tower)) sent = true;
@@ -269,7 +283,7 @@ function nearest(list, x, y, rng) {
 
 // update over time
 export function update(deltaTime) {
-  state.spores += 6 * deltaTime; // spores regenerate 6 per time
+  state.spores = Math.min(maxSpores(), state.spores + 6 * deltaTime); // spores regenerate 6 per time up to max
   // check which enemies are still alive
   const alive = state.enemies.filter((enemy) => enemy.hp > 0);
 
@@ -292,9 +306,20 @@ export function update(deltaTime) {
     // stop and fight if there is an enemy
     const target = nearest(targets, p.x, p.y, k.rng);
 
-    if (!target && p.dist < path.pathLength) p.dist += k.spd * deltaTime; // the plant moves this speed over time
-    [p.x, p.y] = posOf(path, p.dist); // get plant position
-    p.cooldown -= deltaTime; // plant cooldown reduces over time
+    // check if a player's plant blocks the other player's plant
+    const blocked = state.plants.some(
+      (q) =>
+        q !== p && // if a plant is not the same
+        q.owner !== p.owner && // and the owner of both plants is not the same
+        q.pathIndex === p.pathIndex &&
+        q.dist > p.dist &&
+        q.dist - p.dist < PLANT_BLOCK,
+    );
+
+    if (!target && !blocked && p.dist < path.pathLength)
+      p.dist += k.spd * deltaTime;
+    [p.x, p.y] = posOf(path, p.dist);
+    p.cooldown -= deltaTime;
 
     // =========================
     // PITCHER HEALING
@@ -330,7 +355,7 @@ export function update(deltaTime) {
 
         // Rafflesia splash attack.
         if (k.n === "Rafflesia") {
-          for (const secEnemy of alive)
+          for (const secEnemy of targets)
             if (
               secEnemy !== enemy &&
               Math.hypot(secEnemy.x - enemy.x, secEnemy.y - enemy.y) < 60

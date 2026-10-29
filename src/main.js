@@ -8,6 +8,7 @@ import {
   canPlaceTower,
   deploySelected,
   maxTowers,
+  maxSpores,
 } from "./game.js";
 import {
   createBossLevelState,
@@ -120,6 +121,20 @@ const plantProgression = [
 ];
 
 // =====================================================
+// 2P LOGIC -- ACTIVE PLAYER
+// =====================================================
+let activePlayer = 0; // 0 = player 1, 1 = player 2
+const pickedBy = [null, null]; // each player remembers their own selected plant
+
+function setActivePlayer(p) {
+  pickedBy[activePlayer] = selectedPlantIndex;
+  activePlayer = p;
+  selectedPlantIndex = pickedBy[p];
+  if (selectedPlantIndex !== null) showPlantDetails(selectedPlantIndex);
+  showPlantMessage(`Player ${p + 1} active.`);
+}
+
+// =====================================================
 // SEND / DEPLOY PLANT
 // added messages for the new user interface.
 // =====================================================
@@ -132,8 +147,8 @@ function deploy(i) {
     return;
   }
 
-  // Normal battles deploy from placed towers; boss plants use the moving front line.
-  if (mode === "td" && !state.myTowers.some((t) => t.plant === i)) {
+  // the plant needs a tower to come out of
+  if (!state.myTowers.some((t) => t.plant === i && t.owner === activePlayer)) {
     showPlantMessage(
       `Place a ${k.n} tower first then click a tile next to the path.`,
     );
@@ -147,7 +162,7 @@ function deploy(i) {
   }
 
   if (mode === "boss") spawnBossPlant(bossState, i);
-  else deploySelected(i);
+  else deploySelected(i, activePlayer);
   showPlantMessage(
     mode === "boss"
       ? `${k.n} deployed to lane ${bossState.selectedLane + 1}.`
@@ -304,7 +319,7 @@ canvas.addEventListener("click", (e) => {
   const [c, r] = cellFromEvent(e);
   const plant = PLANTS[selectedPlantIndex];
 
-  if (placeTower(c, r, selectedPlantIndex)) {
+  if (placeTower(c, r, selectedPlantIndex, activePlayer)) {
     showPlantMessage(
       `${plant.n} tower placed. Press deploy to send out plants.`,
     );
@@ -334,6 +349,12 @@ addEventListener("keydown", (e) => {
   }
   if (e.code === "KeyP" || e.code === "Escape") {
     pause();
+  }
+
+  // tab to switch players
+  if (e.code === "Tab") {
+    e.preventDefault();
+    if (state.players === 2) setActivePlayer(1 - activePlayer);
   }
 
   // place a plant tower using the number keys 1-4
@@ -747,7 +768,7 @@ function draw() {
 
     g.fillStyle = plant.col;
     g.fillRect(x - 16, y - 16, 32, 32);
-    g.strokeStyle = "#ffffff";
+    g.strokeStyle = tower.owner === 0 ? "#fff" : "#7300f7";
     g.lineWidth = 2;
     g.strokeRect(x - 16, y - 16, 32, 32);
   });
@@ -755,7 +776,7 @@ function draw() {
   // placement preview: green if allowed, red if not
   if (hoverCell && state.phase === "play" && selectedPlantIndex !== null) {
     const [c, r] = hoverCell;
-    g.fillStyle = canPlaceTower(c, r, selectedPlantIndex)
+    g.fillStyle = canPlaceTower(c, r, selectedPlantIndex, activePlayer)
       ? "rgba(143,212,90,.35)"
       : "rgba(224,69,123,.35)";
     g.fillRect(c * TILE, r * TILE, TILE, TILE);
@@ -768,6 +789,8 @@ function draw() {
     g.beginPath();
     g.arc(p.x, p.y, k.radius, 0, 7);
     g.fill();
+    g.strokeStyle = p.owner === 0 ? "#fff" : "#7300f7";
+    g.stroke();
     g.fillStyle = "rgba(0,0,0,.45)";
     g.beginPath();
     g.arc(p.x, p.y, k.radius * 0.45, 0, 7);

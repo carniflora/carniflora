@@ -1,86 +1,7 @@
+import { LEVEL_PATHS } from "./path.js";
+
 export const MAP_COLS = 14;
 export const MAP_ROWS = 10;
-
-/* Add arrays for the paths for multiple levels here. All paths need 
-to have the same end coordinates (where the tower will be) */
-export const LEVEL_PATHS = [
-  {
-    name: "Level 1",
-    goal: [13, 9],
-    maxTowers: 2,
-    paths: [
-      [
-        [0, 0],
-        [0, 2],
-        [6, 2],
-        [6, 4],
-        [8, 4],
-        [8, 8],
-        [10, 8],
-        [10, 9],
-        [13, 9],
-      ],
-    ],
-  },
-  {
-    name: "Level 2",
-    goal: [13, 9],
-    maxTowers: 3,
-    paths: [
-      [
-        [0, 0],
-        [0, 2],
-        [6, 2],
-        [6, 4],
-        [8, 4],
-        [8, 8],
-        [10, 8],
-        [10, 9],
-        [13, 9],
-      ],
-      [
-        [0, 9],
-        [0, 7],
-        [2, 7],
-        [2, 5],
-        [4, 5],
-        [9, 5],
-        [9, 9],
-        [13, 9],
-      ],
-    ],
-  },
-  {
-    name: "Level 3",
-    goal: [13, 0],
-    maxTowers: 4,
-    paths: [
-      [
-        [0, 9],
-        [0, 6],
-        [5, 6],
-        [5, 3],
-        [10, 3],
-        [10, 0],
-        [13, 0],
-      ],
-      [
-        [0, 2],
-        [3, 2],
-        [3, 0],
-        [13, 0],
-      ],
-      [
-        [0, 5],
-        [7, 5],
-        [7, 1],
-        [12, 1],
-        [12, 0],
-        [13, 0],
-      ],
-    ],
-  },
-];
 
 /* make array of cells from the designated corner points in LEVEL_PATHS */
 export function makeCells(pathPoints) {
@@ -151,9 +72,10 @@ export function buildPath(pathPoints) {
 }
 
 /* load the paths that were specified for each level */
-export function loadLevel(index) {
+export function loadLevel(index, players = 1) {
   const def = LEVEL_PATHS[index];
-  const paths = def.paths.map(buildPath);
+  const path_options = players === 2 && def.paths2p ? def.paths2p : def.paths;
+  const paths = path_options.map(buildPath);
 
   // create set with the path cells -- no duplicates
   const blockPath = new Set();

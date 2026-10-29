@@ -1,38 +1,160 @@
-export const PATH = [
-  [-20, 110],
-  [220, 110],
-  [220, 400],
-  [480, 400],
-  [480, 140],
-  [740, 140],
-  [740, 420],
-  [870, 420],
+/* Add arrays for the paths for multiple levels here. All paths need 
+to have the same end coordinates (where the tower will be) */
+export const LEVEL_PATHS = [
+  {
+    name: "Level 1",
+    goal: [13, 9],
+    maxTowers: 2,
+    maxTowers2p: 1,
+    paths: [
+      [
+        [0, 0],
+        [0, 2],
+        [6, 2],
+        [6, 4],
+        [8, 4],
+        [8, 8],
+        [10, 8],
+        [10, 9],
+        [13, 9],
+      ],
+    ],
+    paths2p: [
+      [
+        [0, 1],
+        [5, 1],
+        [5, 4],
+        [9, 4],
+        [9, 9],
+        [13, 9],
+      ],
+      [
+        [0, 8],
+        [4, 8],
+        [4, 6],
+        [11, 6],
+        [11, 9],
+        [13, 9],
+      ],
+    ],
+  },
+  {
+    name: "Level 2",
+    goal: [13, 9],
+    maxTowers: 3,
+    maxTowers2p: 2,
+    paths: [
+      [
+        [0, 0],
+        [0, 2],
+        [6, 2],
+        [6, 4],
+        [8, 4],
+        [8, 8],
+        [10, 8],
+        [10, 9],
+        [13, 9],
+      ],
+      [
+        [0, 9],
+        [0, 7],
+        [2, 7],
+        [2, 5],
+        [4, 5],
+        [9, 5],
+        [9, 9],
+        [13, 9],
+      ],
+    ],
+    paths2p: [
+      [
+        [0, 0],
+        [0, 3],
+        [7, 3],
+        [7, 7],
+        [12, 7],
+        [12, 9],
+        [13, 9],
+      ],
+      [
+        [0, 9],
+        [3, 9],
+        [3, 5],
+        [10, 5],
+        [10, 9],
+        [13, 9],
+      ],
+      [
+        [0, 4],
+        [2, 4],
+        [2, 2],
+        [9, 2],
+        [9, 6],
+        [13, 6],
+        [13, 9],
+      ],
+    ],
+  },
+  {
+    name: "Level 3",
+    goal: [13, 0],
+    maxTowers: 4,
+    maxTowers2p: 2,
+    paths: [
+      [
+        [0, 9],
+        [0, 6],
+        [5, 6],
+        [5, 3],
+        [10, 3],
+        [10, 0],
+        [13, 0],
+      ],
+      [
+        [0, 2],
+        [3, 2],
+        [3, 0],
+        [13, 0],
+      ],
+      [
+        [0, 5],
+        [7, 5],
+        [7, 1],
+        [12, 1],
+        [12, 0],
+        [13, 0],
+      ],
+    ],
+    paths2p: [
+      [
+        [0, 6],
+        [6, 6],
+        [6, 4],
+        [10, 4],
+        [10, 0],
+        [13, 0],
+      ],
+      [
+        [0, 1],
+        [4, 1],
+        [4, 0],
+        [13, 0],
+      ],
+      [
+        [0, 5],
+        [8, 5],
+        [8, 2],
+        [12, 2],
+        [12, 0],
+        [13, 0],
+      ],
+      [
+        [0, 9],
+        [9, 9],
+        [9, 6],
+        [13, 6],
+        [13, 0],
+      ],
+    ],
+  },
 ];
-
-const SEG = [];
-let total = 0;
-for (let i = 1; i < PATH.length; i++) {
-  const len = Math.hypot(
-    PATH[i][0] - PATH[i - 1][0],
-    PATH[i][1] - PATH[i - 1][1],
-  );
-  SEG.push(len);
-  total += len;
-}
-export const TOTAL = total;
-
-/** Position [x, y] at distance s along the path (clamped to the path end). */
-export function at(s) {
-  let d = Math.min(Math.max(s, 0), TOTAL);
-  for (let i = 0; i < SEG.length; i++) {
-    if (d <= SEG[i]) {
-      const t = d / SEG[i];
-      return [
-        PATH[i][0] + (PATH[i + 1][0] - PATH[i][0]) * t,
-        PATH[i][1] + (PATH[i + 1][1] - PATH[i][1]) * t,
-      ];
-    }
-    d -= SEG[i];
-  }
-  return PATH[PATH.length - 1];
-}
