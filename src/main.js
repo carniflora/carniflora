@@ -9,13 +9,16 @@ import {
   deploySelected,
   maxTowers,
   maxSpores,
+  towersOf,
 } from "./game.js";
+
 import {
   createBossLevelState,
   spawnBossPlant,
   updateBossLevel,
   drawBossLevel,
   selectBossLane,
+  SPORE_CAP,
   LANE_Y,
   LANE_NAMES,
   KINDS as BOSS_KINDS,
@@ -833,14 +836,19 @@ function hud() {
     lastRenderedEvolutionLevel = state.level;
   }
 
+  const cap = mode === "boss" ? SPORE_CAP : maxSpores();
+
   const v = {
-    sp: Math.floor(battle.spores),
+    sp: Math.floor(battle.spores) + " / " + cap,
     lv: mode === "boss" ? "Boss" : state.level,
     tw: (mode === "boss"
       ? [...battle.towers, ...battle.minions, ...battle.tanks, battle.boss]
       : battle.enemies
     ).filter((enemy) => enemy.hp > 0).length,
-    tc: mode === "boss" ? "—" : state.myTowers.length + " / " + maxTowers(),
+    tc:
+      mode === "boss"
+        ? "—"
+        : towersOf(activePlayer).length + " / " + maxTowers(),
   };
 
   // Update spores, level, and towers.
