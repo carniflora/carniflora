@@ -1,4 +1,5 @@
 import { loadLevel, LEVEL_PATHS, MAP_COLS, MAP_ROWS } from "./levels.js";
+import { effects } from "./effects.js";
 
 const FINAL_MINION = 2; // final minion is this far from the enemy tower
 const DIST_BETWEEN_MINIONS = 0.75; // distance between the minions
@@ -151,6 +152,8 @@ export function build() {
       });
     }
   }
+  // Reset effects for this level (seeded random per level start — 4.1 / 4.6)
+  effects.reset();
 }
 
 // ====================
@@ -270,6 +273,8 @@ function nearest(list, x, y, rng) {
 // update over time
 export function update(deltaTime) {
   state.spores += 6 * deltaTime; // spores regenerate 6 per time
+  // Advance buff/debuff system (auto-fire + expire + poison drain — 4.1 / 4.5)
+  effects.update(deltaTime);
   // check which enemies are still alive
   const alive = state.enemies.filter((enemy) => enemy.hp > 0);
 
@@ -312,10 +317,12 @@ export function update(deltaTime) {
     // =========================
     if (p.cooldown <= 0) {
       // check if enemies in range and cooldown complete
+      // Effective stats with active buffs/debuffs applied (4.5)
+      const effDmg = k.dmg * effects.eff("damageMult", 1);
       const enemy = target;
       if (enemy) {
-        p.cooldown = k.cooldown;
-        enemy.hp -= k.dmg;
+        p.cooldown = k.cooldown * effects.eff("cooldownMult", 1);
+        enemy.hp -= effDmg;
         state.fx.push({
           x1: p.x,
           y1: p.y,
@@ -335,7 +342,7 @@ export function update(deltaTime) {
               secEnemy !== enemy &&
               Math.hypot(secEnemy.x - enemy.x, secEnemy.y - enemy.y) < 60
             )
-              secEnemy.hp -= k.dmg * 0.5;
+              secEnemy.hp -= effDmg * 0.5;
           state.fx.push({
             x1: enemy.x,
             y1: enemy.y,
@@ -360,7 +367,8 @@ export function update(deltaTime) {
       const p = nearest(state.plants, enemy.x, enemy.y, enemy.rng);
       if (p) {
         enemy.cooldown = enemy.base;
-        p.hp -= enemy.dmg;
+        // Effective incoming damage for this plant (debuffs like Weakened — 4.5)
+        p.hp -= enemy.dmg * effects.eff("damageTakenMult", 1);
         state.fx.push({
           x1: enemy.x,
           y1: enemy.y,
