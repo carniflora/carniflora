@@ -979,485 +979,10 @@ button:focus-visible {
   padding: 0;
   overflow: hidden;
   background: #f7f3e8;
+  border: #dcc9ef;
+  border-radius: 18px;
 }
 
-.evolution-page {
-  min-height: 600px;
-  padding: 26px;
-  background: #f7f3e8;
-  color: #213229;
-}
-
-.evolution-header {
-  text-align: left;
-  margin-bottom: 24px;
-}
-
-.evolution-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-
-  color: #71875c;
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 1.8px;
-}
-
-.evolution-header h2 {
-  font-family: "DM Serif Display", Georgia, serif;
-  font-size: clamp(2rem, 3vw, 2.8rem);
-  font-weight: 400;
-  color: #203b2a;
-  margin: 6px 0 8px;
-}
-
-.evolution-header p {
-  color: #748075;
-  font-size: 0.88rem;
-  line-height: 1.5;
-  margin: 0;
-}
-
-.guide-title i {
-  color: #5e7d4b;
-}
-
-/* Individual step colours */
-
-.guide-step:nth-child(1) .guide-number {
-  background: #315f3a;
-  border-color: #719f65;
-}
-
-.guide-step:nth-child(2) .guide-number {
-  background: #875360;
-  border-color: #b36a81;
-}
-
-.guide-step:nth-child(3) .guide-number {
-  background: #8a6a38;
-  border-color: #c8a45c;
-}
-
-.guide-step:nth-child(4) .guide-number {
-  background: #90574c;
-  border-color: #b97b6f;
-}
-
-.evolution-message {
-  min-height: 20px;
-  margin-top: 18px;
-  color: #bcd5a6;
-  text-align: center;
-  font-size: 0.85rem;
-}
-
-.evolution-heading {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 24px;
-}
-
-.evolution-heading > div:first-child {
-  flex: 1;
-  min-width: 0;
-}
-
-.evolution-header {
-  margin-bottom: 28px;
-}
-
-.evolution-header h2 {
-  margin: 8px 0 10px;
-  font-family: "DM Serif Display", Georgia, serif;
-  font-size: clamp(2rem, 3vw, 2.7rem);
-  font-weight: 400;
-  letter-spacing: -0.6px;
-  line-height: 1.15;
-  color: #203b2a;
-}
-
-.evolution-header p {
-  max-width: 850px;
-  color: #69786b;
-  font-size: 0.88rem;
-  line-height: 1.6;
-}
-
-.evolution-progress {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  flex-shrink: 0;
-
-  padding: 10px 15px;
-  background: #e8eddf;
-  border: 1px solid #d5dfcb;
-  border-radius: 999px;
-
-  color: #496d43;
-  font-size: 0.77rem;
-  font-weight: 700;
-}
-
-/* Four-column collection */
-.evolution-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  align-items: stretch;
-  gap: 16px;
-  margin-top: 0;
-}
-
-.evolution-card {
-  --card-accent: #567449;
-
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  overflow: hidden;
-
-  background: #f3eee3;
-  border: 1px solid #d9d2c3;
-  border-top: 3px solid var(--card-accent);
-  border-radius: 12px;
-
-  box-shadow: 0 3px 12px rgba(34, 49, 40, 0.04);
-
-  transition:
-    transform 0.2s ease,
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.evolution-card:hover {
-  transform: translateY(-3px);
-  border-color: var(--card-accent);
-  box-shadow: 0 10px 24px rgba(34, 49, 40, 0.09);
-}
-
-.evolution-card:nth-child(1) {
-  --card-accent: #567449;
-  background: #f3eee3;
-}
-
-.evolution-card:nth-child(2) {
-  --card-accent: #9b6674;
-  background: #f3eee3;
-}
-
-.evolution-card:nth-child(3) {
-  --card-accent: #a18049;
-  background: #f3eee3;
-}
-
-.evolution-card:nth-child(4) {
-  --card-accent: #986359;
-  background: #f3eee3;
-}
-
-.evolution-card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  padding: 13px 15px;
-}
-
-.evolution-level {
-  color: var(--card-accent);
-  font-size: 0.69rem;
-  font-weight: 800;
-  letter-spacing: 1.1px;
-  text-transform: uppercase;
-}
-
-.evolution-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-
-  padding: 0;
-  border: none;
-  border-radius: 0;
-  background: transparent;
-
-  color: #857e72;
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.4px;
-}
-
-.evolution-card.is-unlocked .evolution-status {
-  background: transparent;
-  border: none;
-  color: #477344;
-}
-
-.evolution-image {
-  height: 165px;
-  overflow: hidden;
-  background: #e7e2d5;
-}
-
-.evolution-image img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  transition: transform 0.35s ease;
-}
-
-.evolution-card:hover .evolution-image img {
-  transform: scale(1.035);
-}
-
-.evolution-card-body {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  flex: 1;
-  gap: 0;
-
-  padding: 19px 16px 16px;
-  text-align: left;
-}
-
-.evolution-card-body h3 {
-  margin: 0 0 5px;
-  color: #24372d;
-  font-family: "DM Serif Display", Georgia, serif;
-  font-size: 1.6rem;
-  font-weight: 400;
-  line-height: 1.2;
-}
-
-.evolution-role {
-  display: inline-block;
-  padding: 0;
-  background: transparent;
-  border-radius: 0;
-
-  color: var(--card-accent);
-  font-size: 0.67rem;
-  font-weight: 800;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-.evolution-description {
-  flex: 1;
-  margin: 14px 0 20px;
-  color: #637064;
-  font-size: 0.79rem;
-  line-height: 1.6;
-}
-
-.evolution-action {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 8px;
-
-  width: 100%;
-  min-height: 0;
-  margin-top: auto;
-  padding: 13px 0 0;
-
-  background: transparent;
-  border: none;
-  border-top: 1px solid #d9d2c3;
-  border-radius: 0;
-
-  color: #72766c;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-align: left;
-  cursor: default;
-}
-
-.evolution-action:disabled {
-  opacity: 1;
-  cursor: default;
-}
-
-.evolution-action:hover:not(:disabled) {
-  background: transparent;
-  color: #477344;
-}
-
-.evolution-card.is-unlocked .evolution-action {
-  color: #477344;
-}
-
-.evolution-guide {
-  margin-top: 24px;
-  padding: 17px 20px;
-
-  background: #f1ebdc;
-  border: 1px solid #d9d2c3;
-  border-radius: 12px;
-}
-
-.guide-title {
-  margin-bottom: 15px;
-  font-size: 0.8rem;
-  font-weight: 750;
-}
-
-.guide-steps {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.guide-step {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-  color: #58685b;
-  font-size: 0.75rem;
-  line-height: 1.4;
-}
-
-.guide-number {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-
-  width: 28px;
-  height: 28px;
-
-  background: #e0e7d8;
-  border: 1px solid #cbd8c1;
-  border-radius: 50%;
-
-  color: #426b3e;
-  font-size: 0.75rem;
-  font-weight: 800;
-}
-
-.guide-step:nth-child(n) .guide-number {
-  background: #e0e7d8;
-  border-color: #cbd8c1;
-  color: #426b3e;
-}
-
-.evolution-message {
-  min-height: 0;
-  margin: 12px 0 0;
-  color: #637064;
-  text-align: left;
-  font-size: 0.8rem;
-}
-
-.guide-step:nth-child(1) .guide-number {
-  background: #567449;
-  border-color: #567449;
-  color: #ffffff;
-}
-
-.guide-step:nth-child(2) .guide-number {
-  background: #9b6674;
-  border-color: #9b6674;
-  color: #ffffff;
-}
-
-.guide-step:nth-child(3) .guide-number {
-  background: #a18049;
-  border-color: #a18049;
-  color: #ffffff;
-}
-
-.guide-step:nth-child(4) .guide-number {
-  background: #986359;
-  border-color: #986359;
-  color: #ffffff;
-}
-
-/* ==========================================
-   UPGRADES
-   ========================================== */
-
-.evolution-action {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-
-  width: 100%;
-  min-height: 70px;
-  margin-top: auto;
-  padding: 13px 14px;
-
-  background: #e2eadb;
-  border: 1px solid #bfd0b5;
-  border-radius: 9px;
-
-  color: #315e34;
-  text-align: left;
-  cursor: default;
-}
-
-.evolution-action > i {
-  flex-shrink: 0;
-  font-size: 20px;
-  color: inherit;
-}
-
-.evolution-action-text {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.evolution-action-text strong {
-  font-size: 0.87rem;
-  font-weight: 750;
-  line-height: 1.3;
-}
-
-.evolution-action-text span {
-  font-size: 0.73rem;
-  line-height: 1.4;
-}
-
-.evolution-card:nth-child(1) .evolution-action {
-  background: #e2eadb;
-  border-color: #bfd0b5;
-  color: #315e34;
-}
-
-.evolution-card:nth-child(2) .evolution-action {
-  background: #f0e2e5;
-  border-color: #d6b9c1;
-  color: #85505e;
-}
-
-.evolution-card:nth-child(3) .evolution-action {
-  background: #efe5d2;
-  border-color: #dac6a2;
-  color: #80622f;
-}
-
-.evolution-card:nth-child(4) .evolution-action {
-  background: #eedfda;
-  border-color: #d6b8b0;
-  color: #85544a;
-}
-
-.evolution-heading > div:first-child {
-  flex: 1;
-  min-width: 0;
-}
-
-.evolution-heading {
-  gap: 16px;
-}
 .side-nav {
   justify-content: flex-start;
   align-self: stretch;
@@ -1523,14 +1048,6 @@ button:focus-visible {
 
 .nav-footer {
   margin-top: auto;
-}
-
-/* Upgrades panel */
-#upgradesTab.active {
-  min-height: 100%;
-  background: #f7f3e8;
-  border-radius: 16px;
-  color: #213229;
 }
 
 /* Hide controls on Plants, Upgrades, and Map */
@@ -1812,13 +1329,6 @@ button:focus-visible {
    ========================================== */
 
 @media (max-width: 1250px) {
-  .evolution-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .evolution-header p {
-    white-space: normal;
-  }
   #plantsTab .plant-card-layout {
     display: flex;
     flex-direction: column;
@@ -2035,35 +1545,6 @@ button:focus-visible {
     flex-wrap: wrap;
   }
 
-  .evolution-page {
-    padding: 22px 14px;
-  }
-
-  .evolution-heading {
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .evolution-header h2 {
-    font-size: 2rem;
-  }
-
-  .evolution-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .evolution-image {
-    height: 190px;
-  }
-
-  .guide-steps {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .evolution-guide {
-    padding: 16px;
-  }
-
   #app {
     padding: 7px;
   }
@@ -2130,5 +1611,2139 @@ button:focus-visible {
     #plantsTab .plant-card-info p {
       max-width: 320px;
     }
+  }
+}
+
+/*********************************
+
+
+***********************************/
+
+#upgradesTab.active {
+  display: block;
+}
+#upgradesTab .upgrade-world {
+  --up-purple: #8866c6;
+  --up-text: #7147a3;
+  --up-bg: #f7f0ff;
+  position: relative;
+  isolation: isolate;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 800px;
+  padding: 26px 22px 34px;
+  overflow: hidden;
+  background: var(--up-bg);
+  color: var(--up-text);
+}
+
+#upgradesTab .upgrade-world *,
+#upgradesTab .upgrade-world *::before,
+#upgradesTab .upgrade-world *::after {
+  box-sizing: border-box;
+}
+
+#upgradesTab .upgrade-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  position: relative;
+  z-index: 3;
+}
+
+#upgradesTab .upgrade-eyebrow {
+  font-size: 10px;
+  letter-spacing: 2px;
+  font-weight: 900;
+  color: #9a75ce;
+}
+
+#upgradesTab .upgrade-heading h2 {
+  margin: 5px 0 7px;
+  font:
+    normal clamp(30px, 3.2vw, 46px)/1.1 Georgia,
+    serif;
+  color: #7046a3;
+}
+
+#upgradesTab .upgrade-heading p {
+  margin: 0;
+  max-width: 680px;
+  color: #9079a7;
+  font-size: 12px;
+  line-height: 1.5;
+}
+#upgradesTab .upgrade-level-badge {
+  flex: none;
+  padding: 8px 14px;
+  background: white;
+  border: 1px solid #ddc9f5;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+#upgradesTab .upgrade-map {
+  position: relative;
+  min-height: 550px !important;
+  height: 550px;
+  width: 100%;
+  margin: 10px 0 4px;
+}
+#upgradesTab .upgrade-stage {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  width: 104px;
+  padding: 4px;
+  border: 0;
+  background: transparent;
+  color: var(--up-text);
+  cursor: pointer;
+  pointer-events: auto;
+  isolation: isolate;
+  transform: translate(-50%, -50%);
+  transition: transform 0.18s ease;
+}
+
+#upgradesTab .upgrade-stage:hover {
+  transform: translate(-50%, -50%) scale(1.07);
+}
+#upgradesTab .upgrade-stage:focus-visible {
+  outline: 3px solid #9263d0;
+  outline-offset: 3px;
+  border-radius: 15px;
+}
+
+#upgradesTab .upgrade-stage::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 29px;
+  left: 50%;
+  width: 94px;
+  height: 55px;
+  transform: translateX(-50%);
+  border: 3px solid white;
+  border-radius: 50%;
+  background: #b4ead8;
+  box-shadow:
+    0 5px 0 #83cbb2,
+    0 9px 13px #4e347533;
+}
+
+#upgradesTab .stage-plant-image,
+#upgradesTab .upgrade-stage img {
+  display: block;
+  width: 55px;
+  height: 64px;
+  object-fit: cover;
+  border: 2px solid white;
+  border-radius: 8px;
+  box-shadow: 0 3px 8px #4b34753b;
+}
+#upgradesTab .upgrade-stage-number {
+  display: grid;
+  place-items: center;
+  z-index: 1;
+  width: 31px;
+  height: 31px;
+  margin-top: -18px;
+  border: 3px solid #b695e5;
+  border-radius: 50%;
+  background: white;
+  color: #7045a5;
+  font-size: 14px;
+  font-weight: 900;
+}
+#upgradesTab .upgrade-stage-name {
+  z-index: 1;
+  padding: 4px 11px;
+  border: 1px solid #ffffffc9;
+  border-radius: 20px;
+  background: #8765c4;
+  color: white;
+  font-size: 11px;
+  font-weight: 800;
+}
+#upgradesTab .upgrade-stage-state {
+  font-size: 9px;
+  font-weight: 800;
+  color: #74569e;
+  white-space: nowrap;
+}
+#upgradesTab .upgrade-stage.selected .upgrade-stage-number {
+  background: #ffe3a1;
+  border-color: #e9b95b;
+}
+
+#upgradesTab .upgrade-stage.selected::before {
+  box-shadow:
+    0 5px 0 #83cbb2,
+    0 0 0 5px #f6d99588,
+    0 9px 13px #4e347533;
+}
+
+/* Positions along the SVG road from Step 1. */
+
+#upgradesTab .upgrade-stage-1 {
+  left: 2%;
+  top: 69%;
+}
+#upgradesTab .upgrade-stage-2 {
+  left: 25%;
+  top: 42%;
+}
+#upgradesTab .upgrade-stage-3 {
+  left: 64%;
+  top: 30%;
+  translate: -25px 10px;
+}
+#upgradesTab .upgrade-stage-4 {
+  left: 93%;
+  top: 5%;
+  translate: -5px 40px;
+}
+#upgradesTab .upgrade-map-hint {
+  position: absolute;
+  z-index: 2;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 8px 15px;
+  border-radius: 20px;
+  background: #8b68c6;
+  color: white;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+#upgradesTab .upgrade-collection {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  position: relative;
+  z-index: 3;
+  width: max-content;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 7px;
+  border: 2px solid #e1cdf9;
+  border-radius: 14px;
+  background: #eadcfb;
+}
+#upgradesTab .upgrade-collection-choice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 110px;
+  padding: 7px 11px;
+  border: 1px solid #d6c1ef;
+  border-radius: 9px;
+  background: white;
+  color: #7048a2;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+#upgradesTab .upgrade-collection-choice img {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+#upgradesTab .upgrade-collection-choice:hover {
+  background: #fbf7ff;
+  border-color: #a77ed9;
+}
+#upgradesTab .upgrade-collection-choice.selected {
+  background: #ffe5a2;
+  border-color: #e5b454;
+}
+
+#upgradesTab .upgrade-info {
+  position: absolute;
+  z-index: 4;
+  right: 18px;
+  top: 205px;
+  width: 230px;
+  padding: 4px 4px 12px;
+  border: 2px solid #dac2f7;
+  border-radius: 20px;
+  background: #fffaff;
+  box-shadow: 0 12px 24px #67449c25;
+}
+
+#upgradesTab .upgrade-info-header {
+  padding: 10px;
+  border-radius: 13px;
+  background: #f5b7d8;
+  color: #8549a1;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+#upgradesTab .upgrade-info-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 9px 0;
+}
+
+#upgradesTab .upgrade-preview {
+  width: 95px;
+  height: 95px;
+  object-fit: cover;
+  border-radius: 50%;
+  background: #efe1f9;
+}
+#upgradesTab .upgrade-role {
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: #fce0ed;
+  color: #a365a1;
+  font-size: 10px;
+  font-weight: 900;
+}
+#upgradesTab .upgrade-info h3 {
+  margin: 0;
+  color: #7645a4;
+  font:
+    normal 27px/1.2 Georgia,
+    serif;
+}
+
+#upgradesTab .upgrade-description {
+  margin: 0 0 5px;
+  color: #957ea7;
+  text-align: center;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+#upgradesTab .upgrade-level-row,
+#upgradesTab .upgrade-stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  min-height: 34px;
+  padding: 7px 9px;
+  border-radius: 9px;
+  font-size: 11px;
+  font-weight: 800;
+}
+#upgradesTab .upgrade-level-row {
+  background: #fae0ed;
+  color: #9a5ba5;
+}
+#upgradesTab .upgrade-stat-row {
+  border: 2px solid #dcc7f6;
+  background: white;
+  color: #754da8;
+}
+
+#upgradesTab .upgrade-stat-row strong {
+  min-width: 36px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  background: #bdebd7;
+  color: #3b8a6b;
+  text-align: center;
+}
+#upgradesTab .upgrade-mission {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  padding: 11px;
+  border-radius: 10px;
+  background: #dfcbfa;
+  color: #7249a4;
+}
+#upgradesTab .upgrade-mission span {
+  font-size: 10px;
+  font-weight: 900;
+}
+#upgradesTab .upgrade-mission strong {
+  font-size: 12px;
+}
+#upgradesTab .upgrade-mission p {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.5;
+}
+#upgradesTab .upgrade-battle-button {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #e4b54d;
+  border-bottom: 3px solid #d4a43b;
+  border-radius: 10px;
+  background: #ffe4a0;
+  color: #815b26;
+  font-size: 11px;
+  font-weight: 900;
+  cursor: pointer;
+}
+#upgradesTab .upgrade-battle-button:hover {
+  background: #ffda7c;
+}
+
+/* Stage notification — hidden when empty */
+#upgradesTab .evolution-message {
+  position: absolute;
+  top: 115px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: max-content;
+  max-width: 90%;
+  margin: 0;
+  padding: 10px 20px;
+
+  background: #d9f5e8;
+  border: 1px solid #82cfa8;
+  border-radius: 12px;
+
+  color: #236b4b;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+
+  z-index: 20;
+}
+
+/* No message = no green box */
+#upgradesTab .evolution-message:empty {
+  display: none;
+}
+
+@media (max-width: 1150px) {
+  #upgradesTab .upgrade-world {
+    min-height: 0;
+    padding: 20px 14px 30px;
+  }
+  #upgradesTab .upgrade-map {
+    height: 420px;
+  }
+  #upgradesTab .upgrade-info {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: min(100%, 420px);
+    margin: 25px auto 0;
+  }
+  #upgradesTab .upgrade-collection {
+    margin-top: 15px;
+  }
+}
+@media (max-width: 650px) {
+  #upgradesTab .upgrade-heading {
+    flex-direction: column;
+  }
+  #upgradesTab .upgrade-map {
+    height: 320px;
+  }
+  #upgradesTab .upgrade-stage {
+    width: 68px;
+  }
+  #upgradesTab .upgrade-stage::before {
+    width: 60px;
+    height: 37px;
+    top: 23px;
+  }
+  #upgradesTab .stage-plant-image,
+  #upgradesTab .upgrade-stage img {
+    width: 38px;
+    height: 44px;
+  }
+  #upgradesTab .upgrade-stage-number {
+    width: 23px;
+    height: 23px;
+    margin-top: -14px;
+    font-size: 11px;
+  }
+  #upgradesTab .upgrade-stage-name {
+    padding: 3px 6px;
+    font-size: 9px;
+  }
+  #upgradesTab .upgrade-stage-state {
+    font-size: 7px;
+  }
+  #upgradesTab .upgrade-map-hint {
+    bottom: -7px;
+    font-size: 8px;
+  }
+  #upgradesTab .upgrade-collection-choice {
+    min-width: 90px;
+  }
+}
+
+/* =========================================
+   UPGRADES — FIT ENTIRE PAGE ON SCREEN
+   ========================================= */
+
+@media (min-width: 1251px) {
+  /* Use the available browser height */
+  #app:has(#upgradesTab.active) {
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  #app:has(#upgradesTab.active) > header {
+    flex: 0 0 auto;
+  }
+
+  /* Game container fills remaining space */
+  .game-layout:has(#upgradesTab.active) {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    gap: 0;
+  }
+
+  /* Main purple game border */
+  .game-layout:has(#upgradesTab.active) .main-panel {
+    order: 1;
+    flex: 1;
+    width: 100%;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 2px solid #dcc9ef;
+    border-radius: 24px;
+    background: #f7f0ff;
+  }
+
+  #upgradesTab.active {
+    height: 100%;
+  }
+
+  /* Upgrades page content */
+  #upgradesTab.active .upgrade-world {
+    position: relative;
+    height: 100%;
+    min-height: 0;
+    padding: 18px 28px 90px;
+    overflow: hidden;
+    background: #f7f0ff;
+  }
+
+  /* Smaller header to save space */
+  #upgradesTab .upgrade-heading h2 {
+    font-size: clamp(28px, 2.7vw, 40px);
+    margin: 2px 0 5px;
+  }
+
+  #upgradesTab .upgrade-heading p {
+    font-size: 11px;
+  }
+
+  /* Road uses the available middle area */
+  #upgradesTab .upgrade-map {
+    position: absolute;
+    top: 110px;
+    left: 28px;
+    right: 28px;
+    width: auto;
+    height: calc(100% - 220px);
+    min-height: 0;
+    margin: 0;
+  }
+
+  /* Keep the road SVG inside its area */
+  #upgradesTab .upgrade-path {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Plant checkpoints remain on the road */
+  #upgradesTab .upgrade-stages {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* Make checkpoints slightly smaller */
+  #upgradesTab .upgrade-stage {
+    scale: 0.85;
+  }
+
+  #upgradesTab .upgrade-info {
+    position: absolute;
+    top: 410px;
+    right: 15px;
+    width: 320px;
+    max-height: none;
+    overflow: visible;
+  }
+
+  /* Compact the information panel */
+  #upgradesTab .upgrade-info-content {
+    gap: 5px;
+    padding: 8px 8px 0;
+  }
+
+  #upgradesTab .upgrade-preview {
+    width: 65px;
+    height: 65px;
+  }
+
+  #upgradesTab .upgrade-info h3 {
+    font-size: 21px;
+  }
+
+  #upgradesTab .upgrade-description {
+    font-size: 10px;
+    line-height: 1.3;
+    margin-bottom: 0;
+  }
+
+  #upgradesTab .upgrade-level-row,
+  #upgradesTab .upgrade-stat-row {
+    min-height: 27px;
+    padding: 4px 7px;
+    font-size: 10px;
+  }
+
+  #upgradesTab .upgrade-mission {
+    gap: 3px;
+    padding: 7px;
+  }
+
+  #upgradesTab .upgrade-mission p {
+    font-size: 10px;
+    line-height: 1.3;
+  }
+
+  #upgradesTab .upgrade-battle-button {
+    padding: 7px;
+  }
+
+  /* Plant collection above bottom navigation */
+  #upgradesTab .upgrade-collection {
+    position: absolute;
+    bottom: 88px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+    margin: 0;
+    flex-wrap: nowrap;
+  }
+
+  #upgradesTab .upgrade-collection-choice {
+    min-width: 95px;
+    padding: 4px 7px;
+  }
+
+  #upgradesTab .upgrade-collection-choice img {
+    width: 23px;
+    height: 23px;
+  }
+
+  #upgradesTab .upgrade-map-hint {
+    display: none;
+  }
+
+  /* Bottom navigation inside game border */
+  .game-layout:has(#upgradesTab.active) .side-nav {
+    position: absolute;
+    z-index: 20;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(700px, calc(100% - 50px));
+    min-height: 58px;
+    padding: 7px 12px;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #dcc9ef;
+    border-radius: 16px;
+    background: #fffaff;
+    box-shadow: 0 5px 18px rgba(105, 70, 161, 0.12);
+  }
+
+  /* Hide old sidebar decorations */
+  .game-layout:has(#upgradesTab.active) .nav-brand,
+  .game-layout:has(#upgradesTab.active) .nav-divider,
+  .game-layout:has(#upgradesTab.active) .nav-section-label,
+  .game-layout:has(#upgradesTab.active) .nav-footer {
+    display: none;
+  }
+
+  /* Horizontal navigation */
+  .game-layout:has(#upgradesTab.active) .nav-links {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    width: 100%;
+  }
+
+  .game-layout:has(#upgradesTab.active) .side-nav .nav-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 40px;
+    padding: 7px;
+    border: 1px solid #e5d5f5;
+    border-radius: 10px;
+    background: #f5edff;
+    color: #7046a3;
+    font-size: 12px;
+  }
+
+  .game-layout:has(#upgradesTab.active) .side-nav .nav-icon {
+    color: #8c70c8;
+  }
+
+  .game-layout:has(#upgradesTab.active) .side-nav .nav-btn.active {
+    background: #8c70c8;
+    border-color: #8c70c8;
+    color: white;
+  }
+
+  .game-layout:has(#upgradesTab.active) .side-nav .nav-btn.active .nav-icon {
+    color: white;
+  }
+
+  .game-layout:has(#upgradesTab.active) .nav-arrow {
+    display: none;
+  }
+
+  .game-layout:has(#upgradesTab.active) .plant-details {
+    display: none;
+  }
+}
+
+/* ==========================================
+   UPGRADES — FULL LAVENDER BACKGROUND
+   ========================================== */
+
+/* Replace the brown page background */
+html:has(#upgradesTab.active),
+body:has(#upgradesTab.active) {
+  background: #f7f0ff;
+}
+
+/* Make the entire app lavender */
+#app:has(#upgradesTab.active) {
+  max-width: none;
+  width: 100%;
+  min-height: 100dvh;
+  height: auto;
+  margin: 0;
+  padding: 16px 24px;
+  background: #f7f0ff;
+  overflow: visible;
+}
+
+/* Remove the purple outer border */
+.game-layout:has(#upgradesTab.active) .main-panel {
+  width: 100%;
+  min-height: 1100px;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: #f7f0ff;
+  overflow: visible;
+}
+
+/* Make the upgrade content blend into the page */
+#upgradesTab.active {
+  height: auto;
+  min-height: 1100px;
+  background: transparent;
+}
+
+#upgradesTab.active .upgrade-world {
+  min-height: 1100px;
+  height: auto;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  overflow: visible;
+}
+
+/* Match the heading to the purple theme */
+#app:has(#upgradesTab.active) header h1 {
+  color: #7046a3;
+}
+
+/* Match the header counters */
+#app:has(#upgradesTab.active) header .stats > span {
+  background: #fffaff;
+  border-color: #e1cdf9;
+  color: #7046a3;
+}
+
+#app:has(#upgradesTab.active) header .stats b {
+  color: #7046a3;
+}
+
+/* UPGRADES — KEEP THE ROAD VISIBLE */
+
+#upgradesTab .upgrade-map {
+  overflow: visible;
+}
+
+#upgradesTab .upgrade-path {
+  display: block;
+  overflow: visible;
+}
+
+/* Give the road breathing room on both sides */
+@media (min-width: 1251px) {
+  #upgradesTab .upgrade-map {
+    left: 55px;
+    right: 55px;
+    width: auto;
+  }
+}
+
+@media (min-width: 1251px) {
+  /* Fit the whole Upgrades page in the viewport */
+  #app:has(#upgradesTab.active) {
+    height: 100dvh;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Keep the game header visible */
+  #app:has(#upgradesTab.active) > header {
+    flex-shrink: 0;
+  }
+
+  /* Fill remaining space below the header */
+  .game-layout:has(#upgradesTab.active) {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Remove the forced 1100px height */
+  .game-layout:has(#upgradesTab.active) .main-panel {
+    flex: 1;
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  #upgradesTab.active {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  #upgradesTab.active .upgrade-world {
+    position: relative;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    padding-bottom: 95px;
+  }
+
+  /* Resize the road to available screen height */
+  #upgradesTab .upgrade-map {
+    position: absolute;
+    top: 105px;
+    left: 55px;
+    right: 55px;
+    width: auto;
+    height: calc(100% - 220px);
+    min-height: 0;
+    margin: 0;
+  }
+
+  #upgradesTab .upgrade-path {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Keep plant collection above navigation */
+  #upgradesTab .upgrade-collection {
+    position: absolute;
+    bottom: 85px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    z-index: 5;
+  }
+
+  /* Keep navigation at the bottom of the screen */
+  .game-layout:has(#upgradesTab.active) .side-nav {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 30;
+    flex-shrink: 0;
+  }
+
+  /* Move Plant Growth card lower */
+  /* Plant Growth card — adjusted position */
+
+  /* Plant Growth card — restore original width */
+  #upgradesTab .upgrade-info {
+    position: absolute;
+    top: 265px;
+    right: -30px;
+    width: 270px;
+    min-width: 270px;
+    max-width: none;
+    max-height: none;
+    overflow: visible;
+    box-sizing: border-box;
+  }
+}
+
+/* Center the entire Upgrades heading section */
+#upgradesTab .upgrade-heading {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  text-align: center;
+}
+
+/* Center all heading content together */
+#upgradesTab .upgrade-heading > div {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Center the small heading */
+#upgradesTab .upgrade-eyebrow {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+/* Center Plant Upgrades */
+#upgradesTab .upgrade-heading h2 {
+  width: 100%;
+  margin: 4px 0 8px;
+  text-align: center;
+}
+
+/* Center the description */
+#upgradesTab .upgrade-heading p {
+  width: 100%;
+  max-width: 650px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Keep Level 1 of 4 at the top-right */
+
+/* Position the stage notification below the page description */
+#upgradesTab .evolution-message {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  margin: 0;
+  z-index: 20;
+}
+
+/* Hide the notification when there is no message */
+#upgradesTab .evolution-message:empty {
+  display: none;
+}
+
+/* ==========================================
+   UPGRADES — CIRCULAR PLANT IMAGE FRAMES
+   ========================================== */
+
+/* Keep all four plant checkpoints consistent */
+#upgradesTab .upgrade-stage {
+  width: 110px;
+}
+
+/* Mint-green circular frame behind each plant */
+#upgradesTab .upgrade-stage::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+
+  background: #b4ead8;
+  border: 3px solid white;
+
+  box-shadow:
+    0 5px 0 #83cbb2,
+    0 8px 15px rgba(78, 52, 117, 0.2);
+
+  z-index: -1;
+}
+
+/* Make every plant image circular */
+#upgradesTab .upgrade-stage .stage-plant-image {
+  display: block;
+
+  width: 78px;
+  height: 78px;
+  min-width: 78px;
+  min-height: 78px;
+
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
+
+  border: 3px solid white;
+  background: #b4ead8;
+
+  box-shadow: 0 3px 10px rgba(78, 52, 117, 0.15);
+}
+
+/* Plant name above the circular picture */
+#upgradesTab .upgrade-stage-name {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 5px 12px;
+  background: #8765c4;
+  color: white;
+  border: 2px solid white;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+  z-index: 5;
+}
+
+/* LOCKED / UNLOCKED above the plant name */
+#upgradesTab .upgrade-stage-state {
+  position: absolute;
+  bottom: calc(100% + 43px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 9px;
+  border-radius: 12px;
+  background: #fffaff;
+  color: #7046a3;
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+  z-index: 5;
+}
+
+/* Level number stays at the bottom of the circle */
+#upgradesTab .upgrade-stage-number {
+  position: relative;
+  z-index: 4;
+  margin-top: -17px;
+}
+
+/* Smaller circles on mobile */
+@media (max-width: 650px) {
+  #upgradesTab .upgrade-stage {
+    width: 76px;
+  }
+
+  #upgradesTab .upgrade-stage::before {
+    width: 60px;
+    height: 60px;
+  }
+
+  #upgradesTab .upgrade-stage .stage-plant-image {
+    width: 54px;
+    height: 54px;
+    min-width: 54px;
+    min-height: 54px;
+  }
+}
+
+/* ========================================
+   STAGE 4 — ENCHANTED CASTLE FRAME
+   ======================================== */
+
+/* Castle image inside an elegant arch */
+#upgradesTab .upgrade-stage-4 .stage-plant-image {
+  display: block;
+
+  width: 95px;
+  height: 125px;
+
+  object-fit: cover;
+  object-position: center;
+
+  border-radius: 48% 48% 12px 12px;
+
+  border: 4px solid #f2d79a;
+
+  outline: 3px solid #a987dc;
+  outline-offset: 2px;
+
+  box-shadow:
+    0 0 0 7px rgba(255, 255, 255, 0.8),
+    0 8px 20px rgba(119, 76, 164, 0.25);
+
+  background: #fff4df;
+}
+
+/* Small floral decoration above the castle */
+#upgradesTab .upgrade-stage-4::before {
+  position: absolute;
+  top: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  color: #d59bbd;
+  font-size: 18px;
+
+  pointer-events: none;
+  z-index: 5;
+}
+
+#upgradesTab .castle-flowers i:nth-child(2) {
+  color: #e2bd71;
+  font-size: 24px;
+}
+/* Gentle glow when hovering */
+#upgradesTab .upgrade-stage-4:hover .stage-plant-image {
+  box-shadow:
+    0 0 0 7px rgba(255, 255, 255, 0.9),
+    0 0 22px rgba(192, 142, 239, 0.55);
+
+  transition: box-shadow 0.25s ease;
+}
+
+#upgradesTab .upgrade-stage-4 .castle-flowers {
+  position: absolute;
+  top: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #c68ab7;
+  font-size: 20px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Remove the green circle from Rafflesia / Stage 4 */
+#upgradesTab .upgrade-stage-4::before,
+#upgradesTab .upgrade-stage-4.selected::before {
+  content: none;
+  display: none;
+}
+
+/* Keep the Stage 4 image clearly visible */
+#upgradesTab .upgrade-stage-4 .stage-plant-image {
+  position: relative;
+  z-index: 2;
+}
+
+/* Stage 4 — Boss Castle */
+#upgradesTab .upgrade-stage-4 .stage-plant-image {
+  width: 95px;
+  height: 125px;
+  min-width: 95px;
+  min-height: 125px;
+
+  object-fit: cover;
+  object-position: center;
+
+  border-radius: 48% 48% 12px 12px;
+  border: 4px solid #f2d79a;
+  outline: 3px solid #a987dc;
+  outline-offset: 2px;
+
+  background: #fff4df;
+}
+
+/* Boss Castle — normal frame */
+#upgradesTab .upgrade-stage-4 .stage-plant-image {
+  border: 4px solid #f2d79a;
+  outline: 3px solid #a987dc;
+  outline-offset: 2px;
+
+  transition:
+    border-color 0.25s ease,
+    outline-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+/* Boss Castle — gold frame when selected */
+#upgradesTab .upgrade-stage-4.selected .stage-plant-image {
+  border-color: #ffd166;
+  outline: 3px solid #e6a832;
+  outline-offset: 3px;
+
+  box-shadow:
+    0 0 0 5px rgba(255, 209, 102, 0.25),
+    0 0 18px rgba(255, 193, 59, 0.65),
+    0 5px 14px rgba(111, 72, 157, 0.2);
+}
+
+/* Locked status — matching Plant Growth card */
+#upgradesTab .upgrade-stage.locked .upgrade-stage-state {
+  background: #f3b6dc;
+  color: #874c91;
+  border: 1px solid #e9a4d0;
+}
+
+#upgradesTab .upgrade-stage.unlocked .upgrade-stage-state {
+  background: #dcf7e9;
+  color: #19845e;
+  border: 1px solid #a4dfc1;
+}
+/* Lock icon uses the same purple */
+#upgradesTab .upgrade-stage.unlocked .upgrade-stage-state svg {
+  color: #19845e;
+  stroke: #19845e;
+}
+
+/* Move the level badge slightly higher */
+#upgradesTab .upgrade-level-badge {
+  position: relative;
+  top: -25px;
+}
+
+/* Remove unwanted decorative circle on Upgrades page */
+/* Hide the unused bottom plant collection */
+#upgradesTab .upgrade-collection {
+  display: none !important;
+}
+
+/* ==========================================
+   UPGRADES — RESPONSIVE TABLET AND MOBILE
+   ========================================== */
+
+/* Prevent content from exceeding its container */
+#upgradesTab,
+#upgradesTab .upgrade-world {
+  width: 100%;
+  min-width: 0;
+}
+
+#upgradesTab .upgrade-heading p,
+#upgradesTab .upgrade-description {
+  overflow-wrap: anywhere;
+}
+
+/* TABLET / IPAD */
+@media (min-width: 651px) and (max-width: 1250px) {
+  #upgradesTab .upgrade-world {
+    height: auto;
+    min-height: 0;
+    padding: 24px 20px 40px;
+    overflow: visible;
+  }
+
+  #upgradesTab .upgrade-heading {
+    padding: 12px 0 24px;
+  }
+
+  #upgradesTab .upgrade-map {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    width: 100%;
+    height: 480px;
+    margin: 20px auto 40px;
+  }
+
+  #upgradesTab .upgrade-path {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  #upgradesTab .upgrade-stages {
+    position: absolute;
+    inset: 0;
+  }
+
+  #upgradesTab .upgrade-stage {
+    scale: 0.8;
+  }
+
+  #upgradesTab .upgrade-stage-1 {
+    left: 7%;
+    top: 70%;
+  }
+
+  #upgradesTab .upgrade-stage-2 {
+    left: 29%;
+    top: 42%;
+  }
+
+  #upgradesTab .upgrade-stage-3 {
+    left: 65%;
+    top: 30%;
+    translate: 0 0;
+  }
+
+  #upgradesTab .upgrade-stage-4 {
+    left: 91%;
+    top: 18%;
+    translate: 0 0;
+  }
+
+  #upgradesTab .upgrade-info {
+    position: relative;
+    top: auto;
+    right: auto;
+    left: auto;
+    width: min(100%, 440px);
+    min-width: 0;
+    max-width: 100%;
+    margin: 40px auto 0;
+  }
+
+  #upgradesTab .evolution-message {
+    top: 140px;
+  }
+}
+
+/* IPHONE / SMALL MOBILE */
+@media (max-width: 650px) {
+  #app:has(#upgradesTab.active) {
+    height: auto;
+    min-height: 100dvh;
+    padding: 10px;
+    overflow-x: clip;
+  }
+
+  #app:has(#upgradesTab.active) > header .stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  #app:has(#upgradesTab.active) > header .stats > span {
+    min-width: 0;
+    width: 100%;
+    justify-content: center;
+    font-size: 12px;
+    padding: 9px 5px;
+  }
+
+  .game-layout:has(#upgradesTab.active) {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .game-layout:has(#upgradesTab.active) .main-panel {
+    width: 100%;
+    min-height: 0;
+    height: auto;
+    padding: 0;
+    overflow: visible;
+  }
+
+  #upgradesTab.active,
+  #upgradesTab.active .upgrade-world {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  #upgradesTab .upgrade-world {
+    padding: 22px 12px 35px;
+  }
+
+  #upgradesTab .upgrade-heading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  #upgradesTab .upgrade-heading h2 {
+    font-size: clamp(28px, 8vw, 38px);
+  }
+
+  #upgradesTab .upgrade-heading p {
+    font-size: 12px;
+    line-height: 1.6;
+    padding: 0 6px;
+  }
+
+  /* Vertical progression for narrow screens */
+  #upgradesTab .upgrade-map {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    width: 100%;
+    height: 800px;
+    margin: 55px auto 25px;
+  }
+
+  /* Hide the wide desktop road */
+  #upgradesTab .upgrade-path {
+    display: none;
+  }
+
+  /* Draw a mobile vertical path */
+  #upgradesTab .upgrade-map::before {
+    content: "";
+    position: absolute;
+    top: 40px;
+    bottom: 40px;
+    left: 50%;
+    width: 52px;
+    transform: translateX(-50%);
+    background: #dfcafa;
+    border-left: 4px solid #8c69ca;
+    border-right: 4px solid #8c69ca;
+    border-radius: 30px;
+  }
+
+  #upgradesTab .upgrade-map::after {
+    content: "";
+    position: absolute;
+    top: 40px;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 2px dashed #9774d0;
+  }
+
+  #upgradesTab .upgrade-stages {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+  }
+
+  #upgradesTab .upgrade-stage {
+    width: 110px;
+    scale: 0.9;
+    translate: 0 0;
+  }
+
+  #upgradesTab .upgrade-stage-1 {
+    left: 50%;
+    top: 13%;
+  }
+
+  #upgradesTab .upgrade-stage-2 {
+    left: 50%;
+    top: 37%;
+  }
+
+  #upgradesTab .upgrade-stage-3 {
+    left: 50%;
+    top: 61%;
+  }
+
+  #upgradesTab .upgrade-stage-4 {
+    left: 50%;
+    top: 85%;
+  }
+
+  #upgradesTab .upgrade-stage-4 .stage-plant-image {
+    width: 82px;
+    height: 108px;
+    min-width: 82px;
+    min-height: 108px;
+  }
+
+  /* Place the info card after the path */
+  #upgradesTab .upgrade-info {
+    position: relative;
+    top: auto;
+    right: auto;
+    left: auto;
+    width: 100%;
+    min-width: 0;
+    max-width: 420px;
+    margin: 35px auto 0;
+    overflow: visible;
+  }
+
+  #upgradesTab .upgrade-info-content {
+    padding: 14px;
+  }
+
+  #upgradesTab .upgrade-preview {
+    width: 85px;
+    height: 85px;
+  }
+
+  #upgradesTab .upgrade-stat-row,
+  #upgradesTab .upgrade-level-row {
+    font-size: 12px;
+    min-height: 38px;
+  }
+
+  #upgradesTab .evolution-message {
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+    max-width: 100%;
+    width: fit-content;
+    margin: 15px auto;
+  }
+}
+
+/* ==========================================
+   IPAD UPGRADES — FINAL RESPONSIVE FIX
+   ========================================== */
+
+@media (min-width: 651px) and (max-width: 1250px) {
+  /* Allow the Upgrades page to scroll */
+  #app:has(#upgradesTab.active) {
+    height: auto !important;
+    min-height: 100dvh;
+    overflow: visible !important;
+    padding: 12px 20px;
+  }
+
+  .game-layout:has(#upgradesTab.active) {
+    display: flex !important;
+    flex-direction: column;
+    gap: 0;
+    min-height: 0;
+  }
+
+  .game-layout:has(#upgradesTab.active) .main-panel {
+    order: 1;
+    width: 100%;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    padding: 0;
+    border: none;
+    background: #f7f0ff;
+  }
+
+  #upgradesTab.active {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  #upgradesTab.active .upgrade-world {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    position: relative;
+    width: 100%;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 25px 18px 35px;
+    overflow: visible !important;
+    background: #f7f0ff;
+  }
+
+  /* Heading */
+  #upgradesTab .upgrade-heading {
+    order: 1;
+    width: 100%;
+    padding: 10px 0 20px;
+  }
+
+  /* Map has its own space */
+  #upgradesTab .upgrade-map {
+    position: relative !important;
+    order: 2;
+    inset: auto !important;
+    width: 100% !important;
+    height: 480px !important;
+    min-height: 480px;
+    margin: 45px 0 35px !important;
+    flex-shrink: 0;
+  }
+
+  #upgradesTab .upgrade-path {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  #upgradesTab .upgrade-stages {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* Plant Growth card BELOW the road */
+  #upgradesTab .upgrade-info {
+    position: relative !important;
+    order: 3;
+    inset: auto !important;
+    top: auto !important;
+    right: auto !important;
+    left: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    translate: none !important;
+    width: min(100%, 460px) !important;
+    min-width: 0 !important;
+    max-width: 100%;
+    height: auto !important;
+    margin: 25px auto 0 !important;
+    z-index: 2;
+  }
+
+  #upgradesTab .evolution-message {
+    order: 4;
+  }
+
+  /* New purple bottom navigation */
+  .game-layout:has(#upgradesTab.active) .side-nav {
+    position: relative !important;
+    order: 2;
+    inset: auto !important;
+    transform: none !important;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: min(100%, 700px);
+    height: auto;
+    min-height: 0;
+    margin: 25px auto 20px;
+    padding: 10px;
+    background: #fffaff;
+    border: 1px solid #dcc9ef;
+    border-radius: 16px;
+    box-shadow: 0 5px 18px rgba(105, 70, 161, 0.12);
+  }
+
+  /* Remove the old green menu decorations */
+  .game-layout:has(#upgradesTab.active) .nav-brand,
+  .game-layout:has(#upgradesTab.active) .nav-divider,
+  .game-layout:has(#upgradesTab.active) .nav-section-label,
+  .game-layout:has(#upgradesTab.active) .nav-footer {
+    display: none !important;
+  }
+
+  /* Four navigation buttons */
+  .game-layout:has(#upgradesTab.active) .nav-links {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    width: 100%;
+  }
+
+  .game-layout:has(#upgradesTab.active) .side-nav .nav-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    padding: 8px 5px;
+    background: #f5edff;
+    border: 1px solid #e5d5f5;
+    border-radius: 10px;
+    color: #7046a3;
+    font-size: 12px;
+  }
+
+  .game-layout:has(#upgradesTab.active) .side-nav .nav-icon {
+    color: #8c70c8;
+  }
+
+  .game-layout:has(#upgradesTab.active) .side-nav .nav-btn.active {
+    background: #8c70c8;
+    border-color: #8c70c8;
+    color: white;
+  }
+
+  .game-layout:has(#upgradesTab.active) .side-nav .nav-btn.active .nav-icon {
+    color: white;
+  }
+
+  .game-layout:has(#upgradesTab.active) .nav-arrow {
+    display: none;
+  }
+
+  /* Hide the regular plant details sidebar */
+  .game-layout:has(#upgradesTab.active) .plant-details {
+    display: none;
+  }
+}
+
+/* ==========================================
+   FIX MOBILE UPGRADES CARD OVERLAP
+   ========================================== */
+
+@media (max-width: 650px) {
+  /* Stack everything vertically */
+  #upgradesTab.active .upgrade-world {
+    display: flex !important;
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* Heading first */
+  #upgradesTab .upgrade-heading {
+    order: 1;
+  }
+
+  /* Road and checkpoints second */
+  #upgradesTab .upgrade-map {
+    order: 2;
+    position: relative !important;
+    width: 100%;
+    height: 800px !important;
+    min-height: 800px !important;
+    margin: 55px auto 30px !important;
+    flex-shrink: 0;
+  }
+
+  /* Plant Growth card AFTER the road */
+  #upgradesTab .upgrade-info {
+    order: 3;
+    position: relative !important;
+    inset: auto !important;
+    transform: none !important;
+    translate: none !important;
+    width: min(100%, 420px) !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    margin: 25px auto 30px !important;
+    z-index: 2;
+  }
+
+  /* Keep navigation below the page content */
+  .game-layout:has(#upgradesTab.active) {
+    display: flex !important;
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  .game-layout:has(#upgradesTab.active) .main-panel {
+    order: 1;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  .game-layout:has(#upgradesTab.active) .side-nav {
+    order: 2;
+    position: relative !important;
+    inset: auto !important;
+    transform: none !important;
+    margin: 20px auto !important;
+    width: 100%;
+  }
+
+  #upgradesTab .evolution-message {
+    order: 4;
+  }
+}
+
+/* ==========================================
+   UPGRADES — FIX CARD OVERLAP ON TABLETS
+   ========================================== */
+
+/* ==========================================
+   UPGRADES — RESPONSIVE IPAD / TABLET FIX
+   ========================================== */
+
+@media (min-width: 651px) and (max-width: 1250px) {
+  /* Allow the page to grow and scroll */
+  #app:has(#upgradesTab.active) {
+    height: auto !important;
+    min-height: 100dvh;
+    overflow: visible !important;
+  }
+
+  /* Arrange the game content vertically */
+  .game-layout:has(#upgradesTab.active) {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0;
+    height: auto !important;
+  }
+
+  /* Main Upgrades content comes first */
+  .game-layout:has(#upgradesTab.active) .main-panel {
+    order: 1;
+    flex: none;
+    width: 100%;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  #upgradesTab.active {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* Stack heading, road and card */
+  #upgradesTab.active .upgrade-world {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 24px 18px 35px;
+    overflow: visible !important;
+  }
+
+  #upgradesTab .upgrade-heading {
+    order: 1;
+    padding: 10px 0 15px;
+  }
+
+  /* Keep the road in its own area */
+  #upgradesTab .upgrade-map {
+    order: 2;
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: 480px !important;
+    min-height: 480px !important;
+    margin: 40px 0 25px !important;
+    flex-shrink: 0;
+  }
+
+  #upgradesTab .upgrade-path {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  #upgradesTab .upgrade-stages {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* Card is now BELOW the road, not over it */
+  #upgradesTab .upgrade-info {
+    position: relative !important;
+    order: 3;
+    inset: auto !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    transform: none !important;
+    translate: none !important;
+
+    width: min(100%, 420px) !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+
+    margin: 20px auto 0 !important;
+    z-index: 2;
+  }
+
+  /* Restore readable card sizes */
+  #upgradesTab .upgrade-info-header {
+    padding: 10px;
+    font-size: 11px;
+  }
+
+  #upgradesTab .upgrade-info-content {
+    padding: 12px;
+    gap: 9px;
+  }
+
+  #upgradesTab .upgrade-preview {
+    width: 80px;
+    height: 80px;
+  }
+
+  #upgradesTab .upgrade-info h3 {
+    font-size: 25px;
+  }
+
+  #upgradesTab .upgrade-description {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  #upgradesTab .upgrade-level-row,
+  #upgradesTab .upgrade-stat-row {
+    min-height: 36px;
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  #upgradesTab .upgrade-mission p {
+    font-size: 11px;
+  }
+
+  /* Bottom navigation follows all page content */
+  .game-layout:has(#upgradesTab.active) .side-nav {
+    position: relative !important;
+    order: 2;
+    inset: auto !important;
+    transform: none !important;
+
+    width: min(100%, 700px);
+    height: auto;
+    margin: 20px auto 25px;
+    padding: 10px;
+
+    z-index: 5;
+  }
+
+  .game-layout:has(#upgradesTab.active) .nav-links {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    width: 100%;
+  }
+
+  .game-layout:has(#upgradesTab.active) .side-nav .nav-btn {
+    min-width: 0;
+    padding: 9px 5px;
+    font-size: 12px;
+  }
+
+  /* Prevent long labels from overflowing */
+  .game-layout:has(#upgradesTab.active) .side-nav .nav-btn span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  #upgradesTab .evolution-message {
+    order: 4;
+  }
+}
+
+/* =========================================
+   UPGRADES PAGE — TABLET RESPONSIVE FIX
+   ========================================= */
+
+/* ==========================================
+   UPGRADES — IPAD HORIZONTAL CARD + BOTTOM NAV
+   ========================================== */
+
+@media (min-width: 651px) and (max-width: 1250px) {
+  /* Make the Upgrades content flow vertically */
+  #upgradesTab.active .upgrade-world {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    height: auto !important;
+    min-height: 100dvh !important;
+    overflow: visible !important;
+    padding-bottom: 110px !important;
+  }
+
+  /* Road stays above the card */
+  #upgradesTab .upgrade-map {
+    position: relative !important;
+    order: 2 !important;
+    width: 100% !important;
+    height: 430px !important;
+    min-height: 430px !important;
+    margin: 20px 0 !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Horizontal information card */
+  /* Horizontal information card — below the map */
+  #upgradesTab .upgrade-info {
+    position: relative !important;
+    order: 4 !important;
+    inset: auto !important;
+    transform: none !important;
+    translate: none !important;
+
+    width: min(100%, 680px) !important;
+    max-width: 680px !important;
+    height: auto !important;
+    min-height: 0 !important;
+
+    margin: 80px auto 30px !important;
+    z-index: 1 !important;
+  }
+
+  /* Two-column card layout */
+  #upgradesTab .upgrade-info-content {
+    display: grid !important;
+    grid-template-columns: 110px minmax(0, 1fr) !important;
+    column-gap: 16px !important;
+    row-gap: 8px !important;
+    align-items: center !important;
+    padding: 14px !important;
+  }
+
+  /* Image on the left */
+  #upgradesTab .upgrade-preview {
+    grid-column: 1 !important;
+    grid-row: 1 / span 4 !important;
+    width: 95px !important;
+    height: 95px !important;
+    object-fit: cover !important;
+    justify-self: center !important;
+  }
+
+  /* Plant name and description on the right */
+  #upgradesTab .upgrade-role,
+  #upgradesTab #upgradeName,
+  #upgradesTab .upgrade-description {
+    grid-column: 2 !important;
+    text-align: left !important;
+    margin: 0 !important;
+  }
+
+  /* Stats use the full card width */
+  #upgradesTab .upgrade-level-row,
+  #upgradesTab .upgrade-stat-row,
+  #upgradesTab .upgrade-mission,
+  #upgradesTab .upgrade-battle-button {
+    grid-column: 1 / -1 !important;
+  }
+
+  /* Keep the bottom navigation visible */
+  .game-layout:has(#upgradesTab.active) .side-nav {
+    position: fixed !important;
+    top: auto !important;
+    bottom: max(12px, env(safe-area-inset-bottom)) !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+
+    width: min(90vw, 680px) !important;
+    max-width: 680px !important;
+    height: auto !important;
+    margin: 0 !important;
+
+    z-index: 1000 !important;
+  }
+
+  /* Make sure the page can scroll */
+  body:has(#upgradesTab.active),
+  #app:has(#upgradesTab.active),
+  .game-layout:has(#upgradesTab.active),
+  .game-layout:has(#upgradesTab.active) .main-panel {
+    height: auto !important;
+    overflow-y: visible !important;
+  }
+}
+
+/* ==========================================
+   IPAD — KEEP PLANT CARD BELOW THE ENTIRE MAP
+   ========================================== */
+
+@media (min-width: 651px) and (max-width: 1250px) {
+  #upgradesTab.active .upgrade-world {
+    display: flex !important;
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: 100dvh !important;
+    overflow: visible !important;
+    padding-bottom: 110px !important;
+  }
+
+  /* Keep the complete winding road visible */
+  #upgradesTab .upgrade-map {
+    position: relative !important;
+    order: 2 !important;
+    height: 650px !important;
+    min-height: 650px !important;
+    width: 100% !important;
+    margin: 0 !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Place the card after the map */
+  #upgradesTab .upgrade-info {
+    position: relative !important;
+    order: 4 !important;
+    inset: auto !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+
+    width: min(100%, 680px) !important;
+    max-width: 680px !important;
+    height: auto !important;
+
+    margin: 20px auto 40px !important;
+    z-index: 1 !important;
+  }
+
+  /* Keep the navigation above other content */
+  .game-layout:has(#upgradesTab.active) .side-nav {
+    z-index: 1000 !important;
+  }
+}
+
+@media (min-width: 651px) and (max-width: 1250px) {
+  #upgradesTab.active .upgrade-world {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* Road map comes first */
+  #upgradesTab .upgrade-map {
+    position: relative !important;
+    order: 2 !important;
+    height: 500px !important;
+    min-height: 500px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Plant Growth card goes underneath the road */
+  #upgradesTab .upgrade-info {
+    position: relative !important;
+    order: 4 !important;
+    inset: auto !important;
+    transform: none !important;
+    margin: 20px auto 100px !important;
+    width: min(100%, 680px) !important;
   }
 }
