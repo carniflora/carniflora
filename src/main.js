@@ -356,9 +356,9 @@ addEventListener("keydown", (e) => {
   }
 
   // tab to switch players
-  if (e.code === "Tab") {
+  if (e.code === "Tab" && state.players === 2) {
     e.preventDefault();
-    if (state.players === 2) setActivePlayer(1 - activePlayer);
+    setActivePlayer(1 - activePlayer);
   }
 
   // place a plant tower using the number keys 1-4
@@ -381,13 +381,12 @@ addEventListener("keydown", (e) => {
 // Map
 // =====================================================
 
-const navButtons = document.querySelectorAll(".nav-btn");
+const navButtons = document.querySelectorAll(".nav-btn[data-tab]");
 
 const tabs = {
   plants: $("plantsTab"),
   upgrades: $("upgradesTab"),
   battle: $("battleTab"),
-  map: $("mapTab"),
 };
 
 // =====================================================
@@ -430,6 +429,35 @@ navButtons.forEach((button) => {
     const selectedTab = button.dataset.tab;
     setActiveTab(selectedTab);
   });
+});
+
+// =====================================================
+// Toggle Player Mode
+// =====================================================
+
+const playerToggle = $("playerToggle");
+
+function setPlayers(n) {
+  state.players = n;
+
+  // Going back to 1 player: make sure Player 1 is the active one
+  if (n === 1 && activePlayer !== 0) setActivePlayer(0);
+
+  playerToggle.querySelector("span").textContent =
+    n === 2 ? "2 Players" : "1 Player";
+  playerToggle.setAttribute("aria-pressed", String(n === 2));
+  playerToggle.classList.toggle("active", n === 2); // green highlight for 2P
+
+  showPlantMessage(
+    n === 2
+      ? "2 players: press Tab to switch between Player 1 and Player 2."
+      : "1 player mode.",
+  );
+}
+
+playerToggle.addEventListener("click", () => {
+  setPlayers(state.players === 2 ? 1 : 2);
+  if (activePhase() !== "menu") startLevel(); // restart so towers match the mode
 });
 
 // =================================
@@ -984,6 +1012,7 @@ function loop(timer) {
 
 build();
 state.phase = "menu";
+setPlayers(state.players === 2 ? 2 : 1);
 
 // =====================================================
 // Select Flytrap by default so that
