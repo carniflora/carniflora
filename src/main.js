@@ -24,6 +24,8 @@ import {
   KINDS as BOSS_KINDS,
 } from "./bossLevel.js";
 import { effects } from "./effects.js";
+import { loadProgress, saveProgress } from "./progress.js";
+import { LEVEL_PATHS } from "./path.js";
 
 import { MAP_COLS, MAP_ROWS } from "./levels.js";
 
@@ -279,7 +281,8 @@ $("ob").onclick = () => {
 
   // Next level.
   if (state.phase === "won") {
-    state.level++;
+    state.level = Math.min(state.level + 1, LEVEL_PATHS.length);
+    saveProgress(state.level);
   }
 
   // Retry / next level.
@@ -962,7 +965,11 @@ function loop(timer) {
         "Retry Boss",
       );
     else if (phase === "won")
-      show("Keep breached", "Level " + state.level + " cleared.", "Next level");
+      show(
+        "Keep breached",
+        "Level " + state.level + " cleared.",
+        state.level < LEVEL_PATHS.length ? "Next level" : "Replay level",
+      );
     else if (phase === "lost")
       show(
         "The swarm withered",
@@ -982,6 +989,7 @@ function loop(timer) {
 // INITIALIZE GAME
 // =====================================================
 
+state.level = loadProgress();
 build();
 state.phase = "menu";
 
