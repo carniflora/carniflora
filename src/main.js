@@ -29,42 +29,16 @@ import { LEVEL_PATHS } from "./path.js";
 
 import { MAP_COLS, MAP_ROWS } from "./levels.js";
 import { dom, resizeCanvas } from "./ui/dom.js";
+import {
+  session,
+  activeBattle,
+  activePlants,
+  activePhase,
+  setActivePhase,
+} from "./ui/session.js";
 
 const { $, canvas, ctx: g } = dom();
 resizeCanvas(MAP_COLS * TILE, MAP_ROWS * TILE);
-
-// =====================================================
-//
-// Keeps track of which plant the player selected.
-//
-// 0 = Flytrap
-// 1 = Sundew
-// 2 = Pitcher
-// 3 = Rafflesia
-//
-// null = no plant selected
-// =====================================================
-
-let selectedPlantIndex = null;
-let mode = "td";
-let bossState = null;
-
-function activeBattle() {
-  return mode === "boss" ? bossState : state;
-}
-
-function activePlants() {
-  return mode === "boss" ? BOSS_KINDS : PLANTS;
-}
-
-function activePhase() {
-  return mode === "boss" ? bossState.state : state.phase;
-}
-
-function setActivePhase(phase) {
-  if (mode === "boss") bossState.state = phase;
-  else state.phase = phase;
-}
 
 const plantImages = [
   "./assets/plants/flytrap.png",
@@ -121,14 +95,13 @@ const plantProgression = [
 // =====================================================
 // 2P LOGIC -- ACTIVE PLAYER
 // =====================================================
-let activePlayer = 0; // 0 = player 1, 1 = player 2
-const pickedBy = [null, null]; // each player remembers their own selected plant
 
 function setActivePlayer(p) {
-  pickedBy[activePlayer] = selectedPlantIndex;
-  activePlayer = p;
-  selectedPlantIndex = pickedBy[p];
-  if (selectedPlantIndex !== null) showPlantDetails(selectedPlantIndex);
+  session.pickedBy[session.activePlayer] = session.selectedPlantIndex;
+  session.activePlayer = p;
+  session.selectedPlantIndex = session.pickedBy[p];
+  if (session.selectedPlantIndex !== null)
+    showPlantDetails(session.selectedPlantIndex);
   showPlantMessage(`Player ${p + 1} active.`);
 }
 
@@ -146,7 +119,11 @@ function deploy(i) {
   }
 
   // the plant needs a tower to come out of
-  if (!state.myTowers.some((t) => t.plant === i && t.owner === activePlayer)) {
+  if (
+    !state.myTowers.some(
+      (t) => t.plant === i && t.owner === session.activePlayer,
+    )
+  ) {
     showPlantMessage(
       `Place a ${k.n} tower first then click a tile next to the path.`,
     );
@@ -159,11 +136,11 @@ function deploy(i) {
     return;
   }
 
-  if (mode === "boss") spawnBossPlant(bossState, i);
-  else deploySelected(i, activePlayer);
+  if (session.mode === "boss") spawnBossPlant(session.bossState, i);
+  else deploySelected(i, session.activePlayer);
   showPlantMessage(
-    mode === "boss"
-      ? `${k.n} deployed to lane ${bossState.selectedLane + 1}.`
+    session.mode === "boss"
+      ? `${k.n} deployed to lane ${session.bossState.selectedLane + 1}.`
       : `${k.n} deployed!`,
   );
 }
@@ -184,8 +161,8 @@ function show(t, m, b) {
 // =========================
 function startLevel() {
   // towerType = null;
-  if (mode === "boss") {
-    bossState = createBossLevelState();
+  if (session.mode === "boss") {
+    session.bossState = createBossLevelState();
     canvas.width = 960;
     canvas.height = 540;
   } else {
@@ -195,16 +172,16 @@ function startLevel() {
     canvas.height = MAP_ROWS * TILE;
   }
   lastPhase = null;
-  $("bossControls").hidden = mode !== "boss";
+  $("bossControls").hidden = session.mode !== "boss";
   $("battleTitle").textContent =
-    mode === "boss" ? "Battle / Harvester Breach" : "Battle";
+    session.mode === "boss" ? "Battle / Harvester Breach" : "Battle";
   $("battleHint").textContent =
-    mode === "boss"
+    session.mode === "boss"
       ? "Click a lane or use ↑/↓ to choose it. Keys 1–4 deploy plants. P pauses."
       : "Click a plant (or press 1–4), click a tile beside the path to place its tower, then deploy.";
   $("ov").classList.add("hide");
   showPlantMessage(
-    mode === "boss"
+    session.mode === "boss"
       ? "Choose a lane, then deploy plants to break the chemical tanks."
       : "Choose a plant and deploy it.",
   );
@@ -212,12 +189,14 @@ function startLevel() {
 }
 
 function toggleMode() {
-  mode = mode === "td" ? "boss" : "td";
+  session.mode = session.mode === "td" ? "boss" : "td";
   startLevel();
-  $("bm").textContent = mode === "boss" ? "Normal Battle" : "Boss Battle";
-  $("bm").setAttribute("aria-pressed", String(mode === "boss"));
+  $("bm").textContent =
+    session.mode === "boss" ? "Normal Battle" : "Boss Battle";
+  $("bm").setAttribute("aria-pressed", String(session.mode === "boss"));
   setActiveTab("battle");
-  if (selectedPlantIndex !== null) showPlantDetails(selectedPlantIndex);
+  if (session.selectedPlantIndex !== null)
+    showPlantDetails(session.selectedPlantIndex);
   hud();
   $("bm").focus();
 }
@@ -253,8 +232,8 @@ $("rs").onclick = () => {
 // =====================================================
 
 $("ob").onclick = () => {
-  if (mode === "boss") {
-    if (bossState.state === "pause") pause();
+  if (session.mode === "boss") {
+    if (session.bossState.state === "pause") pause();
     else startLevel();
     return;
   }
@@ -290,13 +269,15 @@ function cellFromEvent(e) {
 }
 
 // hover preview
-let hoverCell = null;
-canvas.addEventListener("mousemove", (e) => (hoverCell = cellFromEvent(e)));
-canvas.addEventListener("mouseleave", () => (hoverCell = null));
+canvas.addEventListener(
+  "mousemove",
+  (e) => (session.hoverCell = cellFromEvent(e)),
+);
+canvas.addEventListener("mouseleave", () => (session.hoverCell = null));
 
 // click to place a tower of the selected plant type
 canvas.addEventListener("click", (e) => {
-  if (mode === "boss") {
+  if (session.mode === "boss") {
     const rect = canvas.getBoundingClientRect();
     const y = (e.clientY - rect.top) * (canvas.height / rect.height);
     if (y >= 120 && y <= 455) {
@@ -310,19 +291,21 @@ canvas.addEventListener("click", (e) => {
     return;
   }
   if (state.phase !== "play") return;
-  if (selectedPlantIndex === null) {
+  if (session.selectedPlantIndex === null) {
     showPlantMessage("Select a plant first.");
     return;
   }
 
   const [c, r] = cellFromEvent(e);
-  const plant = PLANTS[selectedPlantIndex];
+  const plant = PLANTS[session.selectedPlantIndex];
 
-  if (placeTower(c, r, selectedPlantIndex, activePlayer)) {
+  if (placeTower(c, r, session.selectedPlantIndex, session.activePlayer)) {
     showPlantMessage(
       `${plant.n} tower placed. Press deploy to send out plants.`,
     );
-  } else if (state.myTowers.some((t) => t.plant === selectedPlantIndex)) {
+  } else if (
+    state.myTowers.some((t) => t.plant === session.selectedPlantIndex)
+  ) {
     showPlantMessage(`You already have a ${plant.n} tower.`);
   } else if (state.myTowers.length >= maxTowers()) {
     showPlantMessage(`Tower limit reached (${maxTowers()}) on this level`);
@@ -336,12 +319,18 @@ canvas.addEventListener("click", (e) => {
 // =========================
 
 addEventListener("keydown", (e) => {
-  if (mode === "boss" && (e.key === "ArrowUp" || e.key === "ArrowDown")) {
+  if (
+    session.mode === "boss" &&
+    (e.key === "ArrowUp" || e.key === "ArrowDown")
+  ) {
     e.preventDefault();
     setBossLane(
       Math.max(
         0,
-        Math.min(2, bossState.selectedLane + (e.key === "ArrowUp" ? -1 : 1)),
+        Math.min(
+          2,
+          session.bossState.selectedLane + (e.key === "ArrowUp" ? -1 : 1),
+        ),
       ),
     );
     return;
@@ -353,7 +342,7 @@ addEventListener("keydown", (e) => {
   // tab to switch players
   if (e.code === "Tab" && state.players === 2) {
     e.preventDefault();
-    setActivePlayer(1 - activePlayer);
+    setActivePlayer(1 - session.activePlayer);
   }
 
   // place a plant tower using the number keys 1-4
@@ -436,7 +425,7 @@ function setPlayers(n) {
   state.players = n;
 
   // Going back to 1 player: make sure Player 1 is the active one
-  if (n === 1 && activePlayer !== 0) setActivePlayer(0);
+  if (n === 1 && session.activePlayer !== 0) setActivePlayer(0);
 
   playerToggle.querySelector("span").textContent =
     n === 2 ? "2 Players" : "1 Player";
@@ -452,7 +441,7 @@ function setPlayers(n) {
 
 playerToggle.addEventListener("click", () => {
   setPlayers(state.players === 2 ? 1 : 2);
-  if (activePhase() !== "menu") startLevel(); // restart so towers match the mode
+  if (activePhase() !== "menu") startLevel(); // restart so towers match session.mode
 });
 
 // =================================
@@ -473,7 +462,7 @@ function showPlantDetails(index) {
   const plant = activePlants()[index];
 
   // Remember selected plant.
-  selectedPlantIndex = index;
+  session.selectedPlantIndex = index;
 
   // Update plant name.
   $("detailName").textContent = plant.n;
@@ -660,15 +649,16 @@ PLANTS.forEach((plant, index) => {
 
 $("selectPlantBtn").addEventListener("click", () => {
   // No plant selected.
-  if (selectedPlantIndex === null) {
+  if (session.selectedPlantIndex === null) {
     return;
   }
 
-  deploy(selectedPlantIndex);
+  deploy(session.selectedPlantIndex);
 });
 
 function setBossLane(lane) {
-  if (mode !== "boss" || !selectBossLane(bossState, lane)) return;
+  if (session.mode !== "boss" || !selectBossLane(session.bossState, lane))
+    return;
   showPlantMessage(
     `Lane ${lane + 1} selected. Deploy with keys 1–4 or the plant buttons.`,
   );
@@ -801,9 +791,18 @@ function draw() {
   });
 
   // placement preview: green if allowed, red if not
-  if (hoverCell && state.phase === "play" && selectedPlantIndex !== null) {
-    const [c, r] = hoverCell;
-    g.fillStyle = canPlaceTower(c, r, selectedPlantIndex, activePlayer)
+  if (
+    session.hoverCell &&
+    state.phase === "play" &&
+    session.selectedPlantIndex !== null
+  ) {
+    const [c, r] = session.hoverCell;
+    g.fillStyle = canPlaceTower(
+      c,
+      r,
+      session.selectedPlantIndex,
+      session.activePlayer,
+    )
       ? "rgba(143,212,90,.35)"
       : "rgba(224,69,123,.35)";
     g.fillRect(c * TILE, r * TILE, TILE, TILE);
@@ -875,19 +874,19 @@ function hud() {
     lastRenderedEvolutionLevel = state.level;
   }
 
-  const cap = mode === "boss" ? SPORE_CAP : maxSpores();
+  const cap = session.mode === "boss" ? SPORE_CAP : maxSpores();
 
   const v = {
     sp: Math.floor(battle.spores) + " / " + cap,
-    lv: mode === "boss" ? "Boss" : state.level,
-    tw: (mode === "boss"
+    lv: session.mode === "boss" ? "Boss" : state.level,
+    tw: (session.mode === "boss"
       ? [...battle.towers, ...battle.minions, ...battle.tanks, battle.boss]
       : battle.enemies
     ).filter((enemy) => enemy.hp > 0).length,
     tc:
-      mode === "boss"
+      session.mode === "boss"
         ? "—"
-        : towersOf(activePlayer).length + " / " + maxTowers(),
+        : towersOf(session.activePlayer).length + " / " + maxTowers(),
   };
 
   // Update spores, level, and towers.
@@ -902,29 +901,31 @@ function hud() {
   // Disables the Select Plant button.
   // ===================================================
 
-  if (selectedPlantIndex !== null) {
-    const plant = activePlants()[selectedPlantIndex];
+  if (session.selectedPlantIndex !== null) {
+    const plant = activePlants()[session.selectedPlantIndex];
     const hasTower =
-      mode === "boss" ||
-      state.myTowers.some((t) => t.plant === selectedPlantIndex);
+      session.mode === "boss" ||
+      state.myTowers.some((t) => t.plant === session.selectedPlantIndex);
     $("selectPlantBtn").disabled =
       activePhase() !== "play" || !hasTower || battle.spores < plant.cost;
   }
 
   bossDeployButtons.forEach((button, index) => {
     button.disabled =
-      mode !== "boss" ||
+      session.mode !== "boss" ||
       activePhase() !== "play" ||
       battle.spores < BOSS_KINDS[index].cost;
   });
   bossLaneButtons.forEach((button, lane) => {
     button.disabled =
-      mode !== "boss" || !["play", "pause"].includes(activePhase());
+      session.mode !== "boss" || !["play", "pause"].includes(activePhase());
     button.setAttribute(
       "aria-pressed",
-      String(mode === "boss" && lane === bossState.selectedLane),
+      String(
+        session.mode === "boss" && lane === session.bossState.selectedLane,
+      ),
     );
-    if (mode === "boss") {
+    if (session.mode === "boss") {
       const tank = battle.tanks.find((target) => target.lane === lane);
       const target =
         battle.phase === "core"
@@ -941,7 +942,7 @@ function hud() {
       if (button.textContent !== label) button.textContent = label;
     }
   });
-  if (mode === "boss") {
+  if (session.mode === "boss") {
     const tanksLeft = battle.tanks.filter((tank) => tank.hp > 0).length;
     const objective =
       battle.phase === "core"
@@ -966,22 +967,22 @@ function hud() {
 function loop(timer) {
   const deltaTime = Math.min(0.05, (timer - last) / 1000);
   last = timer;
-  if (mode === "boss") updateBossLevel(bossState, deltaTime);
+  if (session.mode === "boss") updateBossLevel(session.bossState, deltaTime);
   else if (activePhase() === "play") update(deltaTime);
 
   // check if game is ended
   const phase = activePhase();
   if (phase !== lastPhase) {
-    if (mode === "boss" && phase === "won")
+    if (session.mode === "boss" && phase === "won")
       show(
         "Harvester breached",
-        `The garden is reclaimed in ${Math.ceil(bossState.elapsed)} seconds. ${bossState.stats.deployed} plants deployed; ${bossState.stats.lost} lost (${bossState.stats.mistLost} to mist).`,
+        `The garden is reclaimed in ${Math.ceil(session.bossState.elapsed)} seconds. ${session.bossState.stats.deployed} plants deployed; ${session.bossState.stats.lost} lost (${session.bossState.stats.mistLost} to mist).`,
         "Retry Boss",
       );
-    else if (mode === "boss" && phase === "lost")
+    else if (session.mode === "boss" && phase === "lost")
       show(
         "The mist caught up",
-        `The battlefield was overrun with ${Math.ceil(bossState.boss.hp)} boss HP remaining. Deploy early and combine plant abilities to push farther.`,
+        `The battlefield was overrun with ${Math.ceil(session.bossState.boss.hp)} boss HP remaining. Deploy early and combine plant abilities to push farther.`,
         "Retry Boss",
       );
     else if (phase === "won")
@@ -998,7 +999,8 @@ function loop(timer) {
       );
     lastPhase = phase;
   }
-  if (mode === "boss") drawBossLevel(g, bossState, canvas.width);
+  if (session.mode === "boss")
+    drawBossLevel(g, session.bossState, canvas.width);
   else draw();
   hud();
 
