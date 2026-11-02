@@ -2,12 +2,15 @@ import { loadLevel, MAP_COLS, MAP_ROWS } from "./levels.js";
 import { LEVEL_PATHS } from "./path.js";
 import { effects } from "./effects.js";
 import { state } from "./state.js";
+import {
+  FINAL_MINION,
+  DIST_BETWEEN_MINIONS,
+  MAX_TOWER_DIST_TO_PATH,
+  PLANT_BLOCK,
+  TILE,
+} from "./constants.js";
 
-const FINAL_MINION = 2; // final minion is this far from the enemy tower
-const DIST_BETWEEN_MINIONS = 0.75; // distance between the minions
-const MAX_TOWER_DIST_TO_PATH = 1.25; // maximum distance tower can be from a path
-const PLANT_BLOCK = 0.5;
-export const TILE = 64;
+export { TILE } from "./constants.js";
 
 // get the current position, wrapper function of getPositionAtDistance in levels.js
 const posOf = (path, d) => {
