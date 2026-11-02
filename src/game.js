@@ -10,6 +10,7 @@ import {
   TILE,
 } from "./constants.js";
 import { PLANTS } from "./plants.js";
+import { maxSpores } from "./economy.js";
 
 export { TILE } from "./constants.js";
 
@@ -24,7 +25,7 @@ const posOf = (path, d) => {
 // ====================
 export { state };
 
-export const maxSpores = () => (state.players === 2 ? 180 : 120); // set the number of spores available for the level (180 for 2 players or 120 for 1)
+export { maxSpores };
 
 // ===============
 // PLANT TYPES
