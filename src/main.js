@@ -28,18 +28,10 @@ import { loadProgress, saveProgress } from "./progress.js";
 import { LEVEL_PATHS } from "./path.js";
 
 import { MAP_COLS, MAP_ROWS } from "./levels.js";
+import { dom, resizeCanvas } from "./ui/dom.js";
 
-const $ = (id) => document.getElementById(id);
-
-// ===========
-// CANVAS
-// ===========
-const canvas = document.getElementById("c"),
-  g = canvas.getContext("2d");
-
-// set canvas size
-canvas.width = MAP_COLS * TILE;
-canvas.height = MAP_ROWS * TILE;
+const { $, canvas, ctx: g } = dom();
+resizeCanvas(MAP_COLS * TILE, MAP_ROWS * TILE);
 
 // =====================================================
 //
