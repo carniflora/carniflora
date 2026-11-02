@@ -11,14 +11,9 @@ import {
 } from "./constants.js";
 import { PLANTS } from "./plants.js";
 import { maxSpores } from "./economy.js";
+import { posOf } from "./geometry.js";
 
 export { TILE } from "./constants.js";
-
-// get the current position, wrapper function of getPositionAtDistance in levels.js
-const posOf = (path, d) => {
-  const [x, y] = path.positionAtDistance(Math.min(d, path.pathLength));
-  return [x * TILE, y * TILE];
-};
 
 // ====================
 // GAME STATE
