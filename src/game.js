@@ -9,6 +9,7 @@ import {
   PLANT_BLOCK,
   TILE,
 } from "./constants.js";
+import { PLANTS } from "./plants.js";
 
 export { TILE } from "./constants.js";
 
@@ -28,56 +29,7 @@ export const maxSpores = () => (state.players === 2 ? 180 : 120); // set the num
 // ===============
 // PLANT TYPES
 // ==============
-export const PLANTS = [
-  {
-    n: "Flytrap",
-    cost: 30,
-    hp: 140,
-    spd: 0.7,
-    rng: 70,
-    dmg: 16,
-    cooldown: 0.8,
-    col: "#8fd45a",
-    radius: 10,
-    desc: "A tough plant that attacks enemies up close with powerful bites. Its high health helps it survive attacks and stay in battle longer.",
-  },
-  {
-    n: "Sundew",
-    cost: 40,
-    hp: 55,
-    spd: 1,
-    rng: 115,
-    dmg: 6,
-    cooldown: 0.7,
-    col: "#e0457b",
-    radius: 7,
-    desc: "A ranged plant that attacks from a distance and slows down enemy towers. It helps other plants survive by giving them more time to move forward.",
-  },
-  {
-    n: "Pitcher",
-    cost: 60,
-    hp: 220,
-    spd: 0.5,
-    rng: 70,
-    dmg: 5,
-    cooldown: 1,
-    col: "#e8b04a",
-    radius: 12,
-    desc: "A strong plant that can take a lot of damage while healing nearby friendly plants. It helps keep the group alive as they move toward the enemy keep.",
-  },
-  {
-    n: "Rafflesia",
-    cost: 90,
-    hp: 90,
-    spd: 0.25,
-    rng: 125,
-    dmg: 34,
-    cooldown: 2.4,
-    col: "#b05cf0",
-    radius: 9,
-    desc: "A powerful plant that releases splash attacks to damage multiple enemies in one area. It is useful when several targets are close together.",
-  },
-];
+export { PLANTS };
 
 // ================
 // BUILD LEVEL
