@@ -1,4 +1,4 @@
-import { state } from "./game.js";
+import { state } from "./state.js";
 
 // ── Event catalog (5 buffs, 5 debuffs) ─────────────────────────────────────
 export const EVENTS = [

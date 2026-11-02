@@ -1,6 +1,7 @@
 import { loadLevel, MAP_COLS, MAP_ROWS } from "./levels.js";
 import { LEVEL_PATHS } from "./path.js";
 import { effects } from "./effects.js";
+import { state } from "./state.js";
 
 const FINAL_MINION = 2; // final minion is this far from the enemy tower
 const DIST_BETWEEN_MINIONS = 0.75; // distance between the minions
@@ -17,18 +18,7 @@ const posOf = (path, d) => {
 // ====================
 // GAME STATE
 // ====================
-export const state = {
-  phase: "menu",
-  level: 1,
-  players: 1,
-  spores: 0,
-  map: null,
-  enemies: [],
-  keep: null,
-  plants: [],
-  myTowers: [],
-  fx: [],
-};
+export { state };
 
 export const maxSpores = () => (state.players === 2 ? 180 : 120); // set the number of spores available for the level (180 for 2 players or 120 for 1)
 
