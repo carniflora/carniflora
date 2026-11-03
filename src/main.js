@@ -42,6 +42,11 @@ import { mountPlantGrid } from "./ui/plantGrid.js";
 import { show } from "./ui/overlay.js";
 import { setActiveTab, mountTabs } from "./ui/tabs.js";
 import { renderEvolutionCards } from "./ui/progression.js";
+import {
+  mountBossControls,
+  bossLaneButtons,
+  bossDeployButtons,
+} from "./ui/bossControls.js";
 
 const { $, canvas, ctx: g } = dom();
 resizeCanvas(MAP_COLS * TILE, MAP_ROWS * TILE);
@@ -362,30 +367,12 @@ function setBossLane(lane) {
   hud();
 }
 
-const bossLaneButtons = LANE_NAMES.map((name, lane) => {
-  const button = document.createElement("button");
-  button.className = "boss-lane-button";
-  button.textContent = `${lane + 1} / ${name}`;
-  button.setAttribute("aria-pressed", "false");
-  button.addEventListener("click", () => setBossLane(lane));
-  $("bossLanes").appendChild(button);
-  return button;
-});
-
-// Keep all four deployment choices within reach while watching the boss fight.
-const bossDeployButtons = BOSS_KINDS.map((plant, index) => {
-  const button = document.createElement("button");
-  button.className = "boss-deploy-button";
-  button.style.setProperty("--plant-color", plant.col);
-  button.title = `${plant.d}. Deploy with ${index + 1}.`;
-  button.setAttribute("aria-label", `Deploy ${plant.n}, ${plant.cost} spores`);
-  button.innerHTML = `<kbd>${index + 1}</kbd><strong>${plant.n}</strong><span>${plant.cost} spores</span>`;
-  button.addEventListener("click", () => {
+mountBossControls({
+  onLane: setBossLane,
+  onDeploy: (index) => {
     showPlantDetails(index);
     deploy(index);
-  });
-  $("bossDeploy").appendChild(button);
-  return button;
+  },
 });
 
 // =====================================================
