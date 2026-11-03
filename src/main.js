@@ -1,29 +1,9 @@
-import {
-  state,
-  build,
-  PLANTS,
-  TILE,
-  placeTower,
-  deploySelected,
-  maxTowers,
-} from "./game.js";
-import {
-  createBossLevelState,
-  spawnBossPlant,
-  selectBossLane,
-  LANE_Y,
-} from "./bossLevel.js";
-import { loadProgress, saveProgress } from "./progress.js";
-import { LEVEL_PATHS } from "./path.js";
+import { state, build, PLANTS, TILE, placeTower, maxTowers } from "./game.js";
+import { LANE_Y } from "./bossLevel.js";
+import { loadProgress } from "./progress.js";
 import { MAP_COLS, MAP_ROWS } from "./levels.js";
 import { dom, resizeCanvas } from "./ui/dom.js";
-import {
-  session,
-  activeBattle,
-  activePlants,
-  activePhase,
-  setActivePhase,
-} from "./ui/session.js";
+import { session, activePhase } from "./ui/session.js";
 import { showPlantMessage } from "./ui/messages.js";
 import { showPlantDetails } from "./ui/details.js";
 import { mountPlantGrid } from "./ui/plantGrid.js";
@@ -31,124 +11,20 @@ import { show } from "./ui/overlay.js";
 import { setActiveTab, mountTabs } from "./ui/tabs.js";
 import { renderEvolutionCards } from "./ui/progression.js";
 import { mountBossControls } from "./ui/bossControls.js";
-import { hud } from "./ui/hud.js";
-import { resetPhase, startLoop } from "./ui/loop.js";
+import { startLoop } from "./ui/loop.js";
+import {
+  setActivePlayer,
+  deploy,
+  startLevel,
+  toggleMode,
+  pause,
+  setPlayers,
+  setBossLane,
+  primaryAction,
+} from "./ui/flow.js";
 
 const { $, canvas } = dom();
 resizeCanvas(MAP_COLS * TILE, MAP_ROWS * TILE);
-
-// =====================================================
-// 2P LOGIC -- ACTIVE PLAYER
-// =====================================================
-
-function setActivePlayer(p) {
-  session.pickedBy[session.activePlayer] = session.selectedPlantIndex;
-  session.activePlayer = p;
-  session.selectedPlantIndex = session.pickedBy[p];
-  if (session.selectedPlantIndex !== null)
-    showPlantDetails(session.selectedPlantIndex);
-  showPlantMessage(`Player ${p + 1} active.`);
-}
-
-// =====================================================
-// SEND / DEPLOY PLANT
-// added messages for the new user interface.
-// =====================================================
-function deploy(i) {
-  const k = activePlants()[i];
-
-  // Player cannot deploy until the game starts.
-  if (activePhase() !== "play") {
-    showPlantMessage("Start the battle before deploying a plant.");
-    return;
-  }
-
-  // the plant needs a tower to come out of
-  if (
-    !state.myTowers.some(
-      (t) => t.plant === i && t.owner === session.activePlayer,
-    )
-  ) {
-    showPlantMessage(
-      `Place a ${k.n} tower first then click a tile next to the path.`,
-    );
-    return;
-  }
-
-  // Tell the player when they do not have enough spores.
-  if (activeBattle().spores < k.cost) {
-    showPlantMessage(`You need ${k.cost} spores to deploy ${k.n}.`);
-    return;
-  }
-
-  if (session.mode === "boss") spawnBossPlant(session.bossState, i);
-  else deploySelected(i, session.activePlayer);
-  showPlantMessage(
-    session.mode === "boss"
-      ? `${k.n} deployed to lane ${session.bossState.selectedLane + 1}.`
-      : `${k.n} deployed!`,
-  );
-}
-
-// =========================
-// START LEVEL
-// =========================
-function startLevel() {
-  // towerType = null;
-  if (session.mode === "boss") {
-    session.bossState = createBossLevelState();
-    canvas.width = 960;
-    canvas.height = 540;
-  } else {
-    build();
-    state.phase = "play";
-    canvas.width = MAP_COLS * TILE;
-    canvas.height = MAP_ROWS * TILE;
-  }
-  resetPhase();
-
-  $("bossControls").hidden = session.mode !== "boss";
-  $("battleTitle").textContent =
-    session.mode === "boss" ? "Battle / Harvester Breach" : "Battle";
-  $("battleHint").textContent =
-    session.mode === "boss"
-      ? "Click a lane or use ↑/↓ to choose it. Keys 1–4 deploy plants. P pauses."
-      : "Click a plant (or press 1–4), click a tile beside the path to place its tower, then deploy.";
-  $("ov").classList.add("hide");
-  showPlantMessage(
-    session.mode === "boss"
-      ? "Choose a lane, then deploy plants to break the chemical tanks."
-      : "Choose a plant and deploy it.",
-  );
-  hud();
-}
-
-function toggleMode() {
-  session.mode = session.mode === "td" ? "boss" : "td";
-  startLevel();
-  $("bm").textContent =
-    session.mode === "boss" ? "Normal Battle" : "Boss Battle";
-  $("bm").setAttribute("aria-pressed", String(session.mode === "boss"));
-  setActiveTab("battle");
-  if (session.selectedPlantIndex !== null)
-    showPlantDetails(session.selectedPlantIndex);
-  hud();
-  $("bm").focus();
-}
-
-// ====================
-// PAUSE
-// ==================
-function pause() {
-  if (activePhase() === "play") {
-    setActivePhase("pause");
-    show("Paused", "Timers are frozen.", "Resume");
-  } else if (activePhase() === "pause") {
-    setActivePhase("play");
-    $("ov").classList.add("hide");
-  }
-  hud();
-}
 
 // ========================
 // BUTTON CONTROLS
@@ -166,34 +42,7 @@ $("rs").onclick = () => {
 // START / RESUME / NEXT LEVEL BUTTON
 // =====================================================
 
-$("ob").onclick = () => {
-  if (session.mode === "boss") {
-    if (session.bossState.state === "pause") pause();
-    else startLevel();
-    return;
-  }
-
-  // Start game.
-  if (state.phase === "menu") {
-    startLevel();
-    return;
-  }
-
-  // Resume game.
-  if (state.phase === "pause") {
-    pause();
-    return;
-  }
-
-  // Next level.
-  if (state.phase === "won") {
-    state.level = Math.min(state.level + 1, LEVEL_PATHS.length);
-    saveProgress(state.level);
-  }
-
-  // Retry / next level.
-  startLevel();
-};
+$("ob").onclick = () => primaryAction();
 
 // convert a mouse event to a grid cell
 function cellFromEvent(e) {
@@ -312,24 +161,6 @@ mountTabs();
 
 const playerToggle = $("playerToggle");
 
-function setPlayers(n) {
-  state.players = n;
-
-  // Going back to 1 player: make sure Player 1 is the active one
-  if (n === 1 && session.activePlayer !== 0) setActivePlayer(0);
-
-  playerToggle.querySelector("span").textContent =
-    n === 2 ? "2 Players" : "1 Player";
-  playerToggle.setAttribute("aria-pressed", String(n === 2));
-  playerToggle.classList.toggle("active", n === 2); // green highlight for 2P
-
-  showPlantMessage(
-    n === 2
-      ? "2 players: press Tab to switch between Player 1 and Player 2."
-      : "1 player mode.",
-  );
-}
-
 playerToggle.addEventListener("click", () => {
   setPlayers(state.players === 2 ? 1 : 2);
   if (activePhase() !== "menu") startLevel(); // restart so towers match session.mode
@@ -344,16 +175,6 @@ mountPlantGrid({ onSelect: showPlantDetails, onDeploy: deploy });
 // =====================================================
 // SELECT / DEPLOY PLANT BUTTON
 // =====================================================
-
-function setBossLane(lane) {
-  if (session.mode !== "boss" || !selectBossLane(session.bossState, lane))
-    return;
-  showPlantMessage(
-    `Lane ${lane + 1} selected. Deploy with keys 1–4 or the plant buttons.`,
-  );
-  hud();
-}
-
 mountBossControls({
   onLane: setBossLane,
   onDeploy: (index) => {
