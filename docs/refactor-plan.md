@@ -475,3 +475,38 @@ Every step is one commit, leaves the app playable, and must pass `V`. UI steps a
 8. **Arc end angle `7` is used instead of `2 * Math.PI`** in TD drawing (`main.js:761`, `768`, `783`, `825`, `831`, `843`, `847`) and boss helpers use `TAU`. Cosmetic magic value.
 9. **`build()` uses `Math.random()` directly** (`game.js:133`), so minion placement is not seedable unlike effects; tests only assert counts/costs, so this is currently unobserved.
 10. **`activePhase()` dereferences `bossState` only under `mode === "boss"`.** Safe today because `startLevel()` creates it, but `session.mode` and `session.bossState` are independent mutable fields; no invariant guard exists.
+
+## 9. Execution notes (as built)
+
+Landed on `refactor/modular-architecture`. Deviations from the plan above, all behaviour-neutral:
+
+- **S21 (loop) ran before S20 (flow).** `startLevel()` writes the private `lastPhase` cache, so the loop
+  module had to exist first and export `resetPhase()`; `startLevel` now calls it in place of that write.
+- **S19 (render) and S21 (loop) share one commit.** Moving the loop out of `main.js` leaves `draw` and
+  `healthBar` unreferenced, so neither step passes `npm run lint` alone; the loop module also imports the
+  renderer, so the renderer has to exist first.
+- **Line counts:** `main.js` 1144 to 3 (entry point only), `game.js` 432 to 37 (facade only).
+- **UI imports domain leaves as well as facades.** The UI reaches simulation through `game.js` and
+  `bossLevel.js`, but also imports `constants.js`, `plants.js`, `kinds.js`, `path.js`, `levels.js`,
+  `state.js`, `effects.js` and `progress.js` directly. These are data, config and state leaves with no DOM
+  access; routing them through the facades would add re-export plumbing with no behavioural benefit.
+- **`localStorage` stays in `progress.js`**, inside `loadProgress`/`saveProgress` bodies only, never at
+  module scope, so every module still imports without a DOM.
+- **No unification** of the TD/boss duplicates: see section 4.
+
+### Verification actually run
+
+- Byte-identity of every moved declaration against `git show HEAD:<file>`, including the four `assets.js`
+  arrays.
+- `npm run lint`, `npm run format:check` and `npm test` (83 tests in 5 files) after every step.
+- Literal audit per step: no string or numeric literal changed beyond intended import paths. This caught
+  one silently rewritten UI message string and one dropped player-toggle listener that lint, tests and a
+  behaviour smoke test all passed over.
+- Headless import of all 17 domain modules and all 14 UI modules; no import cycles; `getContext` appears
+  only in `ui/dom.js`.
+- Dual-build browser diff (branch versus an `origin/main` worktree on a second port) covering boot,
+  images, tabs, plant detail, placement, deploy, HUD, pause/resume overlay, 2P toggle, boss mode and
+  restart: identical on every probe, zero console errors on both.
+- Known gap: `requestAnimationFrame` never fires in the headless browser used, so per-frame animation
+  could not be observed. The loop's chain was driven directly instead (30 frames produced state identical
+  to the base branch).
