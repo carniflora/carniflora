@@ -36,6 +36,8 @@ import {
   activePhase,
   setActivePhase,
 } from "./ui/session.js";
+import { showPlantMessage } from "./ui/messages.js";
+import { show } from "./ui/overlay.js";
 
 const { $, canvas, ctx: g } = dom();
 resizeCanvas(MAP_COLS * TILE, MAP_ROWS * TILE);
@@ -143,17 +145,6 @@ function deploy(i) {
       ? `${k.n} deployed to lane ${session.bossState.selectedLane + 1}.`
       : `${k.n} deployed!`,
   );
-}
-
-// ======================
-// SHOW OVERLAY
-// =====================
-function show(t, m, b) {
-  $("ot").textContent = t;
-  $("om").textContent = m;
-  $("ob").textContent = b;
-  $("ov").classList.remove("hide");
-  $("ob").focus();
 }
 
 // =========================
@@ -443,14 +434,6 @@ playerToggle.addEventListener("click", () => {
   setPlayers(state.players === 2 ? 1 : 2);
   if (activePhase() !== "menu") startLevel(); // restart so towers match session.mode
 });
-
-// =================================
-// PLANT MESSAGE
-// =================================
-
-function showPlantMessage(message) {
-  $("plantMessage").textContent = message;
-}
 
 // =====================================================
 // SHOW SELECTED PLANT INFORMATION
