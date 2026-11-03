@@ -38,14 +38,10 @@ import {
 } from "./ui/session.js";
 import { showPlantMessage } from "./ui/messages.js";
 import { showPlantDetails } from "./ui/details.js";
+import { mountPlantGrid } from "./ui/plantGrid.js";
 import { show } from "./ui/overlay.js";
 import { setActiveTab, mountTabs } from "./ui/tabs.js";
-import {
-  plantImages,
-  plantProgression,
-  plantRoles,
-  plantRoleIcons,
-} from "./ui/assets.js";
+import { plantProgression } from "./ui/assets.js";
 
 const { $, canvas, ctx: g } = dom();
 resizeCanvas(MAP_COLS * TILE, MAP_ROWS * TILE);
@@ -347,110 +343,15 @@ playerToggle.addEventListener("click", () => {
   if (activePhase() !== "menu") startLevel(); // restart so towers match session.mode
 });
 
-const plantGrid = $("plantGrid");
-
 // =================================
 // CREATE PLANT CARDS
 // =================================
 
-PLANTS.forEach((plant, index) => {
-  // Create button.
-  const card = document.createElement("button");
-
-  card.type = "button";
-  card.className = "plant-option";
-
-  // Remember which plant
-  // this button represents.
-  card.dataset.plantIndex = index;
-
-  // ==========================================
-  // Plant card with image and information
-  // ==========================================
-
-  card.innerHTML = `
-  <div class="plant-card-content">
-
-    <div class="plant-card-top">
-      <span class="plant-number">
-        PLANT ${index + 1}
-      </span>
-    </div>
-
-    <div class="plant-card-layout">
-
-      <div class="plant-card-image">
-        <img
-          src="${plantImages[index]}"
-          alt="${plant.n} illustration"
-        />
-      </div>
-
-      <div class="plant-card-info">
-
-        <h3>${plant.n}</h3>
-        <p>${plant.desc}</p>
-
-    
-        <span class="plant-role plant-role-${index}">
-        <i class="${plantRoleIcons[index]}" aria-hidden="true"></i>
-        ${plantRoles[index]}
-        </span>
-      </div>
-    </div>
-
-  <div class="plant-card-footer">
-  <span class="plant-card-cost">
-
-    <i class="icon-leaf spore-icon" aria-hidden="true"></i>
-    ${plant.cost} spores
-
-  </span>
-</div>
-
-  </div>
-`;
-
-  // Load the plant image.
-  const cardImage = card.querySelector(".plant-card-image img");
-
-  cardImage.onload = () => {
-    cardImage.style.display = "block";
-    cardImage.parentElement.style.backgroundColor = "#eee9db";
-  };
-
-  // Show why a plant picture failed to load.
-
-  cardImage.onerror = () => {
-    console.error(`Failed to load ${plant.n} image:`, cardImage.src);
-
-    cardImage.style.display = "none";
-    cardImage.parentElement.style.backgroundColor = plant.col;
-  };
-
-  cardImage.src = plantImages[index];
-
-  card.addEventListener("click", () => {
-    showPlantDetails(index);
-  });
-
-  // Put plant card
-  // inside plantGrid.
-  plantGrid.appendChild(card);
-});
+mountPlantGrid({ onSelect: showPlantDetails, onDeploy: deploy });
 
 // =====================================================
 // SELECT / DEPLOY PLANT BUTTON
 // =====================================================
-
-$("selectPlantBtn").addEventListener("click", () => {
-  // No plant selected.
-  if (session.selectedPlantIndex === null) {
-    return;
-  }
-
-  deploy(session.selectedPlantIndex);
-});
 
 function setBossLane(lane) {
   if (session.mode !== "boss" || !selectBossLane(session.bossState, lane))
