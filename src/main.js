@@ -38,6 +38,7 @@ import {
 } from "./ui/session.js";
 import { showPlantMessage } from "./ui/messages.js";
 import { show } from "./ui/overlay.js";
+import { setActiveTab, mountTabs } from "./ui/tabs.js";
 import {
   plantImages,
   plantProgression,
@@ -310,55 +311,11 @@ addEventListener("keydown", (e) => {
 // Map
 // =====================================================
 
-const navButtons = document.querySelectorAll(".nav-btn[data-tab]");
-
-const tabs = {
-  plants: $("plantsTab"),
-  upgrades: $("upgradesTab"),
-  battle: $("battleTab"),
-};
-
-// =====================================================
-// function that changes tabs.
-// =====================================================
-
-function setActiveTab(tabName) {
-  // Remove active style
-  // from every navigation button.
-  navButtons.forEach((button) => {
-    button.classList.remove("active");
-  });
-
-  // Hide every tab.
-  Object.values(tabs).forEach((tab) => {
-    tab.classList.remove("active");
-  });
-
-  // Find navigation button
-  // belonging to this tab.
-  const selectedButton = document.querySelector(`[data-tab="${tabName}"]`);
-
-  // Highlight selected button.
-  if (selectedButton) {
-    selectedButton.classList.add("active");
-  }
-
-  // Show selected tab.
-  if (tabs[tabName]) {
-    tabs[tabName].classList.add("active");
-  }
-}
-
 // =====================================================
 // Make navigation buttons clickable.
 // =====================================================
 
-navButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    const selectedTab = button.dataset.tab;
-    setActiveTab(selectedTab);
-  });
-});
+mountTabs();
 
 // =====================================================
 // Toggle Player Mode
