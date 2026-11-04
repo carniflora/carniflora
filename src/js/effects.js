@@ -1,6 +1,6 @@
 import { state } from "./game.js";
 
-// Event catalog (5 buffs, 5 debuffs) 
+// Event catalog (5 buffs, 5 debuffs)
 export const EVENTS = [
   {
     id: "empowered",
@@ -156,7 +156,7 @@ export const effects = {
     return event;
   },
 
-  // SINGLE CHOKE-POINT: effective stat multiplier 
+  // SINGLE CHOKE-POINT: effective stat multiplier
   eff(stat, base = 1) {
     let m = base;
     for (const a of this.active) {
@@ -165,7 +165,7 @@ export const effects = {
     return m;
   },
 
-  // for HUD display 
+  // for HUD display
   displayList() {
     return this.active.map((a) => ({
       icon: a.event.icon,
