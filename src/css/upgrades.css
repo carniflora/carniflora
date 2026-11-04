@@ -1,6 +1,3 @@
-/* Upgrades page styles. Extracted in original source order. */
-/* Keep src/style.css linked last until all CSS is migrated. */
-
 .game-layout:has(#upgradesTab.active) .plant-details {
   display: none;
 }
