@@ -1,0 +1,469 @@
+/* Upgrades page styles. Extracted in original source order. */
+/* Keep src/style.css linked last until all CSS is migrated. */
+
+.game-layout:has(#upgradesTab.active) .plant-details {
+  display: none;
+}
+
+.main-panel:has(#upgradesTab.active) {
+  padding: 0;
+  overflow: hidden;
+  background: #f7f3e8;
+}
+
+.evolution-page {
+  min-height: 600px;
+  padding: 26px;
+  background: #f7f3e8;
+  color: #213229;
+}
+
+.evolution-header {
+  text-align: left;
+  margin-bottom: 24px;
+}
+
+.evolution-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #71875c;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 1.8px;
+}
+
+.evolution-header h2 {
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: clamp(2rem, 3vw, 2.8rem);
+  font-weight: 400;
+  color: #203b2a;
+  margin: 6px 0 8px;
+}
+
+.evolution-header p {
+  color: #748075;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.guide-title i {
+  color: #5e7d4b;
+}
+
+.guide-step:nth-child(1) .guide-number {
+  background: #315f3a;
+  border-color: #719f65;
+}
+
+.guide-step:nth-child(2) .guide-number {
+  background: #875360;
+  border-color: #b36a81;
+}
+
+.guide-step:nth-child(3) .guide-number {
+  background: #8a6a38;
+  border-color: #c8a45c;
+}
+
+.guide-step:nth-child(4) .guide-number {
+  background: #90574c;
+  border-color: #b97b6f;
+}
+
+.evolution-message {
+  min-height: 20px;
+  margin-top: 18px;
+  color: #bcd5a6;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.evolution-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.evolution-heading > div:first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.evolution-header {
+  margin-bottom: 28px;
+}
+
+.evolution-header h2 {
+  margin: 8px 0 10px;
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: clamp(2rem, 3vw, 2.7rem);
+  font-weight: 400;
+  letter-spacing: -0.6px;
+  line-height: 1.15;
+  color: #203b2a;
+}
+
+.evolution-header p {
+  max-width: 850px;
+  color: #69786b;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.evolution-progress {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  flex-shrink: 0;
+  padding: 10px 15px;
+  background: #e8eddf;
+  border: 1px solid #d5dfcb;
+  border-radius: 999px;
+  color: #496d43;
+  font-size: 0.77rem;
+  font-weight: 700;
+}
+
+.evolution-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 16px;
+  margin-top: 0;
+}
+
+.evolution-card {
+  --card-accent: #567449;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  background: #f3eee3;
+  border: 1px solid #d9d2c3;
+  border-top: 3px solid var(--card-accent);
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(34, 49, 40, 0.04);
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.evolution-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--card-accent);
+  box-shadow: 0 10px 24px rgba(34, 49, 40, 0.09);
+}
+
+.evolution-card:nth-child(1) {
+  --card-accent: #567449;
+  background: #f3eee3;
+}
+
+.evolution-card:nth-child(2) {
+  --card-accent: #9b6674;
+  background: #f3eee3;
+}
+
+.evolution-card:nth-child(3) {
+  --card-accent: #a18049;
+  background: #f3eee3;
+}
+
+.evolution-card:nth-child(4) {
+  --card-accent: #986359;
+  background: #f3eee3;
+}
+
+.evolution-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 15px;
+}
+
+.evolution-level {
+  color: var(--card-accent);
+  font-size: 0.69rem;
+  font-weight: 800;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+}
+
+.evolution-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: #857e72;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+
+.evolution-card.is-unlocked .evolution-status {
+  background: transparent;
+  border: none;
+  color: #477344;
+}
+
+.evolution-image {
+  height: 165px;
+  overflow: hidden;
+  background: #e7e2d5;
+}
+
+.evolution-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.35s ease;
+}
+
+.evolution-card:hover .evolution-image img {
+  transform: scale(1.035);
+}
+
+.evolution-card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1;
+  gap: 0;
+  padding: 19px 16px 16px;
+  text-align: left;
+}
+
+.evolution-card-body h3 {
+  margin: 0 0 5px;
+  color: #24372d;
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: 1.6rem;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.evolution-role {
+  display: inline-block;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  color: var(--card-accent);
+  font-size: 0.67rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.evolution-description {
+  flex: 1;
+  margin: 14px 0 20px;
+  color: #637064;
+  font-size: 0.79rem;
+  line-height: 1.6;
+}
+
+.evolution-action {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  width: 100%;
+  min-height: 0;
+  margin-top: auto;
+  padding: 13px 0 0;
+  background: transparent;
+  border: none;
+  border-top: 1px solid #d9d2c3;
+  border-radius: 0;
+  color: #72766c;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-align: left;
+  cursor: default;
+}
+
+.evolution-action:disabled {
+  opacity: 1;
+  cursor: default;
+}
+
+.evolution-action:hover:not(:disabled) {
+  background: transparent;
+  color: #477344;
+}
+
+.evolution-card.is-unlocked .evolution-action {
+  color: #477344;
+}
+
+.evolution-guide {
+  margin-top: 24px;
+  padding: 17px 20px;
+  background: #f1ebdc;
+  border: 1px solid #d9d2c3;
+  border-radius: 12px;
+}
+
+.guide-title {
+  margin-bottom: 15px;
+  font-size: 0.8rem;
+  font-weight: 750;
+}
+
+.guide-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.guide-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  color: #58685b;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.guide-number {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  background: #e0e7d8;
+  border: 1px solid #cbd8c1;
+  border-radius: 50%;
+  color: #426b3e;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.guide-step:nth-child(n) .guide-number {
+  background: #e0e7d8;
+  border-color: #cbd8c1;
+  color: #426b3e;
+}
+
+.evolution-message {
+  min-height: 0;
+  margin: 12px 0 0;
+  color: #637064;
+  text-align: left;
+  font-size: 0.8rem;
+}
+
+.guide-step:nth-child(1) .guide-number {
+  background: #567449;
+  border-color: #567449;
+  color: #ffffff;
+}
+
+.guide-step:nth-child(2) .guide-number {
+  background: #9b6674;
+  border-color: #9b6674;
+  color: #ffffff;
+}
+
+.guide-step:nth-child(3) .guide-number {
+  background: #a18049;
+  border-color: #a18049;
+  color: #ffffff;
+}
+
+.guide-step:nth-child(4) .guide-number {
+  background: #986359;
+  border-color: #986359;
+  color: #ffffff;
+}
+
+.evolution-action {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 70px;
+  margin-top: auto;
+  padding: 13px 14px;
+  background: #e2eadb;
+  border: 1px solid #bfd0b5;
+  border-radius: 9px;
+  color: #315e34;
+  text-align: left;
+  cursor: default;
+}
+
+.evolution-action > i {
+  flex-shrink: 0;
+  font-size: 20px;
+  color: inherit;
+}
+
+.evolution-action-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.evolution-action-text strong {
+  font-size: 0.87rem;
+  font-weight: 750;
+  line-height: 1.3;
+}
+
+.evolution-action-text span {
+  font-size: 0.73rem;
+  line-height: 1.4;
+}
+
+.evolution-card:nth-child(1) .evolution-action {
+  background: #e2eadb;
+  border-color: #bfd0b5;
+  color: #315e34;
+}
+
+.evolution-card:nth-child(2) .evolution-action {
+  background: #f0e2e5;
+  border-color: #d6b9c1;
+  color: #85505e;
+}
+
+.evolution-card:nth-child(3) .evolution-action {
+  background: #efe5d2;
+  border-color: #dac6a2;
+  color: #80622f;
+}
+
+.evolution-card:nth-child(4) .evolution-action {
+  background: #eedfda;
+  border-color: #d6b8b0;
+  color: #85544a;
+}
+
+.evolution-heading > div:first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.evolution-heading {
+  gap: 16px;
+}
+
+#upgradesTab.active {
+  min-height: 100%;
+  background: #f7f3e8;
+  border-radius: 16px;
+  color: #213229;
+}

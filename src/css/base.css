@@ -1,0 +1,57 @@
+/* ==========================================
+   GLOBAL VARIABLES
+   ========================================== */
+
+:root {
+  --bg: #ebe6d8;
+  --panel: #f7f3e8;
+  --ink: #213229;
+  --mut: #627165;
+  --acc: #8a6a45;
+  --line: #d6cfbe;
+  --btn: #ece6d8;
+  --panel-2: #f1ebdc;
+  --acc-dark: #6f5435;
+  --green: #5e7d4b;
+  --green-dark: #24372d;
+  --green-darker: #1b2a22;
+  --green-soft: #dfe8d7;
+  --white: #ffffff;
+  --shadow: 0 10px 30px rgba(34, 49, 40, 0.08);
+  --radius: 14px;
+}
+
+/* ==========================================
+   GLOBAL RESET
+   ========================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* ==========================================
+   PAGE STYLING
+   ========================================== */
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: linear-gradient(180deg, #efe9dc 0%, #e7e1d2 100%);
+  color: var(--ink);
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+}
+
+body {
+  line-height: 1.45;
+}
+
+/* ==========================================
+   GLOBAL BUTTON STYLING
+   ========================================== */
+
+button {
+  font-family: inherit;
+}
