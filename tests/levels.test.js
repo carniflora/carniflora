@@ -1,5 +1,5 @@
 import { describe, test, expect } from "vitest";
-import { makeCells } from "../src/levels.js";
+import { makeCells } from "../src/js/levels.js";
 
 // test making a vertical path segment (change of rows pos dir)
 describe("makeCells", () => {

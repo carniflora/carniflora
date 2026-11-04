@@ -7,8 +7,8 @@ import {
   PLANTS,
   sendOut,
   state,
-} from "../src/game.js";
-import { MAP_COLS, MAP_ROWS } from "../src/levels.js";
+} from "../src/js/game.js";
+import { MAP_COLS, MAP_ROWS } from "../src/js/levels.js";
 
 describe("Normal battle deployment", () => {
   beforeEach(() => {

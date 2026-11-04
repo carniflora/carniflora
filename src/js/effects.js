@@ -1,6 +1,6 @@
 import { state } from "./game.js";
 
-// ── Event catalog (5 buffs, 5 debuffs) ─────────────────────────────────────
+// Event catalog (5 buffs, 5 debuffs)
 export const EVENTS = [
   {
     id: "empowered",
@@ -84,7 +84,7 @@ export const EVENTS = [
   },
 ];
 
-// ── Seeded RNG (mulberry32) — deterministic replays + testable ──────────────
+// Seeded RNG (mulberry32) — deterministic replays + testable
 export class RNG {
   constructor(seed = Date.now() | 0) {
     this.s = seed >>> 0;
@@ -108,7 +108,7 @@ export class RNG {
   }
 }
 
-// ── Effects engine (DOM-free, testable with vitest) ────────────────────────
+// Effects engine (DOM-free, testable with vitest)
 export const effects = {
   active: [], // [{ event, remaining, mod }]
   history: [], // traceability log
@@ -156,7 +156,7 @@ export const effects = {
     return event;
   },
 
-  // ── SINGLE CHOKE-POINT: effective stat multiplier ──────────────────────
+  // SINGLE CHOKE-POINT: effective stat multiplier
   eff(stat, base = 1) {
     let m = base;
     for (const a of this.active) {
@@ -165,7 +165,7 @@ export const effects = {
     return m;
   },
 
-  // ── for HUD display ────────────────────────────────────────────────────
+  // for HUD display
   displayList() {
     return this.active.map((a) => ({
       icon: a.event.icon,
