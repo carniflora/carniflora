@@ -75,10 +75,10 @@ function setActivePhase(phase) {
 }
 
 const plantImages = [
-  "../assets/plants/flytrap.png",
-  "../assets/plants/sundew.png",
-  "../assets/plants/pitcher.png",
-  "../assets/plants/rafflesia.png",
+  "./assets/plants/flytrap.png",
+  "./assets/plants/sundew.png",
+  "./assets/plants/pitcher.png",
+  "./assets/plants/rafflesia.png",
 ];
 
 //==========================================
@@ -92,7 +92,7 @@ const plantProgression = [
     role: "Frontline",
     description:
       "A tough plant that attacks enemies up close and can withstand damage.",
-    image: "../assets/plants/flytrap.png",
+    image: "./assets/plants/flytrap.png",
     cost: 0,
   },
 
@@ -102,7 +102,7 @@ const plantProgression = [
     role: "Support",
     description:
       "A specialized plant that helps control enemies during battle.",
-    image: "../assets/plants/sundew.png",
+    image: "./assets/plants/sundew.png",
     cost: 200,
   },
 
@@ -112,7 +112,7 @@ const plantProgression = [
     role: "Defender",
     description:
       "A resilient plant that strengthens your strategy as levels progress.",
-    image: "../assets/plants/pitcher.png",
+    image: "./assets/plants/pitcher.png",
     cost: 300,
   },
   {
@@ -121,7 +121,7 @@ const plantProgression = [
     role: "Boss",
     description:
       "A powerful plant with abilities designed for tougher battles.",
-    image: "../assets/plants/rafflesia.png",
+    image: "./assets/plants/rafflesia.png",
     cost: 400,
   },
 ];
