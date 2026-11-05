@@ -140,75 +140,162 @@
             <div id="plantGrid" class="plant-grid"></div>
           </div>
 
-          <!-- UPGRADES TAB -->
-          <div id="upgradesTab" class="tab-content">
-            <div class="evolution-page">
-              <div class="evolution-header">
-                <div class="evolution-heading">
-                  <div>
-                    <span class="evolution-eyebrow">
-                      <i class="icon-sprout" aria-hidden="true"></i>
-                      PLANT COLLECTION / PROGRESSION
-                    </span>
 
-                    <h2>Unlock New Plants</h2>
+    <!-- UPGRADES TAB -->
+    <div id="upgradesTab" class="tab-content">
+      <div class="upgrade-world">
 
-                    <p>
-                      Discover new plants as you progress through the game. Each
-                      one brings a different ability to your strategy.
-                    </p>
-                  </div>
+        <!-- PAGE HEADING -->
+        <div class="upgrade-heading">
+          <div>
+            <span class="upgrade-eyebrow">Your Plant Journey</span>
 
-                  <div class="evolution-progress">
-                    <i class="icon-leaf" aria-hidden="true"></i>
-                    <span id="unlockedPlantCount">1 of 4 unlocked</span>
-                  </div>
-                </div>
-              </div>
+            <h2>Plant Upgrades</h2>
 
-              <!--FOUR LEVEL CARDS-->
-              <div id="evolutionGrid" class="evolution-grid"></div>
+            <p>
+              Follow the winding path, discover new plants along the way,
+              and get ready to take down the castle.
+            </p>
+          </div>
+        </div>
 
-              <!--PROGRRESSION GUIDE -->
-              <div class="evolution-guide">
-                <div class="guide-title">
-                  <i class="icon-route" aria-hidden="true"></i>
-                  Your Progression
-                </div>
+        <!-- PURPLE PROGRESSION MAP -->
+        <div class="upgrade-map">
 
-                <div class="guide-steps">
-                  <div class="guide-step">
-                    <span class="guide-number">1</span>
-                    <span>Complete the current level</span>
-                  </div>
+          <!-- WINDING ROAD -->
+          <svg
+            class="upgrade-path"
+            viewBox="-160 -100 2020 850"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <!-- Outer purple border -->
+            <path
+              d="M -100 520
+                C 100 520, 160 250, 400 290
+                S 750 470, 930 310
+                S 1150 190, 1300 260
+                S 1500 210, 1700 20"
+              fill="none"
+              stroke="#8d6bc9"
+              stroke-width="86"
+              stroke-linecap="round"
+            />
 
-                  <div class="guide-step">
-                    <span class="guide-number">2</span>
-                    <span>Earn spores from battles</span>
-                  </div>
+            <!-- Light lavender road -->
+            <path
+              d="M -100 520
+                C 100 520, 160 250, 400 290
+                S 750 470, 930 310
+                S 1150 190, 1300 260
+                S 1500 210, 1700 20"
+              fill="none"
+              stroke="#d7c5f7"
+              stroke-width="73"
+              stroke-linecap="round"
+            />
 
-                  <div class="guide-step">
-                    <span class="guide-number">3</span>
-                    <span>Unlock the next plant</span>
-                  </div>
+            <!-- Dashed centre line -->
+            <path
+              d="M -100 520
+                C 100 520, 160 250, 400 290
+                S 750 470, 930 310
+                S 1150 190, 1300 260
+                S 1500 210, 1700 20"
+              fill="none"
+              stroke="#9272d0"
+              stroke-width="3"
+              stroke-dasharray="15 22"
+              stroke-linecap="round"
+            />
+          </svg>
 
-                  <div class="guide-step">
-                    <span class="guide-number">4</span>
-                    <span>Build your plant strategy</span>
-                  </div>
-                </div>
-              </div>
+          <!-- FOUR PLANT CHECKPOINTS -->
+          <div id="evolutionGrid" class="upgrade-stages">
+            <p class="upgrade-map-hint">
+              CHOOSE AN ISLAND TO EXPLORE
+            </p>
+          </div>
 
-              <!--STATUS MESSAGE-->
+          <!-- PLANT COLLECTION -->
+          <div
+            id="upgradePlantSelector"
+            class="upgrade-collection"
+            aria-label="Choose a plant"
+          ></div>
+
+          <!-- PLANT GROWTH PANEL -->
+          <aside class="upgrade-info">
+            <div class="upgrade-info-header">
+              PLANT GROWTH
+            </div>
+
+            <div class="upgrade-info-content">
+
+              <img
+                id="upgradePreview"
+                class="upgrade-preview"
+                alt="Selected plant"
+              />
+
+              <span id="upgradeRole" class="upgrade-role"></span>
+
+              <h3 id="upgradeName"></h3>
 
               <p
-                id="evolutionMessage"
-                class="evolution-message"
-                role="status"
-                aria-live="polite"
+                id="upgradeDescription"
+                class="upgrade-description"
               ></p>
+
+              <div class="upgrade-level-row">
+                <span>PLANT LEVEL</span>
+                <strong id="upgradeStage">01</strong>
+              </div>
+
+              <div class="upgrade-stat-row">
+                <span>Attack Power</span>
+                <strong id="upgradeDamage">--</strong>
+              </div>
+
+              <div class="upgrade-stat-row">
+                <span>Range</span>
+                <strong id="upgradeRange">--</strong>
+              </div>
+
+              <div class="upgrade-stat-row">
+                <span>Attack Speed</span>
+                <strong id="upgradeSpeed">--</strong>
+              </div>
+
+              <div class="upgrade-mission">
+                <span>SPECIAL ABILITY / MISSION</span>
+
+                <strong id="upgradeMission"></strong>
+
+                <p id="upgradeMissionDescription"></p>
+              </div>
+
+              <button
+                id="upgradeGoBattle"
+                class="upgrade-battle-button"
+                type="button"
+              >
+                GO TO BATTLE
+              </button>
             </div>
-          </div>
+          </aside>
+
+          <!-- STATUS MESSAGE -->
+          <p
+            id="evolutionMessage"
+            class="evolution-message"
+            role="status"
+            aria-live="polite"
+          ></p>
+
+        </div>
+      </div>
+    </div>
 
           <!-- BATTLE TAB -->
           <div id="battleTab" class="tab-content">

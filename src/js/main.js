@@ -121,7 +121,7 @@ const plantProgression = [
     role: "Boss",
     description:
       "A powerful plant with abilities designed for tougher battles.",
-    image: "./assets/plants/rafflesia.png",
+    image: "./assets/plants/castle.png",
     cost: 400,
   },
 ];
@@ -1043,102 +1043,152 @@ requestAnimationFrame(loop);
 // RENDER PLANT PROGRESSION CARDS
 //==================================
 
-function renderEvolutionCards() {
-  const evolutionGrid = document.getElementById("evolutionGrid");
-  const unlockedCount = document.getElementById("unlockedPlantCount");
+/* ==========================================
+   UPGRADES PAGE — PLANT PROGRESSION
+   ========================================== */
 
-  if (!evolutionGrid) {
-    return;
+let selectedUpgradeIndex = 0;
+
+// Display a message on the Upgrades page.
+function showEvolutionMessage(message) {
+  const messageElement = document.getElementById("evolutionMessage");
+
+  if (messageElement) {
+    messageElement.textContent = message;
+  }
+}
+
+// Update the pink Plant Growth information panel.
+function showUpgradeDetails(index) {
+  const plant = plantProgression[index];
+  const gamePlant = PLANTS[index];
+
+  if (!plant || !gamePlant) return;
+
+  selectedUpgradeIndex = index;
+
+  const setText = (id, value) => {
+    const element = document.getElementById(id);
+    if (element) element.textContent = value;
+  };
+
+  const preview = document.getElementById("upgradePreview");
+
+  if (preview) {
+    preview.src = plant.image;
+    preview.alt = `${plant.name} illustration`;
   }
 
-  // The current game level determines which plants
-  // appear unlocked in the collection.
-  const currentLevel = state.level;
+  setText("upgradeRole", plant.role);
+  setText("upgradeName", plant.name);
+  setText("upgradeDescription", plant.description);
+  setText("upgradeStage", String(plant.level).padStart(2, "0"));
 
-  const totalUnlocked = plantProgression.filter(
-    (plant) => currentLevel >= plant.level,
-  ).length;
+  // Use the existing gameplay data.
+  setText("upgradeDamage", gamePlant.dmg);
+  setText("upgradeRange", gamePlant.rng);
+  setText("upgradeSpeed", gamePlant.spd);
 
-  // Update the collection counter.
-  if (unlockedCount) {
-    unlockedCount.textContent = `${totalUnlocked} of ${plantProgression.length} unlocked`;
-  }
+  // Use existing plant information rather than inventing an ability.
+  setText("upgradeMission", gamePlant.n);
+  setText(
+    "upgradeMissionDescription",
+    gamePlant.desc ?? gamePlant.d ?? plant.description,
+  );
 
-  // Clear the previous cards before rebuilding them.
-  evolutionGrid.innerHTML = "";
+  // Highlight the selected checkpoint.
+  document.querySelectorAll("#evolutionGrid .upgrade-stage").forEach((stage) => {
+    const selected = Number(stage.dataset.plantIndex) === index;
 
-  plantProgression.forEach((plant) => {
-    const unlocked = currentLevel >= plant.level;
-
-    const card = document.createElement("article");
-    card.className = "evolution-card";
-
-    if (unlocked) {
-      card.classList.add("is-unlocked");
-    }
-
-    if (plant.level === 4) {
-      card.classList.add("is-boss");
-    }
-
-    // Create the card content.
-    card.innerHTML = `
-      <div class="evolution-card-top">
-        <span class="evolution-level">
-          LEVEL ${plant.level}
-        </span>
-
-        <span class="evolution-status">
-          <i
-            class="${unlocked ? "icon-check-circle-2" : "icon-lock-keyhole"}"
-            aria-hidden="true"
-          ></i>
-          ${unlocked ? "UNLOCKED" : "LOCKED"}
-        </span>
-      </div>
-
-      <div class="evolution-image">
-        <img
-          src="${plant.image}"
-          alt="${plant.name}"
-        />
-      </div>
-
-      <div class="evolution-card-body">
-        <h3>${plant.name}</h3>
-
-        <span class="evolution-role">
-          ${plant.role}
-        </span>
-
-        <p class="evolution-description">
-          ${plant.description}
-        </p>
-
-      <div class="evolution-action">
-        <i
-          class="${unlocked ? "icon-check-circle-2" : "icon-lock-keyhole"}"
-          aria-hidden="true"
-        ></i>
-
-        <div class="evolution-action-text">
-          <strong>${unlocked ? "Available" : "Locked"}</strong>
-
-          <span>
-            ${
-              unlocked
-                ? "Ready to use in battle"
-                : `Unlocks at Level ${plant.level}`
-            }
-          </span>
-        </div>
-      </div>
-
-    </div>
-    `;
-
-    evolutionGrid.appendChild(card);
+    stage.classList.toggle("selected", selected);
+    stage.setAttribute("aria-pressed", String(selected));
   });
 }
 
+// Create the four plant checkpoints along the purple road.
+function renderEvolutionCards() {
+  const grid = document.getElementById("evolutionGrid");
+
+  if (!grid) return;
+
+  const currentLevel = Number(state.level) || 1;
+
+  // Clear the old cards and checkpoints.
+  grid.replaceChildren();
+
+  plantProgression.forEach((plant, index) => {
+    const unlocked = currentLevel >= plant.level;
+
+    const checkpoint = document.createElement("button");
+
+    checkpoint.type = "button";
+    checkpoint.className = [
+      "upgrade-stage",
+      `upgrade-stage-${plant.level}`,
+      unlocked ? "unlocked" : "locked",
+    ].join(" ");
+
+    checkpoint.dataset.plantIndex = String(index);
+
+    checkpoint.setAttribute(
+      "aria-label",
+      `${plant.name}, level ${plant.level}, ${unlocked ? "unlocked" : "locked"}`,
+    );
+
+    checkpoint.setAttribute("aria-pressed", "false");
+
+    // Status above the plant.
+    const status = document.createElement("span");
+    status.className = "upgrade-stage-state";
+    status.textContent = unlocked ? "UNLOCKED" : "LOCKED";
+
+    // Plant name.
+    const name = document.createElement("span");
+    name.className = "upgrade-stage-name";
+    name.textContent = plant.level === 4 ? "Boss Castle" : plant.name;
+
+    // Plant illustration.
+    const image = document.createElement("img");
+    image.className = "stage-plant-image";
+    image.src = plant.image;
+    image.alt = "";
+
+    // Level number.
+    const number = document.createElement("span");
+    number.className = "upgrade-stage-number";
+    number.textContent = String(plant.level);
+
+    checkpoint.append(status, name, image, number);
+
+    // Allow the player to inspect each checkpoint.
+    checkpoint.addEventListener("click", () => {
+      showUpgradeDetails(index);
+
+      showEvolutionMessage(
+        unlocked
+          ? `${plant.name} is unlocked.`
+          : `${plant.name} unlocks at Level ${plant.level}.`,
+      );
+    });
+
+    grid.appendChild(checkpoint);
+  });
+
+  // Restore the small instruction below the road.
+  const hint = document.createElement("p");
+  hint.className = "upgrade-map-hint";
+  hint.textContent = "CHOOSE AN ISLAND TO EXPLORE";
+  grid.appendChild(hint);
+
+  // Restore the selected plant after a level change.
+  showUpgradeDetails(selectedUpgradeIndex);
+}
+
+// Navigate from the Upgrades page to Battle.
+document.getElementById("upgradeGoBattle")?.addEventListener("click", () => {
+  setActiveTab("battle");
+});
+
+// Initial render.
 renderEvolutionCards();
+

@@ -1,466 +1,542 @@
-.game-layout:has(#upgradesTab.active) .plant-details {
+html:has(#upgradesTab.active),
+body:has(#upgradesTab.active) {
+  background: #f7f0ff;
+}
+
+#app:has(#upgradesTab.active) {
+  background: #f7f0ff;
+  max-width: none;
+}
+
+#app:has(#upgradesTab.active) > header h1 {
+  color: #7046a3;
+}
+
+#app:has(#upgradesTab.active) > header .stats > span {
+  background: #fffaff;
+  border-color: #e1cdf9;
+  color: #7046a3;
+}
+
+#app:has(#upgradesTab.active) > header .stats b,
+#app:has(#upgradesTab.active) > header .hud-icon {
+  color: #7046a3;
+}
+
+.game-layout:has(#upgradesTab.active) {
+  display: block;
+  position: relative;
+}
+
+.game-layout:has(#upgradesTab.active) > .plant-details {
   display: none;
 }
 
-.main-panel:has(#upgradesTab.active) {
+.game-layout:has(#upgradesTab.active) > .main-panel {
+  min-width: 0;
   padding: 0;
-  overflow: hidden;
-  background: #f7f3e8;
-}
-
-.evolution-page {
-  min-height: 600px;
-  padding: 26px;
-  background: #f7f3e8;
-  color: #213229;
-}
-
-.evolution-header {
-  text-align: left;
-  margin-bottom: 24px;
-}
-
-.evolution-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: #71875c;
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 1.8px;
-}
-
-.evolution-header h2 {
-  font-family: "DM Serif Display", Georgia, serif;
-  font-size: clamp(2rem, 3vw, 2.8rem);
-  font-weight: 400;
-  color: #203b2a;
-  margin: 6px 0 8px;
-}
-
-.evolution-header p {
-  color: #748075;
-  font-size: 0.88rem;
-  line-height: 1.5;
-  margin: 0;
-}
-
-.guide-title i {
-  color: #5e7d4b;
-}
-
-.guide-step:nth-child(1) .guide-number {
-  background: #315f3a;
-  border-color: #719f65;
-}
-
-.guide-step:nth-child(2) .guide-number {
-  background: #875360;
-  border-color: #b36a81;
-}
-
-.guide-step:nth-child(3) .guide-number {
-  background: #8a6a38;
-  border-color: #c8a45c;
-}
-
-.guide-step:nth-child(4) .guide-number {
-  background: #90574c;
-  border-color: #b97b6f;
-}
-
-.evolution-message {
-  min-height: 20px;
-  margin-top: 18px;
-  color: #bcd5a6;
-  text-align: center;
-  font-size: 0.85rem;
-}
-
-.evolution-heading {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 24px;
-}
-
-.evolution-heading > div:first-child {
-  flex: 1;
-  min-width: 0;
-}
-
-.evolution-header {
-  margin-bottom: 28px;
-}
-
-.evolution-header h2 {
-  margin: 8px 0 10px;
-  font-family: "DM Serif Display", Georgia, serif;
-  font-size: clamp(2rem, 3vw, 2.7rem);
-  font-weight: 400;
-  letter-spacing: -0.6px;
-  line-height: 1.15;
-  color: #203b2a;
-}
-
-.evolution-header p {
-  max-width: 850px;
-  color: #69786b;
-  font-size: 0.88rem;
-  line-height: 1.6;
-}
-
-.evolution-progress {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  flex-shrink: 0;
-  padding: 10px 15px;
-  background: #e8eddf;
-  border: 1px solid #d5dfcb;
-  border-radius: 999px;
-  color: #496d43;
-  font-size: 0.77rem;
-  font-weight: 700;
-}
-
-.evolution-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  align-items: stretch;
-  gap: 16px;
-  margin-top: 0;
-}
-
-.evolution-card {
-  --card-accent: #567449;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  overflow: hidden;
-  background: #f3eee3;
-  border: 1px solid #d9d2c3;
-  border-top: 3px solid var(--card-accent);
-  border-radius: 12px;
-  box-shadow: 0 3px 12px rgba(34, 49, 40, 0.04);
-  transition:
-    transform 0.2s ease,
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.evolution-card:hover {
-  transform: translateY(-3px);
-  border-color: var(--card-accent);
-  box-shadow: 0 10px 24px rgba(34, 49, 40, 0.09);
-}
-
-.evolution-card:nth-child(1) {
-  --card-accent: #567449;
-  background: #f3eee3;
-}
-
-.evolution-card:nth-child(2) {
-  --card-accent: #9b6674;
-  background: #f3eee3;
-}
-
-.evolution-card:nth-child(3) {
-  --card-accent: #a18049;
-  background: #f3eee3;
-}
-
-.evolution-card:nth-child(4) {
-  --card-accent: #986359;
-  background: #f3eee3;
-}
-
-.evolution-card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  padding: 13px 15px;
-}
-
-.evolution-level {
-  color: var(--card-accent);
-  font-size: 0.69rem;
-  font-weight: 800;
-  letter-spacing: 1.1px;
-  text-transform: uppercase;
-}
-
-.evolution-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 0;
-  border: none;
-  border-radius: 0;
-  background: transparent;
-  color: #857e72;
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.4px;
-}
-
-.evolution-card.is-unlocked .evolution-status {
-  background: transparent;
-  border: none;
-  color: #477344;
-}
-
-.evolution-image {
-  height: 165px;
-  overflow: hidden;
-  background: #e7e2d5;
-}
-
-.evolution-image img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  transition: transform 0.35s ease;
-}
-
-.evolution-card:hover .evolution-image img {
-  transform: scale(1.035);
-}
-
-.evolution-card-body {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  flex: 1;
-  gap: 0;
-  padding: 19px 16px 16px;
-  text-align: left;
-}
-
-.evolution-card-body h3 {
-  margin: 0 0 5px;
-  color: #24372d;
-  font-family: "DM Serif Display", Georgia, serif;
-  font-size: 1.6rem;
-  font-weight: 400;
-  line-height: 1.2;
-}
-
-.evolution-role {
-  display: inline-block;
-  padding: 0;
-  background: transparent;
-  border-radius: 0;
-  color: var(--card-accent);
-  font-size: 0.67rem;
-  font-weight: 800;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-.evolution-description {
-  flex: 1;
-  margin: 14px 0 20px;
-  color: #637064;
-  font-size: 0.79rem;
-  line-height: 1.6;
-}
-
-.evolution-action {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 8px;
-  width: 100%;
-  min-height: 0;
-  margin-top: auto;
-  padding: 13px 0 0;
-  background: transparent;
-  border: none;
-  border-top: 1px solid #d9d2c3;
-  border-radius: 0;
-  color: #72766c;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-align: left;
-  cursor: default;
-}
-
-.evolution-action:disabled {
-  opacity: 1;
-  cursor: default;
-}
-
-.evolution-action:hover:not(:disabled) {
-  background: transparent;
-  color: #477344;
-}
-
-.evolution-card.is-unlocked .evolution-action {
-  color: #477344;
-}
-
-.evolution-guide {
-  margin-top: 24px;
-  padding: 17px 20px;
-  background: #f1ebdc;
-  border: 1px solid #d9d2c3;
-  border-radius: 12px;
-}
-
-.guide-title {
-  margin-bottom: 15px;
-  font-size: 0.8rem;
-  font-weight: 750;
-}
-
-.guide-steps {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.guide-step {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-  color: #58685b;
-  font-size: 0.75rem;
-  line-height: 1.4;
-}
-
-.guide-number {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 28px;
-  height: 28px;
-  background: #e0e7d8;
-  border: 1px solid #cbd8c1;
-  border-radius: 50%;
-  color: #426b3e;
-  font-size: 0.75rem;
-  font-weight: 800;
-}
-
-.guide-step:nth-child(n) .guide-number {
-  background: #e0e7d8;
-  border-color: #cbd8c1;
-  color: #426b3e;
-}
-
-.evolution-message {
-  min-height: 0;
-  margin: 12px 0 0;
-  color: #637064;
-  text-align: left;
-  font-size: 0.8rem;
-}
-
-.guide-step:nth-child(1) .guide-number {
-  background: #567449;
-  border-color: #567449;
-  color: #ffffff;
-}
-
-.guide-step:nth-child(2) .guide-number {
-  background: #9b6674;
-  border-color: #9b6674;
-  color: #ffffff;
-}
-
-.guide-step:nth-child(3) .guide-number {
-  background: #a18049;
-  border-color: #a18049;
-  color: #ffffff;
-}
-
-.guide-step:nth-child(4) .guide-number {
-  background: #986359;
-  border-color: #986359;
-  color: #ffffff;
-}
-
-.evolution-action {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  min-height: 70px;
-  margin-top: auto;
-  padding: 13px 14px;
-  background: #e2eadb;
-  border: 1px solid #bfd0b5;
-  border-radius: 9px;
-  color: #315e34;
-  text-align: left;
-  cursor: default;
-}
-
-.evolution-action > i {
-  flex-shrink: 0;
-  font-size: 20px;
-  color: inherit;
-}
-
-.evolution-action-text {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.evolution-action-text strong {
-  font-size: 0.87rem;
-  font-weight: 750;
-  line-height: 1.3;
-}
-
-.evolution-action-text span {
-  font-size: 0.73rem;
-  line-height: 1.4;
-}
-
-.evolution-card:nth-child(1) .evolution-action {
-  background: #e2eadb;
-  border-color: #bfd0b5;
-  color: #315e34;
-}
-
-.evolution-card:nth-child(2) .evolution-action {
-  background: #f0e2e5;
-  border-color: #d6b9c1;
-  color: #85505e;
-}
-
-.evolution-card:nth-child(3) .evolution-action {
-  background: #efe5d2;
-  border-color: #dac6a2;
-  color: #80622f;
-}
-
-.evolution-card:nth-child(4) .evolution-action {
-  background: #eedfda;
-  border-color: #d6b8b0;
-  color: #85544a;
-}
-
-.evolution-heading > div:first-child {
-  flex: 1;
-  min-width: 0;
-}
-
-.evolution-heading {
-  gap: 16px;
+  border: 0;
+  box-shadow: none;
+  background: #f7f0ff;
+  overflow: visible;
 }
 
 #upgradesTab.active {
-  min-height: 100%;
-  background: #f7f3e8;
+  display: block;
+  width: 100%;
+  background: #f7f0ff;
+}
+
+#upgradesTab .upgrade-world {
+  --up-purple: #8866c6;
+  --up-text: #7046a3;
+  position: relative;
+  width: 100%;
+  min-height: 700px;
+  padding: 16px 24px 100px;
+  color: var(--up-text);
+  background: #f7f0ff;
+}
+
+/* Heading */
+#upgradesTab .upgrade-heading {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  z-index: 3;
+}
+
+#upgradesTab .upgrade-heading > div {
+  max-width: 750px;
+}
+
+#upgradesTab .upgrade-eyebrow,
+#upgradesTab .upgrades-eyebrow {
+  display: block;
+  color: #9a75ce;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+#upgradesTab .upgrade-heading h2 {
+  margin: 4px 0 6px;
+  color: #7046a3;
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: clamp(30px, 3.2vw, 42px);
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+#upgradesTab .upgrade-heading p {
+  margin: 0;
+  color: #9079a7;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Winding road */
+#upgradesTab .upgrade-map {
+  position: relative;
+  width: 100%;
+  height: 550px;
+  margin: 28px auto 0;
+}
+
+#upgradesTab .upgrade-path {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+#upgradesTab .upgrade-stages {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+#upgradesTab .upgrade-map-hint {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  color: #8866c6;
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+#upgradesTab .upgrade-stage {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 110px;
+  padding: 4px;
+  border: 0;
+  background: transparent;
+  color: #7046a3;
+  cursor: pointer;
+  pointer-events: auto;
+  transform: translate(-50%, -50%);
+  transition: transform 180ms ease;
+}
+
+#upgradesTab .upgrade-stage:hover {
+  transform: translate(-50%, -50%) scale(1.06);
+}
+
+#upgradesTab .upgrade-stage:focus-visible {
+  outline: 3px solid #9263d0;
+  outline-offset: 3px;
+  border-radius: 15px;
+}
+
+#upgradesTab .upgrade-stage-1 { left: 5%; top: 78%; }
+#upgradesTab .upgrade-stage-2 { left: 27%; top: 48%; }
+#upgradesTab .upgrade-stage-3 { left: 64%; top: 34%; }
+#upgradesTab .upgrade-stage-4 { left: 94%; top: 17%; }
+
+#upgradesTab .stage-plant-image {
+  width: 78px;
+  height: 78px;
+  object-fit: cover;
+  border: 4px solid #fff;
+  border-radius: 50%;
+  background: #b4ead8;
+  box-shadow: 0 0 0 3px #b4ead8, 0 6px 16px #4e347533;
+}
+
+#upgradesTab .upgrade-stage-number {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 29px;
+  height: 29px;
+  margin-top: -17px;
+  border: 3px solid #b695e5;
+  border-radius: 50%;
+  background: #fff;
+  color: #7045a5;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+#upgradesTab .upgrade-stage-name {
+  order: -1;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: #8765c4;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+#upgradesTab .upgrade-stage-state {
+  order: -2;
+  padding: 4px 8px;
+  border-radius: 12px;
+  background: #f3b6dc;
+  color: #874c91;
+  font-size: 9px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+#upgradesTab .upgrade-stage.unlocked .upgrade-stage-state {
+  background: #dcf7e9;
+  color: #19845e;
+}
+
+#upgradesTab .upgrade-stage.selected .upgrade-stage-number {
+  border-color: #e9b95b;
+  background: #ffe3a1;
+}
+
+#upgradesTab .upgrade-stage-4 .stage-plant-image {
+  width: 95px;
+  height: 125px;
+  border: 4px solid #f2d79a;
+  border-radius: 48% 48% 12px 12px;
+  outline: 3px solid #a987dc;
+  outline-offset: 2px;
+  background: #fff4df;
+}
+
+#upgradesTab .upgrade-stage-4.selected .stage-plant-image {
+  border-color: #ffd166;
+  outline-color: #e6a832;
+}
+
+#upgradesTab .castle-flowers { display: none; }
+
+/* Plant Growth card */
+#upgradesTab .upgrade-info {
+  position: absolute;
+  top: 180px;
+  right: 0;
+  z-index: 4;
+  width: 270px;
+  padding: 4px 4px 12px;
+  border: 2px solid #dac2f7;
+  border-radius: 18px;
+  background: #fffaff;
+  box-shadow: 0 12px 24px #67449c25;
+}
+
+#upgradesTab .upgrade-info-header {
+  padding: 10px;
+  border-radius: 12px;
+  background: #f5b7d8;
+  color: #8549a1;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+#upgradesTab .upgrade-info-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 8px 0;
+}
+
+#upgradesTab .upgrade-preview {
+  width: 65px;
+  height: 65px;
+  object-fit: cover;
+  border-radius: 50%;
+  background: #efe1f9;
+}
+
+#upgradesTab .upgrade-role {
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: #fce0ed;
+  color: #a365a1;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+#upgradesTab .upgrade-info h3 {
+  margin: 0;
+  color: #7645a4;
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: 23px;
+  font-weight: 400;
+}
+
+#upgradesTab .upgrade-description {
+  margin: 0;
+  color: #957ea7;
+  font-size: 11px;
+  line-height: 1.4;
+  text-align: center;
+}
+
+#upgradesTab .upgrade-level-row,
+#upgradesTab .upgrade-stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 29px;
+  padding: 5px 8px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+#upgradesTab .upgrade-level-row {
+  background: #fae0ed;
+  color: #9a5ba5;
+}
+
+#upgradesTab .upgrade-stat-row {
+  border: 1px solid #dcc7f6;
+  background: #fff;
+  color: #754da8;
+}
+
+#upgradesTab .upgrade-stat-row strong {
+  min-width: 35px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  background: #bdebd7;
+  color: #3b8a6b;
+  text-align: center;
+}
+
+#upgradesTab .upgrade-mission {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  padding: 9px;
+  border-radius: 9px;
+  background: #dfcbfa;
+  color: #7249a4;
+}
+
+#upgradesTab .upgrade-mission span { font-size: 10px; font-weight: 900; }
+#upgradesTab .upgrade-mission strong { font-size: 12px; }
+#upgradesTab .upgrade-mission p { margin: 0; font-size: 10px; line-height: 1.4; }
+
+#upgradesTab .upgrade-battle-button {
+  width: 100%;
+  padding: 9px;
+  border: 1px solid #e4b54d;
+  border-bottom: 3px solid #d4a43b;
+  border-radius: 9px;
+  background: #ffe4a0;
+  color: #815b26;
+  font-size: 11px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+#upgradesTab .upgrade-battle-button:hover { background: #ffda7c; }
+
+#upgradesTab .evolution-message {
+  position: absolute;
+  top: 90px;
+  left: 50%;
+  z-index: 6;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 90%;
+  margin: 0;
+  padding: 9px 14px;
+  border: 1px solid #82cfa8;
+  border-radius: 10px;
+  background: #d9f5e8;
+  color: #236b4b;
+  font-size: 12px;
+  text-align: center;
+}
+
+#upgradesTab .evolution-message:empty { display: none; }
+#upgradesTab .upgrade-collection { display: none; }
+
+/* Bottom navigation while Upgrades is active */
+.game-layout:has(#upgradesTab.active) > .side-nav {
+  position: fixed;
+  z-index: 30;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  width: min(700px, calc(100% - 32px));
+  min-height: 56px;
+  padding: 7px 10px;
+  border: 1px solid #dcc9ef;
   border-radius: 16px;
-  color: #213229;
+  background: #fffaff;
+  box-shadow: 0 5px 18px #6946a11f;
+}
+
+.game-layout:has(#upgradesTab.active) .nav-brand,
+.game-layout:has(#upgradesTab.active) .nav-divider,
+.game-layout:has(#upgradesTab.active) .nav-section-label,
+.game-layout:has(#upgradesTab.active) .nav-footer { display: none; }
+
+.game-layout:has(#upgradesTab.active) .nav-links {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  width: 100%;
+}
+
+.game-layout:has(#upgradesTab.active) .side-nav .nav-btn {
+  justify-content: center;
+  min-width: 0;
+  min-height: 40px;
+  padding: 8px 5px;
+  border: 1px solid #e5d5f5;
+  border-radius: 10px;
+  background: #f5edff;
+  color: #7046a3;
+  font-size: 12px;
+}
+
+.game-layout:has(#upgradesTab.active) .side-nav .nav-btn.active {
+  background: #8c70c8;
+  border-color: #8c70c8;
+  color: #fff;
+}
+
+.game-layout:has(#upgradesTab.active) .side-nav .nav-icon { color: inherit; }
+.game-layout:has(#upgradesTab.active) .nav-arrow { display: none; }
+
+/* Tablet: allow the content to flow and put Plant Growth below the road */
+@media (min-width: 651px) and (max-width: 1250px) {
+  #upgradesTab .upgrade-world {
+    min-height: 0;
+    padding: 22px 18px 110px;
+  }
+
+  #upgradesTab .upgrade-map {
+    display: grid;
+    grid-template-rows: 470px auto;
+    height: auto;
+  }
+  #upgradesTab .upgrade-path,
+  #upgradesTab .upgrade-stages { height: 470px; }
+  #upgradesTab .upgrade-info {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: min(100%, 560px);
+    margin: 40px auto 0;
+  }
+  #upgradesTab .upgrade-stage-1 { left: 8%; top: 78%; }
+  #upgradesTab .upgrade-stage-2 { left: 28%; top: 48%; }
+  #upgradesTab .upgrade-stage-3 { left: 64%; top: 34%; }
+  #upgradesTab .upgrade-stage-4 { left: 91%; top: 17%; }
+}
+
+@media (max-width: 650px) {
+  #upgradesTab .upgrade-world {
+    min-height: 0;
+    padding: 22px 12px 110px;
+  }
+
+  #upgradesTab .upgrade-heading p { font-size: 12px; }
+  #upgradesTab .upgrade-map {
+    display: grid;
+    grid-template-rows: 800px auto;
+    height: auto;
+    margin-top: 55px;
+  }
+  #upgradesTab .upgrade-stages { height: 800px; }
+  #upgradesTab .upgrade-path { display: none; }
+
+  #upgradesTab .upgrade-map::before {
+    content: "";
+    position: absolute;
+    top: 22px;
+    bottom: auto;
+    height: 756px;
+    left: 50%;
+    width: 52px;
+    transform: translateX(-50%);
+    border-left: 4px solid #8c69ca;
+    border-right: 4px solid #8c69ca;
+    border-radius: 30px;
+    background: #dfcafa;
+  }
+
+  #upgradesTab .upgrade-map::after {
+    content: "";
+    position: absolute;
+    top: 22px;
+    bottom: auto;
+    height: 756px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 2px dashed #9774d0;
+  }
+
+  #upgradesTab .upgrade-stage-1 { left: 50%; top: 13%; }
+  #upgradesTab .upgrade-stage-2 { left: 50%; top: 37%; }
+  #upgradesTab .upgrade-stage-3 { left: 50%; top: 61%; }
+  #upgradesTab .upgrade-stage-4 { left: 50%; top: 85%; }
+  #upgradesTab .upgrade-map-hint { display: none; }
+
+  #upgradesTab .upgrade-info {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: min(100%, 420px);
+    margin: 30px auto 0;
+  }
+
+  .game-layout:has(#upgradesTab.active) > .side-nav {
+    bottom: max(8px, env(safe-area-inset-bottom));
+    width: calc(100% - 16px);
+    padding: 6px;
+  }
+
+  .game-layout:has(#upgradesTab.active) .nav-links { gap: 4px; }
+  .game-layout:has(#upgradesTab.active) .side-nav .nav-btn {
+    gap: 4px;
+    min-height: 42px;
+    padding: 6px 2px;
+    font-size: 10px;
+  }
+  .game-layout:has(#upgradesTab.active) .side-nav .nav-btn span {
+    min-width: 0;
+    white-space: normal;
+  }
 }
