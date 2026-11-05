@@ -1,0 +1,455 @@
+/* ==========================================
+
+   1. DESKTOP — 1251px AND ABOVE
+
+   ========================================== */
+
+@media (min-width: 1251px) {
+  .game-layout {
+    grid-template-columns: 220px minmax(0, 1fr) 250px;
+  }
+
+  .game-layout:has(#upgradesTab.active) {
+    grid-template-columns: 220px minmax(0, 1fr);
+  }
+
+  .evolution-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* ==========================================
+
+   2. TABLET + PHONE — SHARED STYLES
+
+   ========================================== */
+
+@media (max-width: 1250px) {
+  .evolution-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .evolution-header p {
+    white-space: normal;
+  }
+
+  #plantsTab .plant-card-layout {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 12px;
+
+    width: 100%;
+  }
+
+  #plantsTab .plant-card-image {
+    width: 100px;
+
+    height: 100px;
+
+    margin: 0 auto;
+
+    flex-shrink: 0;
+  }
+
+  #plantsTab .plant-card-image img {
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+
+    object-position: center;
+
+    border-radius: 50%;
+  }
+
+  #plantsTab .plant-card-info {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: flex-start;
+
+    gap: 10px;
+
+    width: 100%;
+
+    min-width: 0;
+
+    text-align: center;
+  }
+
+  #plantsTab .plant-card-info h3 {
+    width: 100%;
+
+    margin: 0;
+
+    text-align: center;
+  }
+
+  #plantsTab .plant-card-info p {
+    width: 100%;
+
+    max-width: 320px;
+
+    margin: 0 auto;
+
+    text-align: center;
+
+    line-height: 1.6;
+  }
+
+  #plantsTab .plant-role {
+    align-self: center;
+
+    justify-content: center;
+
+    width: fit-content;
+
+    margin: 4px auto 0;
+
+    text-align: center;
+  }
+
+  #plantsTab .plant-card-footer {
+    justify-content: center;
+
+    margin-top: auto;
+  }
+
+  #plantsTab .plant-option {
+    width: 100%;
+
+    height: auto;
+
+    min-height: 0;
+  }
+
+  #plantsTab.active {
+    height: auto;
+  }
+
+  #plantsTab .plant-grid {
+    flex: 0 0 auto;
+
+    grid-template-rows: auto;
+
+    align-content: start;
+  }
+}
+
+/* ==========================================
+
+   3. IPAD / TABLET — 651px TO 1250px
+
+   ========================================== */
+
+@media (min-width: 651px) and (max-width: 1250px) {
+  .game-layout,
+  .game-layout:has(#plantsTab.active),
+  .game-layout:has(#upgradesTab.active) {
+    display: grid;
+
+    grid-template-columns: minmax(0, 1fr);
+
+    gap: 14px;
+
+    align-items: start;
+  }
+
+  /* Top navigation */
+
+  .game-layout .side-nav {
+    grid-column: 1;
+
+    grid-row: 1;
+
+    width: 100%;
+
+    height: auto;
+
+    min-height: 0;
+
+    padding: 16px 20px;
+
+    align-self: start;
+  }
+
+  .side-nav .nav-links {
+    display: grid;
+
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    gap: 10px;
+
+    width: 100%;
+  }
+
+  .side-nav .nav-btn {
+    justify-content: center;
+
+    min-width: 0;
+
+    padding: 12px 8px;
+
+    gap: 8px;
+  }
+
+  .game-layout .main-panel {
+    grid-column: 1;
+
+    grid-row: 2;
+
+    width: 100%;
+
+    min-width: 0;
+  }
+
+  .game-layout .plant-details {
+    grid-column: 1;
+
+    grid-row: 3;
+
+    width: 100%;
+
+    min-width: 0;
+  }
+
+  #plantsTab .plant-grid {
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 16px;
+
+    margin-top: 18px;
+  }
+
+  #plantsTab .plant-option {
+    padding: 14px;
+  }
+}
+
+/* ==========================================
+
+   4. IPHONE / MOBILE — 650px AND BELOW
+
+   ========================================== */
+
+@media (max-width: 650px) {
+  .game-layout {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+  }
+
+  /* Top navigation */
+
+  .side-nav {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 0;
+
+    width: 100%;
+
+    padding: 14px;
+  }
+
+  .side-nav .nav-links {
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 8px;
+  }
+
+  .side-nav .nav-btn {
+    justify-content: center;
+
+    min-height: 44px;
+
+    gap: 8px;
+
+    padding: 12px 8px;
+  }
+
+  .side-nav .nav-btn span {
+    flex: 0 1 auto;
+  }
+
+  .side-nav .nav-icon {
+    width: 19px;
+
+    font-size: 19px;
+  }
+
+  .plant-section-header {
+    align-items: flex-start;
+
+    gap: 12px;
+  }
+
+  .plant-count {
+    padding: 7px 9px;
+
+    font-size: 0.62rem;
+  }
+
+  .game-controls {
+    padding: 16px 12px;
+  }
+
+  .control-buttons {
+    width: 100%;
+  }
+
+  .control-buttons .ctl {
+    flex: 1;
+
+    min-width: 0;
+
+    padding: 12px 10px;
+
+    font-size: 0.8rem;
+  }
+
+  .control-instructions {
+    flex-wrap: wrap;
+  }
+
+  .evolution-page {
+    padding: 22px 14px;
+  }
+
+  .evolution-heading {
+    flex-direction: column;
+
+    gap: 16px;
+  }
+
+  .evolution-header h2 {
+    font-size: 2rem;
+  }
+
+  .evolution-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .evolution-image {
+    height: 190px;
+  }
+
+  .guide-steps {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .evolution-guide {
+    padding: 16px;
+  }
+
+  #app {
+    padding: 7px;
+  }
+
+  #app > header {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 12px;
+  }
+
+  #app > header .stats {
+    display: flex;
+
+    flex-wrap: nowrap;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 5px;
+
+    width: 100%;
+
+    min-width: 0;
+  }
+
+  #app > header .stats > span {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex: 0 1 auto;
+
+    min-width: 0;
+
+    max-width: none;
+
+    gap: 4px;
+
+    padding: 8px 7px;
+
+    font-size: 0.75rem;
+
+    white-space: nowrap;
+  }
+
+  #app > header .stats > span b {
+    font-size: 0.8rem;
+  }
+
+  #plantsTab .plant-grid {
+    display: grid;
+
+    grid-template-columns: minmax(0, 1fr);
+
+    grid-template-rows: auto;
+
+    gap: 14px;
+
+    margin-top: 18px;
+  }
+
+  .boss-deploy {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .stats {
+    #plantsTab .plant-option {
+      width: 100%;
+
+      min-width: 0;
+
+      min-height: 0;
+
+      padding: 14px;
+    }
+
+    #plantsTab .plant-card-image {
+      width: 100px;
+
+      height: 100px;
+    }
+
+    #plantsTab .plant-card-info p {
+      max-width: 320px;
+    }
+  }
+}

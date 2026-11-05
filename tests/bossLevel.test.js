@@ -13,8 +13,8 @@ import {
   getBossOverrunSeconds,
   LANE_Y,
   KINDS,
-} from "../src/bossLevel.js";
-import { KINDS as BASE_KINDS } from "../src/kinds.js";
+} from "../src/js/bossLevel.js";
+import { KINDS as BASE_KINDS } from "../src/js/kinds.js";
 
 function plantAt(x, lane = 0, k = 0, hp = KINDS[k].hp) {
   const s = getDistAtX(x);
