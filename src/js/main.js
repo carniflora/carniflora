@@ -1097,12 +1097,14 @@ function showUpgradeDetails(index) {
   );
 
   // Highlight the selected checkpoint.
-  document.querySelectorAll("#evolutionGrid .upgrade-stage").forEach((stage) => {
-    const selected = Number(stage.dataset.plantIndex) === index;
+  document
+    .querySelectorAll("#evolutionGrid .upgrade-stage")
+    .forEach((stage) => {
+      const selected = Number(stage.dataset.plantIndex) === index;
 
-    stage.classList.toggle("selected", selected);
-    stage.setAttribute("aria-pressed", String(selected));
-  });
+      stage.classList.toggle("selected", selected);
+      stage.setAttribute("aria-pressed", String(selected));
+    });
 }
 
 // Create the four plant checkpoints along the purple road.
@@ -1191,4 +1193,3 @@ document.getElementById("upgradeGoBattle")?.addEventListener("click", () => {
 
 // Initial render.
 renderEvolutionCards();
-
