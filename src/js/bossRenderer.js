@@ -3,13 +3,14 @@ import {
   WORLD_WIDTH,
   BOSS_PATH,
   KILLZONE_OFFSET,
-  KINDS,
   LANE_Y,
   LANE_NAMES,
   TAU,
   atBossPath,
   getDistAtX,
-} from "./bossLanes.js";
+} from "./bossLevel.js";
+
+import { KINDS } from "./kinds.js";
 
 const INK = "#e5efdc";
 const MUTED = "#8da58e";

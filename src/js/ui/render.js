@@ -1,6 +1,9 @@
 import { dom } from "./dom.js";
 import { session } from "./session.js";
-import { state, PLANTS, TILE, canPlaceTower } from "../game.js";
+import { state } from "../game.js";
+import { PLANTS } from "../plants.js";
+import { TILE } from "../constants.js";
+import { canPlaceTower } from "../towers.js";
 import { effects } from "../effects.js";
 
 function healthBar(x, y, width, valueHp, maxHp, colour) {

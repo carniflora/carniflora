@@ -1,4 +1,5 @@
 import { dom } from "./dom.js";
+
 import {
   session,
   activeBattle,
@@ -6,8 +7,12 @@ import {
   activePlants,
   setActivePhase,
 } from "./session.js";
+
 import { resetPhase } from "./loop.js";
-import { state, build, deploySelected } from "../game.js";
+
+import { state } from "../state.js";
+import { build } from "../build.js";
+import { deploySelected } from "../towers.js";
 import {
   createBossLevelState,
   spawnBossPlant,
@@ -15,8 +20,7 @@ import {
 } from "../bossLevel.js";
 import { saveProgress } from "../progress.js";
 import { LEVEL_PATHS } from "../path.js";
-import { MAP_COLS, MAP_ROWS } from "../levels.js";
-import { TILE } from "../constants.js";
+import { MAP_COLS, MAP_ROWS, TILE } from "../constants.js";
 import { show } from "./overlay.js";
 import { showPlantMessage } from "./messages.js";
 import { showPlantDetails } from "./details.js";

@@ -1,7 +1,8 @@
 import { dom } from "./dom.js";
 import { session, activePhase } from "./session.js";
 import { state, update } from "../game.js";
-import { updateBossLevel, drawBossLevel } from "../bossLevel.js";
+import { updateBossLevel } from "../bossLevel.js";
+import { drawBossLevel } from "../bossRenderer.js"
 import { LEVEL_PATHS } from "../path.js";
 import { show } from "./overlay.js";
 import { draw } from "./render.js";

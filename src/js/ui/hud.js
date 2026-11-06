@@ -1,7 +1,8 @@
 import { dom } from "./dom.js";
 import { session, activeBattle, activePhase, activePlants } from "./session.js";
 import { state, towersOf, maxTowers, maxSpores } from "../game.js";
-import { SPORE_CAP, LANE_NAMES, KINDS as BOSS_KINDS } from "../bossLevel.js";
+import { SPORE_CAP, LANE_NAMES } from "../bossLevel.js";
+import { KINDS as BOSS_KINDS } from "../kinds.js";
 import { bossLaneButtons, bossDeployButtons } from "./bossControls.js";
 import { renderEvolutionCards } from "./progression.js";
 

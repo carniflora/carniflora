@@ -1,8 +1,5 @@
 import { LEVEL_PATHS } from "./path.js";
 
-export const MAP_COLS = 14;
-export const MAP_ROWS = 10;
-
 /* make array of cells from the designated corner points in LEVEL_PATHS */
 export function makeCells(pathPoints) {
   const cells = []; // empty cell list
