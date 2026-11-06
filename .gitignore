@@ -149,3 +149,6 @@ vite.config.ts.timestamp-*
 .vscode/*
 .idea
 EPIC-4-PLAN.md
+
+# Local planning docs
+docs/refactor-plan.md
