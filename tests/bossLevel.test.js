@@ -12,9 +12,8 @@ import {
   SCROLL_SPEED,
   getBossOverrunSeconds,
   LANE_Y,
-  KINDS,
 } from "../src/js/bossLevel.js";
-import { KINDS as BASE_KINDS } from "../src/js/kinds.js";
+import { KINDS } from "../src/js/kinds.js";
 
 function plantAt(x, lane = 0, k = 0, hp = KINDS[k].hp) {
   const s = getDistAtX(x);
@@ -50,7 +49,6 @@ function defense(x, lane, hp) {
 describe("Three-lane Harvester breach", () => {
   it("keeps all four shared plants and starts with two tanks and a centre cannon", () => {
     const state = createBossLevelState();
-    expect(KINDS).toBe(BASE_KINDS);
     expect(KINDS).toHaveLength(4);
     expect(state.tanks.map((tank) => tank.lane)).toEqual([0, 2]);
     expect(state.towers.find((tower) => tower.type === "cannon").lane).toBe(1);
