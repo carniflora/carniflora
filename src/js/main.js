@@ -1,5 +1,5 @@
-import { state } from "./state.js"
-import { build } from "./build.js" 
+import { state } from "./state.js";
+import { build } from "./build.js";
 import { MAP_COLS, MAP_ROWS, TILE } from "./constants.js";
 import { loadProgress } from "./progress.js";
 import { dom, resizeCanvas } from "./ui/dom.js";
