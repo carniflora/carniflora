@@ -1,6 +1,6 @@
 /* ==========================================
 
-   1. DESKTOP — 1251px AND ABOVE
+   1. DESKTOP VIEW 
 
    ========================================== */
 
@@ -10,11 +10,198 @@
   }
 
   .game-layout:has(#upgradesTab.active) {
-    grid-template-columns: 220px minmax(0, 1fr);
+    display: block;
+    width: 100%;
+    min-width: 0;
   }
 
-  .evolution-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+  #upgradesTab .upgrade-world {
+    width: 100%;
+    min-width: 0;
+    min-height: 700px;
+    padding: 16px clamp(16px, 2vw, 36px) 110px;
+  }
+
+  #upgradesTab .upgrade-heading {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  #upgradesTab .upgrade-map {
+    --info-width: clamp(240px, 19vw, 290px);
+    --info-gap: clamp(20px, 3vw, 48px);
+
+    position: relative;
+    width: 100%;
+    height: 550px;
+    margin: 70px auto 0;
+  }
+
+  #upgradesTab .upgrade-path,
+  #upgradesTab .upgrade-stages {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: auto;
+
+    width: calc(100% - var(--info-width) - var(--info-gap));
+    height: 100%;
+  }
+
+  #upgradesTab .upgrade-stage-1 {
+    left: 2%;
+    top: 69%;
+  }
+
+  #upgradesTab .upgrade-stage-2 {
+    left: 26%;
+    top: 41%;
+  }
+
+  #upgradesTab .upgrade-stage-3 {
+    left: 64%;
+    top: 31%;
+  }
+
+  #upgradesTab .upgrade-stage-4 {
+    left: 92%;
+    top: 18%;
+  }
+
+  #upgradesTab .upgrade-info {
+    position: absolute;
+    top: 20px;
+    right: 0;
+    left: auto;
+
+    width: var(--info-width);
+    max-width: 100%;
+    margin: 0;
+  }
+
+  #upgradesTab .upgrade-map-hint {
+    left: 50%;
+    max-width: 90%;
+    text-align: center;
+  }
+
+  #upgradesTab .upgrade-description,
+  #upgradesTab .upgrade-mission p {
+    overflow-wrap: anywhere;
+  }
+
+  #upgradesTab .evolution-message {
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+  }
+
+  #upgradesTab .evolution-message {
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+  }
+
+  #upgradesTab .upgrade-map {
+    --info-width: 245px;
+  }
+
+  #upgradesTab .upgrade-info {
+    top: -10px;
+  }
+}
+
+@media (min-width: 1251px) and (max-height: 850px) {
+  #upgradesTab .upgrade-world {
+    min-height: 0;
+    padding-top: 8px;
+    padding-bottom: 80px;
+  }
+
+  #upgradesTab .upgrade-map {
+    margin-top: 24px;
+    height: 480px;
+  }
+
+  #upgradesTab .upgrade-info {
+    top: 0;
+    width: var(--info-width);
+    padding-bottom: 8px;
+  }
+
+  #upgradesTab .upgrade-info-content {
+    gap: 4px;
+    padding: 6px 7px 0;
+  }
+
+  #upgradesTab .upgrade-preview {
+    width: 52px;
+    height: 52px;
+  }
+
+  #upgradesTab .upgrade-info h3 {
+    font-size: 20px;
+  }
+
+  #upgradesTab .upgrade-description {
+    font-size: 11px;
+    line-height: 1.35;
+  }
+
+  #upgradesTab .upgrade-level-row,
+  #upgradesTab .upgrade-stat-row {
+    min-height: 25px;
+    padding: 4px 7px;
+    font-size: 10px;
+  }
+
+  #upgradesTab .upgrade-mission {
+    padding: 7px;
+    gap: 3px;
+  }
+
+  #upgradesTab .upgrade-mission p {
+    font-size: 10px;
+    line-height: 1.3;
+  }
+
+  #upgradesTab .upgrade-battle-button {
+    padding: 7px;
+  }
+
+  #upgradesTab .upgrade-map-hint {
+    bottom: 12px;
+  }
+}
+
+@media (min-width: 1251px) and (max-width: 1600px) {
+  .game-layout:has(#upgradesTab.active) > .side-nav {
+    position: fixed;
+    left: 42%;
+    bottom: 12px;
+    transform: translateX(-50%);
+    width: min(700px, calc(100% - 32px));
+    margin: 0;
+  }
+}
+
+@media (min-width: 1601px) {
+  .game-layout:has(#upgradesTab.active) > .side-nav {
+    position: fixed;
+    left: 50%;
+    bottom: 12px;
+    transform: translateX(-50%);
+    width: min(700px, calc(100% - 32px));
+    margin: 0;
+  }
+  #upgradesTab .evolution-message {
+    top: -35px;
+    left: 50%;
+    transform: translateX(-50%);
   }
 }
 
@@ -391,23 +578,14 @@
 
   #app > header .stats > span {
     display: inline-flex;
-
     align-items: center;
-
     justify-content: center;
-
     flex: 0 1 auto;
-
     min-width: 0;
-
     max-width: none;
-
     gap: 4px;
-
     padding: 8px 7px;
-
     font-size: 0.75rem;
-
     white-space: nowrap;
   }
 
@@ -417,13 +595,9 @@
 
   #plantsTab .plant-grid {
     display: grid;
-
     grid-template-columns: minmax(0, 1fr);
-
     grid-template-rows: auto;
-
     gap: 14px;
-
     margin-top: 18px;
   }
 
@@ -434,17 +608,13 @@
   .stats {
     #plantsTab .plant-option {
       width: 100%;
-
       min-width: 0;
-
       min-height: 0;
-
       padding: 14px;
     }
 
     #plantsTab .plant-card-image {
       width: 100px;
-
       height: 100px;
     }
 

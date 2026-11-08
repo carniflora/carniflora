@@ -1039,10 +1039,6 @@ show(
 
 requestAnimationFrame(loop);
 
-//===================================
-// RENDER PLANT PROGRESSION CARDS
-//==================================
-
 /* ==========================================
    UPGRADES PAGE — PLANT PROGRESSION
    ========================================== */
