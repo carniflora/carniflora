@@ -29,6 +29,10 @@
     margin-bottom: 28px;
   }
 
+  #upgradesTab .upgrade-panel-close,
+  #upgradesTab .upgrade-panel-backdrop {
+    display: none;
+  }
   #upgradesTab .upgrade-map {
     --info-width: clamp(240px, 19vw, 290px);
     --info-gap: clamp(20px, 3vw, 48px);
@@ -222,101 +226,69 @@
 
   #plantsTab .plant-card-layout {
     display: flex;
-
     flex-direction: column;
-
     align-items: center;
-
     justify-content: center;
-
     gap: 12px;
-
     width: 100%;
   }
 
   #plantsTab .plant-card-image {
     width: 100px;
-
     height: 100px;
-
     margin: 0 auto;
-
     flex-shrink: 0;
   }
 
   #plantsTab .plant-card-image img {
     width: 100%;
-
     height: 100%;
-
     object-fit: cover;
-
     object-position: center;
-
     border-radius: 50%;
   }
 
   #plantsTab .plant-card-info {
     display: flex;
-
     flex-direction: column;
-
     align-items: center;
-
     justify-content: flex-start;
-
     gap: 10px;
-
     width: 100%;
-
     min-width: 0;
-
     text-align: center;
   }
 
   #plantsTab .plant-card-info h3 {
     width: 100%;
-
     margin: 0;
-
     text-align: center;
   }
 
   #plantsTab .plant-card-info p {
     width: 100%;
-
     max-width: 320px;
-
     margin: 0 auto;
-
     text-align: center;
-
     line-height: 1.6;
   }
 
   #plantsTab .plant-role {
     align-self: center;
-
     justify-content: center;
-
     width: fit-content;
-
     margin: 4px auto 0;
-
     text-align: center;
   }
 
   #plantsTab .plant-card-footer {
     justify-content: center;
-
     margin-top: auto;
   }
 
   #plantsTab .plant-option {
     width: 100%;
-
     height: auto;
-
     min-height: 0;
   }
 
@@ -326,9 +298,7 @@
 
   #plantsTab .plant-grid {
     flex: 0 0 auto;
-
     grid-template-rows: auto;
-
     align-content: start;
   }
 }
@@ -340,135 +310,485 @@
    ========================================== */
 
 @media (min-width: 651px) and (max-width: 1250px) {
-  .game-layout,
-  .game-layout:has(#plantsTab.active),
-  .game-layout:has(#upgradesTab.active) {
-    display: grid;
-
-    grid-template-columns: minmax(0, 1fr);
-
-    gap: 14px;
-
-    align-items: start;
-  }
-
-  /* Top navigation */
-
-  .game-layout .side-nav {
-    grid-column: 1;
-
-    grid-row: 1;
-
-    width: 100%;
-
-    height: auto;
-
+  /* Make the map the main focus */
+  #upgradesTab .upgrade-world {
     min-height: 0;
-
-    padding: 16px 20px;
-
-    align-self: start;
+    padding: 12px 16px 90px;
   }
 
-  .side-nav .nav-links {
+  /* Hide the instruction text */
+  #upgradesTab .upgrade-map-hint {
+    display: none;
+  }
+
+  /* Sliding panel */
+  #upgradesTab .upgrade-info {
+    position: fixed;
+
+    /* Center the card on the screen */
+    top: 50%;
+    left: 50%;
+    right: auto;
+
+    width: min(420px, calc(100vw - 32px));
+    max-width: 100%;
+    max-height: calc(100dvh - 40px);
+
+    margin: 0;
+    overflow-y: auto;
+
+    z-index: 51;
+
+    /* Hidden above the screen */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transform: translate(-50%, -150vh);
+
+    transition:
+      transform 400ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 250ms ease,
+      visibility 400ms;
+  }
+
+  /* Panel slides in when a checkpoint is clicked */
+  #upgradesTab .upgrade-info.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+
+    /* Stop in the center of the screen */
+    transform: translate(-50%, -50%);
+  }
+
+  /* Close button */
+  #upgradesTab .upgrade-panel-close {
     display: grid;
+    place-items: center;
 
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 2;
+    width: 30px;
+    height: 30px;
+    border: 1px solid #dac2f7;
+    border-radius: 50%;
+    background: #fffaff;
+    color: #7046a3;
+    font-size: 22px;
+    cursor: pointer;
+  }
 
-    gap: 10px;
+  /* Background overlay */
+  #upgradesTab .upgrade-panel-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 50;
 
+    background: rgba(45, 25, 75, 0.28);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transition:
+      opacity 300ms ease,
+      visibility 300ms ease;
+  }
+
+  #upgradesTab .upgrade-panel-backdrop.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  #upgradesTab .upgrade-path:not(.upgrade-path-tablet) {
+    display: none !important;
+  }
+
+  #upgradesTab .upgrade-path.upgrade-path-tablet {
+    display: block;
+    position: absolute;
+    inset: 0;
     width: 100%;
+    height: 100%;
+    z-index: 1;
   }
 
-  .side-nav .nav-btn {
-    justify-content: center;
-
-    min-width: 0;
-
-    padding: 12px 8px;
-
-    gap: 8px;
-  }
-
-  .game-layout .main-panel {
-    grid-column: 1;
-
-    grid-row: 2;
-
+  /* Give the vertical road space */
+  #upgradesTab .upgrade-map {
+    display: block;
+    position: relative;
     width: 100%;
-
-    min-width: 0;
+    height: 675px;
+    min-height: 0;
+    margin: 0 auto;
+    padding: 0;
   }
 
-  .game-layout .plant-details {
-    grid-column: 1;
-
-    grid-row: 3;
-
+  /* Keep checkpoints on top of the road */
+  #upgradesTab .upgrade-stages {
+    position: absolute;
+    inset: 0;
     width: 100%;
-
-    min-width: 0;
+    height: 100%;
+    z-index: 2;
   }
 
-  #plantsTab .plant-grid {
-    display: grid;
-
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-
-    gap: 16px;
-
-    margin-top: 18px;
+  /* Flytrap — bottom left */
+  #upgradesTab .upgrade-stage-1 {
+    left: 67%;
+    top: 85%;
+    z-index: 5;
   }
 
-  #plantsTab .plant-option {
-    padding: 14px;
+  /* Sundew — Level 2 */
+  #upgradesTab .upgrade-stage-2 {
+    left: 59%;
+    top: 62%;
+  }
+
+  /* Pitcher — Level 3 */
+  #upgradesTab .upgrade-stage-3 {
+    left: 32%;
+    top: 44%;
+  }
+
+  /* Boss Castle — Level 4 */
+  #upgradesTab .upgrade-stage-4 {
+    left: 76%;
+    top: 18%;
+    z-index: 5;
+  }
+
+  /* Keep checkpoints usable on touch screens */
+  #upgradesTab .upgrade-stage {
+    width: 90px;
+    min-height: 44px;
+    overflow: visible;
+  }
+
+  /* Hide old instruction */
+  #upgradesTab .upgrade-map-hint {
+    display: none;
+  }
+
+  /* ==========================================
+   LARGER TABLETS — UI SIZE ADJUSTMENTS
+   ========================================== */
+
+  /* Game title */
+  #app > header h1 {
+    font-size: 30px;
+  }
+
+  /* Top HUD indicators */
+  #app > header .stats > span {
+    font-size: 14px;
+    padding: 10px 14px;
+    gap: 7px;
+  }
+
+  #app > header .stats > span b {
+    font-size: 15px;
+  }
+
+  /* Upgrades page heading */
+  #upgradesTab .upgrade-heading h2 {
+    font-size: 38px;
+  }
+
+  #upgradesTab .upgrade-heading p {
+    font-size: 14px;
+  }
+
+  /* Plant checkpoints */
+  #upgradesTab .upgrade-stage img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+  }
+
+  /* Boss Castle */
+  #upgradesTab .upgrade-stage-4 img {
+    width: 115px;
+    height: 145px;
+  }
+
+  /* Checkpoint labels */
+  #upgradesTab .upgrade-stage {
+    font-size: 13px;
+  }
+
+  /* Bottom navigation */
+  .game-layout:has(#upgradesTab.active) > .side-nav {
+    width: min(760px, calc(100% - 40px));
+  }
+
+  .game-layout:has(#upgradesTab.active) .nav-btn {
+    min-height: 52px;
+    font-size: 15px;
+    padding: 12px 18px;
   }
 }
 
 /* ==========================================
-
-   4. IPHONE / MOBILE — 650px AND BELOW
-
+   US 8.9 — ROAD VISIBILITY BY SCREEN SIZE
+   Prevent desktop and tablet roads overlapping
    ========================================== */
 
+/* DESKTOP — 1251px and above */
+@media (min-width: 1251px) {
+  /* Show the original desktop road */
+  #upgradesTab .upgrade-path:not(.upgrade-path-tablet) {
+    display: block;
+  }
+
+  /* Hide the tablet/iPhone road completely */
+  #upgradesTab .upgrade-path.upgrade-path-tablet {
+    display: none;
+  }
+}
+
+/* TABLET AND IPHONE — 1250px and below */
+@media (max-width: 1250px) {
+  /* Hide the desktop road completely */
+  #upgradesTab .upgrade-path:not(.upgrade-path-tablet) {
+    display: none;
+  }
+
+  /* Show the winding tablet road */
+  #upgradesTab .upgrade-path.upgrade-path-tablet {
+    display: block;
+  }
+}
+
+/* ==========================================
+   RESPONSIVE LARGER IPAD SCREENS
+   ========================================== */
+
+@media (min-width: 900px) and (max-width: 1250px) and (min-height: 1100px) {
+  /* Road remains responsive to screen height */
+  #upgradesTab .upgrade-map {
+    height: clamp(720px, calc(100dvh - 315px), 1060px);
+    margin: 0 auto;
+  }
+
+  /* Game title */
+  #app > header h1 {
+    font-size: 34px;
+    line-height: 1.2;
+  }
+
+  /* HUD indicators */
+  #app > header .stats > span {
+    font-size: 17px;
+    padding: 12px 16px;
+    gap: 8px;
+  }
+
+  #app > header .stats > span b {
+    font-size: 18px;
+  }
+
+  /* Upgrades heading */
+  #upgradesTab .upgrade-heading h2 {
+    font-size: 42px;
+  }
+
+  #upgradesTab .upgrade-eyebrow {
+    font-size: 15px;
+  }
+
+  #upgradesTab .upgrade-heading p {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  /* Checkpoint containers */
+  #upgradesTab .upgrade-stage {
+    width: 135px;
+    overflow: visible;
+  }
+
+  /* Plant checkpoint pictures */
+  #upgradesTab .upgrade-stage img {
+    width: 105px;
+    height: 105px;
+    max-width: none;
+    object-fit: cover;
+  }
+
+  /* Boss Castle */
+  #upgradesTab .upgrade-stage-4 img {
+    width: 120px;
+    height: 150px;
+  }
+
+  /* Checkpoint names and status labels */
+  #upgradesTab .upgrade-stage .stage-name,
+  #upgradesTab .upgrade-stage .stage-status {
+    font-size: 14px;
+  }
+
+  /* Bottom navigation */
+  .game-layout:has(#upgradesTab.active) > .side-nav {
+    width: min(780px, calc(100% - 40px));
+  }
+
+  .game-layout:has(#upgradesTab.active) .nav-btn {
+    min-height: 54px;
+    font-size: 16px;
+    padding: 12px 16px;
+  }
+  .game-layout:has(#upgradesTab.active) > .side-nav {
+    width: min(560px, calc(100% - 40px));
+    bottom: 18px;
+    padding: 6px;
+    border-radius: 18px;
+  }
+
+  .game-layout:has(#upgradesTab.active) .nav-links {
+    gap: 8px;
+  }
+
+  .game-layout:has(#upgradesTab.active) .nav-btn {
+    min-height: 52px;
+    font-size: 15px;
+    padding: 12px 14px;
+    border-radius: 12px;
+  }
+
+  .game-layout:has(#upgradesTab.active) .nav-icon {
+    font-size: 16px;
+  }
+
+  /* Game title */
+  #app > header h1 {
+    font-size: 38px;
+  }
+
+  /* HUD indicators */
+  #app > header .stats > span {
+    font-size: 18px;
+    padding: 12px 15px;
+    gap: 8px;
+  }
+
+  #app > header .stats > span b {
+    font-size: 19px;
+  }
+
+  /* Upgrades heading */
+  #upgradesTab .upgrade-heading h2 {
+    font-size: 46px;
+  }
+
+  #upgradesTab .upgrade-heading p {
+    font-size: 17px;
+  }
+
+  /* Larger checkpoint containers */
+  #upgradesTab .upgrade-stage {
+    width: 145px;
+    overflow: visible;
+  }
+
+  /* Larger plant images */
+  #upgradesTab .upgrade-stage img {
+    width: 115px;
+    height: 115px;
+    max-width: none;
+    object-fit: cover;
+  }
+
+  /* Boss Castle */
+  #upgradesTab .upgrade-stage-4 img {
+    width: 130px;
+    height: 160px;
+  }
+
+  /* Larger navigation */
+  .game-layout:has(#upgradesTab.active) > .side-nav {
+    width: min(820px, calc(100% - 40px));
+  }
+
+  .game-layout:has(#upgradesTab.active) .nav-btn {
+    min-height: 58px;
+    font-size: 17px;
+    padding: 14px 16px;
+  }
+}
+
+/* ==========================================
+   LARGE TABLET
+   ========================================== */
+
+@media (min-width: 901px) and (max-width: 1100px) and (min-height: 1200px) {
+  #upgradesTab .upgrade-map {
+    height: 860px;
+  }
+
+  #upgradesTab .upgrade-stage {
+    transform: translate(-50%, -50%);
+  }
+
+  /* 1 — Flytrap */
+  #upgradesTab .upgrade-stage-1 {
+    left: 63%;
+    top: 85%;
+  }
+
+  /* 2 — Sundew */
+  #upgradesTab .upgrade-stage-2 {
+    left: 58%;
+    top: 60%;
+  }
+
+  /* 3 — Pitcher */
+  #upgradesTab .upgrade-stage-3 {
+    left: 33%;
+    top: 43%;
+  }
+
+  /* 4 — Boss Castle */
+  #upgradesTab .upgrade-stage-4 {
+    left: 73%;
+    top: 24%;
+  }
+}
+
+/* ==========================================
+   4. MOBILE — other pages and Upgrades (one block)
+   ========================================== */
 @media (max-width: 650px) {
   .game-layout {
     display: flex;
-
     flex-direction: column;
-
     gap: 12px;
   }
 
   /* Top navigation */
-
   .side-nav {
     display: flex;
-
     flex-direction: column;
-
     gap: 0;
-
     width: 100%;
-
     padding: 14px;
   }
 
   .side-nav .nav-links {
     display: grid;
-
     grid-template-columns: repeat(2, minmax(0, 1fr));
-
     gap: 8px;
   }
 
   .side-nav .nav-btn {
     justify-content: center;
-
     min-height: 44px;
-
     gap: 8px;
-
     padding: 12px 8px;
   }
 
@@ -478,19 +798,16 @@
 
   .side-nav .nav-icon {
     width: 19px;
-
     font-size: 19px;
   }
 
   .plant-section-header {
     align-items: flex-start;
-
     gap: 12px;
   }
 
   .plant-count {
     padding: 7px 9px;
-
     font-size: 0.62rem;
   }
 
@@ -504,11 +821,8 @@
 
   .control-buttons .ctl {
     flex: 1;
-
     min-width: 0;
-
     padding: 12px 10px;
-
     font-size: 0.8rem;
   }
 
@@ -562,17 +876,11 @@
 
   #app > header .stats {
     display: flex;
-
     flex-wrap: nowrap;
-
     justify-content: space-between;
-
     align-items: center;
-
     gap: 5px;
-
     width: 100%;
-
     min-width: 0;
   }
 
@@ -605,21 +913,320 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .stats {
-    #plantsTab .plant-option {
-      width: 100%;
-      min-width: 0;
-      min-height: 0;
-      padding: 14px;
-    }
+  #plantsTab .plant-option {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    padding: 14px;
+  }
 
-    #plantsTab .plant-card-image {
-      width: 100px;
-      height: 100px;
-    }
+  #plantsTab .plant-card-image {
+    width: 100px;
+    height: 100px;
+  }
 
-    #plantsTab .plant-card-info p {
-      max-width: 320px;
-    }
+  #plantsTab .plant-card-info p {
+    max-width: 320px;
+  }
+
+  /* ==========================================
+     UPGRADES — SINGLE VIEWPORT ON MOBILE
+     One winding SVG, four checkpoints, bottom navigation
+     ========================================== */
+
+  #app:has(#upgradesTab.active) {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  #app:has(#upgradesTab.active) > header {
+    flex: 0 0 auto;
+    gap: 5px;
+    padding-bottom: 3px;
+  }
+
+  #app:has(#upgradesTab.active) > header h1 {
+    font-size: clamp(18px, 5vw, 24px);
+  }
+
+  #app:has(#upgradesTab.active) > header .stats > span {
+    padding: 5px 4px;
+    font-size: clamp(9px, 2.3vw, 12px);
+  }
+
+  #app:has(#upgradesTab.active) > header .stats > span b {
+    font-size: inherit;
+  }
+
+  .game-layout:has(#upgradesTab.active) {
+    display: block;
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  .game-layout:has(#upgradesTab.active) .main-panel,
+  #upgradesTab.active {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  #upgradesTab .upgrade-world {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    padding: 5px 5px calc(62px + env(safe-area-inset-bottom));
+    overflow: hidden;
+  }
+
+  #upgradesTab .upgrade-heading {
+    position: relative;
+    flex: 0 0 auto;
+    width: 100%;
+    margin: 0 0 4px;
+    padding: 0;
+    text-align: center;
+    z-index: 3;
+  }
+
+  #upgradesTab .upgrade-heading h2 {
+    font-size: clamp(20px, 5.5vw, 28px);
+    line-height: 1.12;
+  }
+
+  #upgradesTab .upgrade-heading p {
+    max-width: 100%;
+    margin: 3px auto 0;
+    font-size: clamp(9px, 2.4vw, 12px);
+    line-height: 1.3;
+    white-space: normal;
+  }
+
+  /* The map fills only the space left between heading and nav. */
+  #upgradesTab .upgrade-map {
+    position: relative;
+    display: block;
+    flex: 1 1 auto;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: auto;
+    margin: 0 auto;
+    padding: 0;
+    overflow: visible;
+  }
+
+  /* Remove any legacy CSS-drawn vertical road. */
+  #upgradesTab .upgrade-map::before,
+  #upgradesTab .upgrade-map::after {
+    content: none;
+    display: none;
+  }
+
+  /* Hide desktop road; use only the winding tablet SVG. */
+  #upgradesTab .upgrade-path:not(.upgrade-path-tablet) {
+    display: none;
+  }
+
+  #upgradesTab .upgrade-path.upgrade-path-tablet {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  #upgradesTab .upgrade-stages {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    overflow: visible;
+  }
+
+  #upgradesTab .upgrade-stage {
+    position: absolute;
+    width: clamp(54px, 16vw, 76px);
+    min-height: 0;
+    overflow: visible;
+  }
+
+  #upgradesTab .upgrade-stage img {
+    width: clamp(42px, 13vw, 64px);
+    height: clamp(42px, 13vw, 64px);
+    max-width: 100%;
+    object-fit: cover;
+  }
+
+  #upgradesTab .upgrade-stage-4 img {
+    width: clamp(53px, 16vw, 80px);
+    height: clamp(66px, 20vw, 104px);
+  }
+
+  #upgradesTab .upgrade-stage-1 {
+    left: 67%;
+    top: 85%;
+    z-index: 5;
+  }
+
+  #upgradesTab .upgrade-stage-2 {
+    left: 59%;
+    top: 62%;
+  }
+
+  #upgradesTab .upgrade-stage-3 {
+    left: 32%;
+    top: 44%;
+  }
+
+  #upgradesTab .upgrade-stage-4 {
+    left: 76%;
+    top: 18%;
+    z-index: 5;
+  }
+
+  #upgradesTab .upgrade-map-hint {
+    display: none;
+  }
+
+  #upgradesTab .evolution-message {
+    position: absolute;
+    top: 4px;
+    left: 50%;
+    width: max-content;
+    max-width: 68%;
+    padding: 5px 8px;
+    font-size: clamp(9px, 2.3vw, 12px);
+    text-align: center;
+    transform: translateX(-50%);
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  #upgradesTab .upgrade-info {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    right: auto;
+    width: min(400px, calc(100vw - 24px));
+    max-width: 100%;
+    max-height: calc(100dvh - 32px);
+    margin: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    z-index: 101;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translate(-50%, -150vh);
+    transition:
+      transform 400ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 250ms ease,
+      visibility 400ms;
+  }
+
+  #upgradesTab .upgrade-info.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translate(-50%, -50%);
+  }
+
+  #upgradesTab .upgrade-panel-close {
+    display: grid;
+    place-items: center;
+    position: sticky;
+    top: 8px;
+    float: right;
+    width: 32px;
+    height: 32px;
+    border: 1px solid #dac2f7;
+    border-radius: 50%;
+    background: #fffaff;
+    color: #7046a3;
+    font-size: 22px;
+    cursor: pointer;
+    z-index: 2;
+  }
+
+  #upgradesTab .upgrade-panel-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(45, 25, 75, 0.28);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 300ms ease,
+      visibility 300ms ease;
+  }
+
+  #upgradesTab .upgrade-panel-backdrop.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  /* Fixed bottom navigation only on the Upgrades screen. */
+  .game-layout:has(#upgradesTab.active) > .side-nav {
+    position: fixed;
+    top: auto;
+    bottom: max(8px, env(safe-area-inset-bottom));
+    left: 50%;
+    right: auto;
+    display: block;
+    width: min(500px, calc(100vw - 16px));
+    max-width: none;
+    min-height: 0;
+    margin: 0;
+    padding: 5px;
+    transform: translateX(-50%);
+    z-index: 30;
+  }
+
+  .game-layout:has(#upgradesTab.active) .nav-links {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  .game-layout:has(#upgradesTab.active) .nav-btn {
+    justify-content: center;
+    min-width: 0;
+    min-height: 42px;
+    gap: 3px;
+    padding: 7px 3px;
+    font-size: clamp(9px, 2.3vw, 12px);
+  }
+
+  .game-layout:has(#upgradesTab.active) .nav-icon {
+    font-size: clamp(14px, 3.8vw, 18px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #upgradesTab .upgrade-info,
+  #upgradesTab .upgrade-panel-backdrop {
+    transition: none;
   }
 }

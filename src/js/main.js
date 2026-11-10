@@ -1054,7 +1054,6 @@ function showEvolutionMessage(message) {
   }
 }
 
-// Update the pink Plant Growth information panel.
 function showUpgradeDetails(index) {
   const plant = plantProgression[index];
   const gamePlant = PLANTS[index];
@@ -1085,7 +1084,6 @@ function showUpgradeDetails(index) {
   setText("upgradeRange", gamePlant.rng);
   setText("upgradeSpeed", gamePlant.spd);
 
-  // Use existing plant information rather than inventing an ability.
   setText("upgradeMission", gamePlant.n);
   setText(
     "upgradeMissionDescription",
@@ -1162,6 +1160,8 @@ function renderEvolutionCards() {
     checkpoint.addEventListener("click", () => {
       showUpgradeDetails(index);
 
+      openUpgradePanel();
+
       showEvolutionMessage(
         unlocked
           ? `${plant.name} is unlocked.`
@@ -1175,7 +1175,6 @@ function renderEvolutionCards() {
   // Restore the small instruction below the road.
   const hint = document.createElement("p");
   hint.className = "upgrade-map-hint";
-  hint.textContent = "CHOOSE AN ISLAND TO EXPLORE";
   grid.appendChild(hint);
 
   // Restore the selected plant after a level change.
@@ -1189,3 +1188,69 @@ document.getElementById("upgradeGoBattle")?.addEventListener("click", () => {
 
 // Initial render.
 renderEvolutionCards();
+
+/* ==========================================
+   TABLET — SLIDING PLANT GROWTH PANEL
+   ========================================== */
+
+const upgradeTabletQuery = window.matchMedia(
+  "(min-width: 651px) and (max-width: 1250px)",
+);
+
+const upgradePanel = document
+  .getElementById("upgradesTab")
+  .querySelector(".upgrade-info");
+
+const upgradeBackdrop = document.getElementById("upgradePanelBackdrop");
+
+const upgradeCloseButton = document.getElementById("upgradePanelClose");
+
+function syncUpgradePanelAccessibility() {
+  const isHidden =
+    upgradeTabletQuery.matches && !upgradePanel.classList.contains("is-open");
+
+  upgradePanel.inert = isHidden;
+  upgradePanel.setAttribute("aria-hidden", String(isHidden));
+}
+
+function openUpgradePanel() {
+  if (!upgradeTabletQuery.matches) return;
+
+  upgradePanel.classList.add("is-open");
+  upgradeBackdrop.classList.add("is-open");
+
+  syncUpgradePanelAccessibility();
+  upgradeCloseButton.focus();
+}
+
+function closeUpgradePanel() {
+  upgradePanel.classList.remove("is-open");
+  upgradeBackdrop.classList.remove("is-open");
+
+  syncUpgradePanelAccessibility();
+}
+
+/* Close with the X button */
+upgradeCloseButton.addEventListener("click", closeUpgradePanel);
+
+/* Close when clicking outside the panel */
+upgradeBackdrop.addEventListener("click", closeUpgradePanel);
+
+/* Close with Escape */
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && upgradePanel.classList.contains("is-open")) {
+    closeUpgradePanel();
+  }
+});
+
+/* Close if switching pages using navigation */
+navButtons.forEach((button) => {
+  button.addEventListener("click", closeUpgradePanel);
+});
+
+/* Reset correctly when resizing between tablet and desktop */
+upgradeTabletQuery.addEventListener("change", () => {
+  closeUpgradePanel();
+});
+
+syncUpgradePanelAccessibility();
