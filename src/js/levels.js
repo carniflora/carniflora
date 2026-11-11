@@ -1,3 +1,4 @@
+import { TILE } from "./constants.js";
 import { LEVEL_PATHS } from "./path.js";
 
 /* make array of cells from the designated corner points in LEVEL_PATHS */
@@ -32,6 +33,12 @@ export function makeCells(pathPoints) {
   }
   return cells;
 }
+
+/* get the current position, wrapper function of getPositionAtDistance in levels.js */
+export const pxPosOf = (path, d) => {
+  const [x, y] = path.positionAtDistance(Math.min(d, path.pathLength));
+  return [x * TILE, y * TILE];
+};
 
 /* Get [x,y] position at given distance along path, blend position so minion doesn't teleport */
 export function getPositionAtDistance(distanceAlongPath, cells, pathLength) {

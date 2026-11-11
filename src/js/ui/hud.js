@@ -1,10 +1,12 @@
 import { dom } from "./dom.js";
+import { state } from "../state.js";
 import { session, activeBattle, activePhase, activePlants } from "./session.js";
-import { state, towersOf, maxTowers, maxSpores } from "../game.js";
+import { towersOf, maxTowers } from "../towers.js";
+import { maxSpores } from "../economy.js";
 import { SPORE_CAP, LANE_NAMES } from "../bossLevel.js";
-import { KINDS as BOSS_KINDS } from "../kinds.js";
+import { BOSS_KINDS } from "../plants.js";
 import { bossLaneButtons, bossDeployButtons } from "./bossControls.js";
-import { renderEvolutionCards } from "./progression.js";
+import { renderEvolutionCards } from "./flow.js";
 
 // store currently displayed HUD value
 let shown = {};
@@ -104,4 +106,22 @@ export function hud() {
   }
   $("pz").textContent = activePhase() === "pause" ? "Resume (P)" : "Pause (P)";
   $("pz").setAttribute("aria-pressed", String(activePhase() === "pause"));
+}
+
+// formerly from messages.js
+
+export function showPlantMessage(message) {
+  const { $ } = dom();
+  $("plantMessage").textContent = message;
+}
+
+// formerly from overlay.js
+
+export function show(t, m, b) {
+  const { $ } = dom();
+  $("ot").textContent = t;
+  $("om").textContent = m;
+  $("ob").textContent = b;
+  $("ov").classList.remove("hide");
+  $("ob").focus();
 }

@@ -1,6 +1,6 @@
 import { state } from "../state.js";
 import { PLANTS } from "../plants.js";
-import { KINDS as BOSS_KINDS } from "../kinds.js";
+import { BOSS_KINDS } from "../plants.js";
 
 export const session = {
   mode: "td",

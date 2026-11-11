@@ -1,6 +1,6 @@
 import { dom } from "./dom.js";
 import { session } from "./session.js";
-import { state } from "../game.js";
+import { state } from "../state.js";
 import { PLANTS } from "../plants.js";
 import { TILE } from "../constants.js";
 import { canPlaceTower } from "../towers.js";

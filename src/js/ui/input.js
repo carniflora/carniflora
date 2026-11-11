@@ -1,6 +1,9 @@
 import { dom } from "./dom.js";
+import { TILE } from "../constants.js";
+import { state } from "../state.js";
+import { placeTower, maxTowers } from "../towers.js";
+import { PLANTS } from "../plants.js";
 import { session, activePhase } from "./session.js";
-import { state, PLANTS, TILE, placeTower, maxTowers } from "../game.js";
 import { LANE_Y } from "../bossLevel.js";
 import {
   pause,
@@ -12,8 +15,8 @@ import {
   setPlayers,
   deploy,
 } from "./flow.js";
-import { showPlantDetails } from "./details.js";
-import { showPlantMessage } from "./messages.js";
+import { showPlantDetails } from "./tabs.js";
+import { showPlantMessage } from "./hud.js";
 
 export function mountInput() {
   const { $, canvas } = dom();

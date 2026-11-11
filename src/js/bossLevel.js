@@ -1,6 +1,5 @@
 /** Three-lane reverse tower defense simulation. Coordinates are in world pixels. */
-import { KINDS } from "./kinds.js";
-
+import { BOSS_KINDS } from "./plants.js";
 export const WORLD_WIDTH = 2000;
 export const ARENA_X = WORLD_WIDTH - 960;
 export const SCROLL_SPEED = 30;
@@ -181,7 +180,7 @@ export function getBossOverrunSeconds(state) {
 }
 
 export function spawnBossPlant(state, kindIndex, lane = state.selectedLane) {
-  const kind = KINDS[kindIndex];
+  const kind = BOSS_KINDS[kindIndex];
   if (
     state.state !== "play" ||
     !kind ||
@@ -298,7 +297,7 @@ function updatePlants(state, dt) {
         continue;
       }
     }
-    const kind = KINDS[plant.k];
+    const kind = BOSS_KINDS[plant.k];
     const front = state.boss.shielded
       ? [...state.tanks, ...state.towers].find(
           (target) =>
@@ -324,7 +323,7 @@ function updatePlants(state, dt) {
           !healed.has(ally) &&
           Math.hypot(ally.x - plant.x, ally.y - plant.y) < 80
         ) {
-          ally.hp = Math.min(KINDS[ally.k].hp, ally.hp + 5 * dt);
+          ally.hp = Math.min(BOSS_KINDS[ally.k].hp, ally.hp + 5 * dt);
           healed.add(ally);
         }
       }

@@ -1,6 +1,6 @@
 import { dom } from "./dom.js";
 import { LANE_NAMES } from "../bossLevel.js";
-import { KINDS as BOSS_KINDS } from "../kinds.js";
+import { BOSS_KINDS } from "../plants.js";
 
 // The live button arrays. hud() mutates these elements, so it must
 // receive these same arrays, never copies.

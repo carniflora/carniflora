@@ -3,14 +3,17 @@ import { build } from "./build.js";
 import { MAP_COLS, MAP_ROWS, TILE } from "./constants.js";
 import { loadProgress } from "./progress.js";
 import { dom, resizeCanvas } from "./ui/dom.js";
-import { showPlantDetails } from "./ui/details.js";
 import { mountPlantGrid } from "./ui/plantGrid.js";
-import { show } from "./ui/overlay.js";
-import { setActiveTab, mountTabs } from "./ui/tabs.js";
-import { renderEvolutionCards } from "./ui/progression.js";
+import { show } from "./ui/hud.js";
+import { setActiveTab, mountTabs, showPlantDetails } from "./ui/tabs.js";
 import { mountBossControls } from "./ui/bossControls.js";
 import { startLoop } from "./ui/loop.js";
-import { setPlayers, deploy, setBossLane } from "./ui/flow.js";
+import {
+  setPlayers,
+  deploy,
+  setBossLane,
+  renderEvolutionCards,
+} from "./ui/flow.js";
 import { mountInput } from "./ui/input.js";
 
 // Composition root
