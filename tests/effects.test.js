@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach } from "vitest";
 import { effects, RNG, EVENTS } from "../src/js/effects.js";
-import { state } from "../src/js/game.js";
+import { state } from "../src/js/state.js";
 
 // EPIC 4 — Random Buffs & Debuffs. Covers US 4.1/4.2/4.3/4.5/4.6.
 // game.js/state import is side-effect free (no DOM access at import time),

@@ -1,7 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { loadProgress, saveProgress } from "../src/js/progress.js";
 import { LEVEL_PATHS } from "../src/js/path.js";
-import { build, maxSpores, state } from "../src/js/game.js";
+import { build } from "../src/js/build.js";
+import { state } from "../src/js/state.js";
+import { maxSpores } from "../src/js/economy.js";
 
 const STORAGE_KEY = "carniflora.level";
 
