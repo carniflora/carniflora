@@ -12,11 +12,10 @@ import {
   SCROLL_SPEED,
   getBossOverrunSeconds,
   LANE_Y,
-  KINDS,
 } from "../src/js/bossLevel.js";
-import { KINDS as BASE_KINDS } from "../src/js/kinds.js";
+import { BOSS_KINDS } from "../src/js/plants.js";
 
-function plantAt(x, lane = 0, k = 0, hp = KINDS[k].hp) {
+function plantAt(x, lane = 0, k = 0, hp = BOSS_KINDS[k].hp) {
   const s = getDistAtX(x);
   const [px, y] = atBossPath(s, lane);
   return { k, lane, s, x: px, y, hp, cd: 0, slow: 0 };
@@ -50,8 +49,7 @@ function defense(x, lane, hp) {
 describe("Three-lane Harvester breach", () => {
   it("keeps all four shared plants and starts with two tanks and a centre cannon", () => {
     const state = createBossLevelState();
-    expect(KINDS).toBe(BASE_KINDS);
-    expect(KINDS).toHaveLength(4);
+    expect(BOSS_KINDS).toHaveLength(4);
     expect(state.tanks.map((tank) => tank.lane)).toEqual([0, 2]);
     expect(state.towers.find((tower) => tower.type === "cannon").lane).toBe(1);
     expect(state.boss.shielded).toBe(true);
@@ -113,7 +111,7 @@ describe("Three-lane Harvester breach", () => {
     state.plants.forEach((plant, i) => {
       expect(plant.s).toBeGreaterThanOrEqual(starts[i]);
       expect(plant.x).toBeGreaterThan(state.leftEdge + 40);
-      expect(plant.hp).toBe(KINDS[0].hp);
+      expect(plant.hp).toBe(BOSS_KINDS[0].hp);
     });
     expect(state.stats.mistLost).toBe(0);
   });

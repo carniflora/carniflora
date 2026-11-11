@@ -1,8 +1,7 @@
 import { state } from "./state.js";
 import { maxSpores } from "./economy.js";
-import { posOf } from "./geometry.js";
 import { TILE, FINAL_MINION, DIST_BETWEEN_MINIONS } from "./constants.js";
-import { loadLevel } from "./levels.js";
+import { pxPosOf, loadLevel } from "./levels.js";
 import { effects } from "./effects.js";
 
 export function build() {
@@ -18,7 +17,7 @@ export function build() {
   const firstPath = state.map.paths[0];
 
   // grab coordinates of the last cell
-  const [ex, ey] = posOf(firstPath, firstPath.pathLength);
+  const [ex, ey] = pxPosOf(firstPath, firstPath.pathLength);
 
   // create the enemy tower
   state.keep = {
@@ -47,7 +46,7 @@ export function build() {
 
     for (let attempts = 0; placed < count && attempts < 500; attempts++) {
       const position = firstMinion + Math.random() * (lastMinion - firstMinion);
-      const [x, y] = posOf(path, position);
+      const [x, y] = pxPosOf(path, position);
 
       // compare real positions along different paths
       const tooClose = placedPoints.some(

@@ -1,4 +1,7 @@
 import { dom } from "./dom.js";
+import { state } from "../state.js";
+import { plantProgression } from "./assets.js";
+
 import {
   session,
   activeBattle,
@@ -6,22 +9,22 @@ import {
   activePlants,
   setActivePhase,
 } from "./session.js";
+
 import { resetPhase } from "./loop.js";
-import { state, build, deploySelected } from "../game.js";
+import { build } from "../build.js";
+import { deploySelected } from "../towers.js";
+
 import {
   createBossLevelState,
   spawnBossPlant,
   selectBossLane,
 } from "../bossLevel.js";
+
 import { saveProgress } from "../progress.js";
 import { LEVEL_PATHS } from "../path.js";
-import { MAP_COLS, MAP_ROWS } from "../levels.js";
-import { TILE } from "../constants.js";
-import { show } from "./overlay.js";
-import { showPlantMessage } from "./messages.js";
-import { showPlantDetails } from "./details.js";
-import { setActiveTab } from "./tabs.js";
-import { hud } from "./hud.js";
+import { MAP_COLS, MAP_ROWS, TILE } from "../constants.js";
+import { setActiveTab, showPlantDetails } from "./tabs.js";
+import { hud, showPlantMessage, show } from "./hud.js";
 
 export function setActivePlayer(p) {
   session.pickedBy[session.activePlayer] = session.selectedPlantIndex;
@@ -182,4 +185,106 @@ export function primaryAction() {
 
   // Retry / next level.
   startLevel();
+}
+
+//===================================
+// RENDER PLANT PROGRESSION CARDS
+//==================================
+
+export function renderEvolutionCards() {
+  const evolutionGrid = document.getElementById("evolutionGrid");
+  const unlockedCount = document.getElementById("unlockedPlantCount");
+
+  if (!evolutionGrid) {
+    return;
+  }
+
+  // The current game level determines which plants
+  // appear unlocked in the collection.
+  const currentLevel = state.level;
+
+  const totalUnlocked = plantProgression.filter(
+    (plant) => currentLevel >= plant.level,
+  ).length;
+
+  // Update the collection counter.
+  if (unlockedCount) {
+    unlockedCount.textContent = `${totalUnlocked} of ${plantProgression.length} unlocked`;
+  }
+
+  // Clear the previous cards before rebuilding them.
+  evolutionGrid.innerHTML = "";
+
+  plantProgression.forEach((plant) => {
+    const unlocked = currentLevel >= plant.level;
+
+    const card = document.createElement("article");
+    card.className = "evolution-card";
+
+    if (unlocked) {
+      card.classList.add("is-unlocked");
+    }
+
+    if (plant.level === 4) {
+      card.classList.add("is-boss");
+    }
+
+    // Create the card content.
+    card.innerHTML = `
+      <div class="evolution-card-top">
+        <span class="evolution-level">
+          LEVEL ${plant.level}
+        </span>
+
+        <span class="evolution-status">
+          <i
+            class="${unlocked ? "icon-check-circle-2" : "icon-lock-keyhole"}"
+            aria-hidden="true"
+          ></i>
+          ${unlocked ? "UNLOCKED" : "LOCKED"}
+        </span>
+      </div>
+
+      <div class="evolution-image">
+        <img
+          src="${plant.image}"
+          alt="${plant.name}"
+        />
+      </div>
+
+      <div class="evolution-card-body">
+        <h3>${plant.name}</h3>
+
+        <span class="evolution-role">
+          ${plant.role}
+        </span>
+
+        <p class="evolution-description">
+          ${plant.description}
+        </p>
+
+      <div class="evolution-action">
+        <i
+          class="${unlocked ? "icon-check-circle-2" : "icon-lock-keyhole"}"
+          aria-hidden="true"
+        ></i>
+
+        <div class="evolution-action-text">
+          <strong>${unlocked ? "Available" : "Locked"}</strong>
+
+          <span>
+            ${
+              unlocked
+                ? "Ready to use in battle"
+                : `Unlocks at Level ${plant.level}`
+            }
+          </span>
+        </div>
+      </div>
+
+    </div>
+    `;
+
+    evolutionGrid.appendChild(card);
+  });
 }

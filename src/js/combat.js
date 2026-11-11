@@ -2,7 +2,7 @@ import { state } from "./state.js";
 import { PLANTS } from "./plants.js";
 import { effects } from "./effects.js";
 import { maxSpores } from "./economy.js";
-import { posOf } from "./geometry.js";
+import { pxPosOf } from "./levels.js";
 import { PLANT_BLOCK } from "./constants.js";
 
 // ============================
@@ -60,7 +60,7 @@ export function update(deltaTime) {
 
     if (!target && !blocked && p.dist < path.pathLength)
       p.dist += k.spd * deltaTime;
-    [p.x, p.y] = posOf(path, p.dist);
+    [p.x, p.y] = pxPosOf(path, p.dist);
     p.cooldown -= deltaTime;
 
     // =========================

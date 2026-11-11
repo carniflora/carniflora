@@ -1,9 +1,8 @@
 import { state } from "./state.js";
 import { PLANTS } from "./plants.js";
 import { LEVEL_PATHS } from "./path.js";
-import { MAP_COLS, MAP_ROWS } from "./levels.js";
-import { posOf } from "./geometry.js";
-import { MAX_TOWER_DIST_TO_PATH } from "./constants.js";
+import { pxPosOf } from "./levels.js";
+import { MAP_COLS, MAP_ROWS, MAX_TOWER_DIST_TO_PATH } from "./constants.js";
 
 // check if a tower can be built on this cell
 function canBuildAt(c, r) {
@@ -78,7 +77,7 @@ export function sendOut(tower) {
   if (state.spores < plant.cost) return false;
 
   const path = state.map.paths[tower.pathIndex];
-  const [x, y] = posOf(path, tower.startDist);
+  const [x, y] = pxPosOf(path, tower.startDist);
 
   state.spores -= plant.cost;
   state.plants.push({

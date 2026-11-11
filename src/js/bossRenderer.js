@@ -3,13 +3,14 @@ import {
   WORLD_WIDTH,
   BOSS_PATH,
   KILLZONE_OFFSET,
-  KINDS,
   LANE_Y,
   LANE_NAMES,
   TAU,
   atBossPath,
   getDistAtX,
-} from "./bossLanes.js";
+} from "./bossLevel.js";
+
+import { BOSS_KINDS } from "./plants.js";
 
 const INK = "#e5efdc";
 const MUTED = "#8da58e";
@@ -212,7 +213,7 @@ function drawDefense(ctx, t) {
 }
 
 function drawPlant(ctx, plant, elapsed) {
-  const kind = KINDS[plant.k];
+  const kind = BOSS_KINDS[plant.k];
   const y = plant.y + Math.sin(elapsed * 7 + plant.s * 0.04) * 1.5;
   ctx.fillStyle = "rgba(0,0,0,0.3)";
   ctx.beginPath();
@@ -529,7 +530,7 @@ function drawMap(ctx, state, width) {
     ctx.lineTo(x(1840), y);
     ctx.stroke();
     for (const p of state.plants.filter((p) => p.lane === lane))
-      circle(ctx, x(p.x), y, 2.5, KINDS[p.k].col);
+      circle(ctx, x(p.x), y, 2.5, BOSS_KINDS[p.k].col);
     const tank = state.tanks.find((t) => t.lane === lane);
     ctx.fillStyle = tank
       ? tank.hp > 0

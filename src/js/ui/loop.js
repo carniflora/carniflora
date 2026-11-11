@@ -1,11 +1,12 @@
 import { dom } from "./dom.js";
 import { session, activePhase } from "./session.js";
-import { state, update } from "../game.js";
-import { updateBossLevel, drawBossLevel } from "../bossLevel.js";
+import { state } from "../state.js";
+import { update } from "../combat.js";
+import { updateBossLevel } from "../bossLevel.js";
+import { drawBossLevel } from "../bossRenderer.js";
 import { LEVEL_PATHS } from "../path.js";
-import { show } from "./overlay.js";
 import { draw } from "./render.js";
-import { hud } from "./hud.js";
+import { hud, show } from "./hud.js";
 
 let lastPhase = null;
 
