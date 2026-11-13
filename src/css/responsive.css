@@ -420,7 +420,6 @@
     z-index: 2;
   }
 
-
   #upgradesTab .upgrade-stage-1 {
     left: 67%;
     top: 85%;
@@ -461,7 +460,6 @@
     font-size: 30px;
   }
 
-
   #app > header .stats > span {
     font-size: 14px;
     padding: 10px 14px;
@@ -472,7 +470,6 @@
     font-size: 15px;
   }
 
-
   #upgradesTab .upgrade-heading h2 {
     font-size: 38px;
   }
@@ -481,19 +478,16 @@
     font-size: 14px;
   }
 
-
   #upgradesTab .upgrade-stage img {
     width: 100px;
     height: 100px;
     object-fit: cover;
   }
 
-
   #upgradesTab .upgrade-stage-4 img {
     width: 115px;
     height: 145px;
   }
-
 
   #upgradesTab .upgrade-stage {
     font-size: 13px;
@@ -517,7 +511,6 @@
 
 /* DESKTOP — 1251px and above */
 @media (min-width: 1251px) {
-
   #upgradesTab .upgrade-path:not(.upgrade-path-tablet) {
     display: block;
   }
@@ -529,12 +522,10 @@
 
 /* TABLET AND IPHONE — 1250px and below */
 @media (max-width: 1250px) {
-
   #upgradesTab .upgrade-path:not(.upgrade-path-tablet) {
     display: none;
   }
 
-  
   #upgradesTab .upgrade-path.upgrade-path-tablet {
     display: block;
   }
@@ -545,12 +536,10 @@
    ========================================== */
 
 @media (min-width: 900px) and (max-width: 1250px) and (min-height: 1100px) {
-
   #upgradesTab .upgrade-map {
     height: clamp(720px, calc(100dvh - 315px), 1060px);
     margin: 0 auto;
   }
-
 
   #app > header h1 {
     font-size: 34px;
@@ -566,7 +555,6 @@
   #app > header .stats > span b {
     font-size: 18px;
   }
-
 
   #upgradesTab .upgrade-heading h2 {
     font-size: 42px;
