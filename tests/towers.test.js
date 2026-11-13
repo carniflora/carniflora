@@ -1,14 +1,14 @@
 import { beforeEach, describe, expect, it } from "vitest";
+import { build } from "../src/js/build.js";
+import { PLANTS } from "../src/js/plants.js";
+import { state } from "../src/js/state.js";
+import { MAP_COLS, MAP_ROWS } from "../src/js/constants.js";
 import {
-  build,
-  canPlaceTower,
-  deploySelected,
-  placeTower,
-  PLANTS,
   sendOut,
-  state,
-} from "../src/js/game.js";
-import { MAP_COLS, MAP_ROWS } from "../src/js/levels.js";
+  deploySelected,
+  canPlaceTower,
+  placeTower,
+} from "../src/js/towers.js";
 
 describe("Normal battle deployment", () => {
   beforeEach(() => {
