@@ -310,36 +310,26 @@
    ========================================== */
 
 @media (min-width: 651px) and (max-width: 1250px) {
-  /* Make the map the main focus */
   #upgradesTab .upgrade-world {
     min-height: 0;
     padding: 12px 16px 90px;
   }
 
-  /* Hide the instruction text */
   #upgradesTab .upgrade-map-hint {
     display: none;
   }
 
-  /* Sliding panel */
   #upgradesTab .upgrade-info {
     position: fixed;
-
-    /* Center the card on the screen */
     top: 50%;
     left: 50%;
     right: auto;
-
     width: min(420px, calc(100vw - 32px));
     max-width: 100%;
     max-height: calc(100dvh - 40px);
-
     margin: 0;
     overflow-y: auto;
-
     z-index: 51;
-
-    /* Hidden above the screen */
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
@@ -352,17 +342,13 @@
       visibility 400ms;
   }
 
-  /* Panel slides in when a checkpoint is clicked */
   #upgradesTab .upgrade-info.is-open {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
-
-    /* Stop in the center of the screen */
     transform: translate(-50%, -50%);
   }
 
-  /* Close button */
   #upgradesTab .upgrade-panel-close {
     display: grid;
     place-items: center;
@@ -381,7 +367,6 @@
     cursor: pointer;
   }
 
-  /* Background overlay */
   #upgradesTab .upgrade-panel-backdrop {
     display: block;
     position: fixed;
@@ -417,7 +402,6 @@
     z-index: 1;
   }
 
-  /* Give the vertical road space */
   #upgradesTab .upgrade-map {
     display: block;
     position: relative;
@@ -428,7 +412,6 @@
     padding: 0;
   }
 
-  /* Keep checkpoints on top of the road */
   #upgradesTab .upgrade-stages {
     position: absolute;
     inset: 0;
@@ -437,40 +420,35 @@
     z-index: 2;
   }
 
-  /* Flytrap — bottom left */
+
   #upgradesTab .upgrade-stage-1 {
     left: 67%;
     top: 85%;
     z-index: 5;
   }
 
-  /* Sundew — Level 2 */
   #upgradesTab .upgrade-stage-2 {
     left: 59%;
     top: 62%;
   }
 
-  /* Pitcher — Level 3 */
   #upgradesTab .upgrade-stage-3 {
     left: 32%;
     top: 44%;
   }
 
-  /* Boss Castle — Level 4 */
   #upgradesTab .upgrade-stage-4 {
     left: 76%;
     top: 18%;
     z-index: 5;
   }
 
-  /* Keep checkpoints usable on touch screens */
   #upgradesTab .upgrade-stage {
     width: 90px;
     min-height: 44px;
     overflow: visible;
   }
 
-  /* Hide old instruction */
   #upgradesTab .upgrade-map-hint {
     display: none;
   }
@@ -479,12 +457,11 @@
    LARGER TABLETS — UI SIZE ADJUSTMENTS
    ========================================== */
 
-  /* Game title */
   #app > header h1 {
     font-size: 30px;
   }
 
-  /* Top HUD indicators */
+
   #app > header .stats > span {
     font-size: 14px;
     padding: 10px 14px;
@@ -495,7 +472,7 @@
     font-size: 15px;
   }
 
-  /* Upgrades page heading */
+
   #upgradesTab .upgrade-heading h2 {
     font-size: 38px;
   }
@@ -504,25 +481,24 @@
     font-size: 14px;
   }
 
-  /* Plant checkpoints */
+
   #upgradesTab .upgrade-stage img {
     width: 100px;
     height: 100px;
     object-fit: cover;
   }
 
-  /* Boss Castle */
+
   #upgradesTab .upgrade-stage-4 img {
     width: 115px;
     height: 145px;
   }
 
-  /* Checkpoint labels */
+
   #upgradesTab .upgrade-stage {
     font-size: 13px;
   }
 
-  /* Bottom navigation */
   .game-layout:has(#upgradesTab.active) > .side-nav {
     width: min(760px, calc(100% - 40px));
   }
@@ -541,12 +517,11 @@
 
 /* DESKTOP — 1251px and above */
 @media (min-width: 1251px) {
-  /* Show the original desktop road */
+
   #upgradesTab .upgrade-path:not(.upgrade-path-tablet) {
     display: block;
   }
 
-  /* Hide the tablet/iPhone road completely */
   #upgradesTab .upgrade-path.upgrade-path-tablet {
     display: none;
   }
@@ -554,12 +529,12 @@
 
 /* TABLET AND IPHONE — 1250px and below */
 @media (max-width: 1250px) {
-  /* Hide the desktop road completely */
+
   #upgradesTab .upgrade-path:not(.upgrade-path-tablet) {
     display: none;
   }
 
-  /* Show the winding tablet road */
+  
   #upgradesTab .upgrade-path.upgrade-path-tablet {
     display: block;
   }
@@ -570,19 +545,18 @@
    ========================================== */
 
 @media (min-width: 900px) and (max-width: 1250px) and (min-height: 1100px) {
-  /* Road remains responsive to screen height */
+
   #upgradesTab .upgrade-map {
     height: clamp(720px, calc(100dvh - 315px), 1060px);
     margin: 0 auto;
   }
 
-  /* Game title */
+
   #app > header h1 {
     font-size: 34px;
     line-height: 1.2;
   }
 
-  /* HUD indicators */
   #app > header .stats > span {
     font-size: 17px;
     padding: 12px 16px;
@@ -593,7 +567,7 @@
     font-size: 18px;
   }
 
-  /* Upgrades heading */
+
   #upgradesTab .upgrade-heading h2 {
     font-size: 42px;
   }
@@ -607,13 +581,11 @@
     line-height: 1.5;
   }
 
-  /* Checkpoint containers */
   #upgradesTab .upgrade-stage {
     width: 135px;
     overflow: visible;
   }
 
-  /* Plant checkpoint pictures */
   #upgradesTab .upgrade-stage img {
     width: 105px;
     height: 105px;
@@ -621,19 +593,16 @@
     object-fit: cover;
   }
 
-  /* Boss Castle */
   #upgradesTab .upgrade-stage-4 img {
     width: 120px;
     height: 150px;
   }
 
-  /* Checkpoint names and status labels */
   #upgradesTab .upgrade-stage .stage-name,
   #upgradesTab .upgrade-stage .stage-status {
     font-size: 14px;
   }
 
-  /* Bottom navigation */
   .game-layout:has(#upgradesTab.active) > .side-nav {
     width: min(780px, calc(100% - 40px));
   }
@@ -665,12 +634,10 @@
     font-size: 16px;
   }
 
-  /* Game title */
   #app > header h1 {
     font-size: 38px;
   }
 
-  /* HUD indicators */
   #app > header .stats > span {
     font-size: 18px;
     padding: 12px 15px;
@@ -681,7 +648,6 @@
     font-size: 19px;
   }
 
-  /* Upgrades heading */
   #upgradesTab .upgrade-heading h2 {
     font-size: 46px;
   }
@@ -690,13 +656,11 @@
     font-size: 17px;
   }
 
-  /* Larger checkpoint containers */
   #upgradesTab .upgrade-stage {
     width: 145px;
     overflow: visible;
   }
 
-  /* Larger plant images */
   #upgradesTab .upgrade-stage img {
     width: 115px;
     height: 115px;
@@ -704,13 +668,11 @@
     object-fit: cover;
   }
 
-  /* Boss Castle */
   #upgradesTab .upgrade-stage-4 img {
     width: 130px;
     height: 160px;
   }
 
-  /* Larger navigation */
   .game-layout:has(#upgradesTab.active) > .side-nav {
     width: min(820px, calc(100% - 40px));
   }
@@ -929,11 +891,6 @@
     max-width: 320px;
   }
 
-  /* ==========================================
-     UPGRADES — SINGLE VIEWPORT ON MOBILE
-     One winding SVG, four checkpoints, bottom navigation
-     ========================================== */
-
   #app:has(#upgradesTab.active) {
     display: flex;
     flex-direction: column;
@@ -1018,7 +975,6 @@
     white-space: normal;
   }
 
-  /* The map fills only the space left between heading and nav. */
   #upgradesTab .upgrade-map {
     position: relative;
     display: block;
@@ -1032,14 +988,12 @@
     overflow: visible;
   }
 
-  /* Remove any legacy CSS-drawn vertical road. */
   #upgradesTab .upgrade-map::before,
   #upgradesTab .upgrade-map::after {
     content: none;
     display: none;
   }
 
-  /* Hide desktop road; use only the winding tablet SVG. */
   #upgradesTab .upgrade-path:not(.upgrade-path-tablet) {
     display: none;
   }
@@ -1187,7 +1141,6 @@
     pointer-events: auto;
   }
 
-  /* Fixed bottom navigation only on the Upgrades screen. */
   .game-layout:has(#upgradesTab.active) > .side-nav {
     position: fixed;
     top: auto;
