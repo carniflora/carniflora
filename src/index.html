@@ -7,12 +7,14 @@
       content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
     <title>Carniflora: Breach</title>
-    <link rel="stylesheet" href="css/base.css" />
-    <link rel="stylesheet" href="css/layout.css" />
-    <link rel="stylesheet" href="css/plants.css" />
-    <link rel="stylesheet" href="css/upgrades.css" />
-    <link rel="stylesheet" href="css/battle.css" />
-    <link rel="stylesheet" href="css/responsive.css" />
+
+    <link rel="stylesheet" href="./css/base.css" />
+    <link rel="stylesheet" href="./css/layout.css" />
+    <link rel="stylesheet" href="./css/plants.css" />
+    <link rel="stylesheet" href="./css/upgrades.css" />
+    <link rel="stylesheet" href="./css/battle.css" />
+    <link rel="stylesheet" href="./css/responsive.css" />
+
     <link
       rel="stylesheet"
       href="https://unpkg.com/lucide-static@latest/font/lucide.css"
@@ -55,13 +57,8 @@
         </div>
       </header>
 
-      <!-- MAIN 3-COLUMN LAYOUT -->
       <main class="game-layout">
-        <!-- LEFT NAVIGATION -->
-
-        <!-- SIDEBAR -->
         <aside class="side-nav">
-          <!-- Brand -->
           <div class="nav-brand">
             <div class="nav-brand-icon">
               <i class="icon-sprout" aria-hidden="true"></i>
@@ -77,7 +74,6 @@
 
           <p class="nav-section-label">NAVIGATION</p>
 
-          <!-- Navigation -->
           <div class="nav-links">
             <button class="nav-btn active" data-tab="plants">
               <i class="icon-leaf nav-icon" aria-hidden="true"></i>
@@ -109,16 +105,13 @@
             </button>
           </div>
 
-          <!-- Bottom status -->
           <div class="nav-footer">
             <span class="nav-status-dot"></span>
             <span>Ready to grow</span>
           </div>
         </aside>
 
-        <!-- CENTER PANEL -->
         <section class="main-panel">
-          <!-- PLANTS TAB -->
           <div id="plantsTab" class="tab-content active">
             <div class="plant-section-header">
               <div class="plant-heading-text">
@@ -138,73 +131,210 @@
             <div id="plantGrid" class="plant-grid"></div>
           </div>
 
-          <!-- UPGRADES TAB -->
           <div id="upgradesTab" class="tab-content">
-            <div class="evolution-page">
-              <div class="evolution-header">
-                <div class="evolution-heading">
-                  <div>
-                    <span class="evolution-eyebrow">
-                      <i class="icon-sprout" aria-hidden="true"></i>
-                      PLANT COLLECTION / PROGRESSION
-                    </span>
+            <div class="upgrade-world">
+              <div class="upgrade-heading">
+                <div>
+                  <span class="upgrade-eyebrow">Your Plant Journey</span>
 
-                    <h2>Unlock New Plants</h2>
+                  <h2>Plant Upgrades</h2>
 
-                    <p>
-                      Discover new plants as you progress through the game. Each
-                      one brings a different ability to your strategy.
-                    </p>
-                  </div>
-
-                  <div class="evolution-progress">
-                    <i class="icon-leaf" aria-hidden="true"></i>
-                    <span id="unlockedPlantCount">1 of 4 unlocked</span>
-                  </div>
+                  <p>
+                    Follow the winding path, discover new plants along the way,
+                    and get ready to take down the castle.
+                  </p>
                 </div>
               </div>
 
-              <!--FOUR LEVEL CARDS-->
-              <div id="evolutionGrid" class="evolution-grid"></div>
+              <div class="upgrade-map">
+                <svg
+                  class="upgrade-path"
+                  viewBox="-160 -100 2020 850"
+                  preserveAspectRatio="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M -100 520
+                C 100 520, 160 250, 400 290
+                S 750 470, 930 310
+                S 1150 190, 1300 260
+                S 1500 210, 1700 20"
+                    fill="none"
+                    stroke="#8d6bc9"
+                    stroke-width="86"
+                    stroke-linecap="round"
+                  />
 
-              <!--PROGRRESSION GUIDE -->
-              <div class="evolution-guide">
-                <div class="guide-title">
-                  <i class="icon-route" aria-hidden="true"></i>
-                  Your Progression
-                </div>
+                  <path
+                    d="M -100 520
+                C 100 520, 160 250, 400 290
+                S 750 470, 930 310
+                S 1150 190, 1300 260
+                S 1500 210, 1700 20"
+                    fill="none"
+                    stroke="#d7c5f7"
+                    stroke-width="73"
+                    stroke-linecap="round"
+                  />
 
-                <div class="guide-steps">
-                  <div class="guide-step">
-                    <span class="guide-number">1</span>
-                    <span>Complete the current level</span>
+                  <path
+                    d="M -100 520
+                C 100 520, 160 250, 400 290
+                S 750 470, 930 310
+                S 1150 190, 1300 260
+                S 1500 210, 1700 20"
+                    fill="none"
+                    stroke="#9272d0"
+                    stroke-width="3"
+                    stroke-dasharray="15 22"
+                    stroke-linecap="round"
+                  />
+                </svg>
+
+                <!-- TABLET AND PHONE progression road -->
+                <svg
+                  class="upgrade-path upgrade-path-tablet"
+                  viewBox="0 0 600 760"
+                  preserveAspectRatio="none"
+                  aria-hidden="true"
+                >
+                  <!-- Outer purple road -->
+                  <path
+                    d="
+                      M 380 690
+                      C 250 690, 135 680, 120 620
+                      C 105 565, 135 525, 205 515
+                      L 390 490
+                      C 500 475, 510 400, 420 375
+                      C 340 352, 255 378, 175 360
+                      C 85 340, 80 255, 170 225
+                      C 250 198, 345 220, 425 205
+                    "
+                    fill="none"
+                    stroke="#8866c6"
+                    stroke-width="44"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+
+                  <!-- Lavender road surface -->
+                  <path
+                    d="
+                      M 380 690
+                      C 250 690, 135 680, 120 620
+                      C 105 565, 135 525, 205 515
+                      L 390 490
+                      C 500 475, 510 400, 420 375
+                      C 340 352, 255 378, 175 360
+                      C 85 340, 80 255, 170 225
+                      C 250 198, 345 220, 425 205
+                    "
+                    fill="none"
+                    stroke="#dfcafa"
+                    stroke-width="37"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+
+                  <!-- Dashed centre line -->
+                  <path
+                    d="
+                      M 380 690
+                      C 250 690, 135 680, 120 620
+                      C 105 565, 135 525, 205 515
+                      L 390 490
+                      C 500 475, 510 400, 420 375
+                      C 340 352, 255 378, 175 360
+                      C 85 340, 80 255, 170 225
+                      C 250 198, 345 220, 425 205
+                    "
+                    fill="none"
+                    stroke="#9774d0"
+                    stroke-width="2"
+                    stroke-dasharray="9 12"
+                    stroke-linecap="round"
+                  />
+                </svg>
+
+                <div id="evolutionGrid" class="upgrade-stages"></div>
+                <div
+                  id="upgradePlantSelector"
+                  class="upgrade-collection"
+                  aria-label="Choose a plant"
+                ></div>
+                <aside class="upgrade-info">
+                  <div class="upgrade-info-header">PLANT GROWTH</div>
+
+                  <button
+                    id="upgradePanelClose"
+                    class="upgrade-panel-close"
+                    type="button"
+                    aria-label="Close plant details"
+                  >
+                    &times;
+                  </button>
+
+                  <div class="upgrade-info-content">
+                    <img
+                      id="upgradePreview"
+                      class="upgrade-preview"
+                      alt="Selected plant"
+                    />
+
+                    <span id="upgradeRole" class="upgrade-role"></span>
+
+                    <h3 id="upgradeName"></h3>
+                    <p id="upgradeDescription" class="upgrade-description"></p>
+                    <div class="upgrade-level-row">
+                      <span>PLANT LEVEL</span>
+                      <strong id="upgradeStage">01</strong>
+                    </div>
+
+                    <div class="upgrade-stat-row">
+                      <span>Attack Power</span>
+                      <strong id="upgradeDamage">--</strong>
+                    </div>
+
+                    <div class="upgrade-stat-row">
+                      <span>Range</span>
+                      <strong id="upgradeRange">--</strong>
+                    </div>
+
+                    <div class="upgrade-stat-row">
+                      <span>Attack Speed</span>
+                      <strong id="upgradeSpeed">--</strong>
+                    </div>
+
+                    <div class="upgrade-mission">
+                      <span>SPECIAL ABILITY / MISSION</span>
+
+                      <strong id="upgradeMission"></strong>
+
+                      <p id="upgradeMissionDescription"></p>
+                    </div>
+
+                    <button
+                      id="upgradeGoBattle"
+                      class="upgrade-battle-button"
+                      type="button"
+                    >
+                      GO TO BATTLE
+                    </button>
                   </div>
+                </aside>
 
-                  <div class="guide-step">
-                    <span class="guide-number">2</span>
-                    <span>Earn spores from battles</span>
-                  </div>
+                <div
+                  id="upgradePanelBackdrop"
+                  class="upgrade-panel-backdrop"
+                ></div>
 
-                  <div class="guide-step">
-                    <span class="guide-number">3</span>
-                    <span>Unlock the next plant</span>
-                  </div>
-
-                  <div class="guide-step">
-                    <span class="guide-number">4</span>
-                    <span>Build your plant strategy</span>
-                  </div>
-                </div>
+                <p
+                  id="evolutionMessage"
+                  class="evolution-message"
+                  role="status"
+                  aria-live="polite"
+                ></p>
               </div>
-
-              <!--STATUS MESSAGE-->
-
-              <p
-                id="evolutionMessage"
-                class="evolution-message"
-                role="status"
-                aria-live="polite"
-              ></p>
             </div>
           </div>
 
@@ -252,14 +382,10 @@
           </div>
         </section>
 
-        <!-- RIGHT SIDE: PLANT INFO -->
         <aside class="plant-details">
           <p class="sidebar-label">PLANT INFO</p>
-
           <div id="detailColor" class="detail-color"></div>
-
           <h2 id="detailName">Choose a Plant</h2>
-
           <p id="detailDescription" class="detail-description">
             Select a plant to see its abilities.
           </p>
@@ -358,7 +484,6 @@
         </div>
       </div>
     </div>
-
-    <script type="module" src="js/main.js"></script>
+    <script type="module" src="./js/main.js"></script>
   </body>
 </html>
