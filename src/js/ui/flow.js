@@ -187,104 +187,227 @@ export function primaryAction() {
   startLevel();
 }
 
-//===================================
-// RENDER PLANT PROGRESSION CARDS
-//==================================
+/* ==========================================
+   UPGRADES PAGE — PLANT PROGRESSION
+   Combined with refactored team architecture
+   ========================================== */
 
-export function renderEvolutionCards() {
-  const evolutionGrid = document.getElementById("evolutionGrid");
-  const unlockedCount = document.getElementById("unlockedPlantCount");
+let selectedUpgradeIndex = 0;
 
-  if (!evolutionGrid) {
-    return;
+const upgradePanel = document.querySelector("#upgradesTab .upgrade-info");
+const upgradeBackdrop = document.getElementById("upgradePanelBackdrop");
+const upgradeCloseButton = document.getElementById("upgradePanelClose");
+
+const compactUpgradeQuery = window.matchMedia("(max-width: 1250px)");
+
+// Display unlock messages.
+function showEvolutionMessage(message) {
+  const element = document.getElementById("evolutionMessage");
+
+  if (element) {
+    element.textContent = message;
+  }
+}
+
+// Keep hidden panels inaccessible to keyboard navigation.
+function syncUpgradePanelAccessibility() {
+  if (!upgradePanel) return;
+
+  const hidden =
+    compactUpgradeQuery.matches && !upgradePanel.classList.contains("is-open");
+
+  upgradePanel.inert = hidden;
+  upgradePanel.setAttribute("aria-hidden", String(hidden));
+}
+
+// Open the Plant Growth card on tablets and phones.
+function openUpgradePanel() {
+  if (!upgradePanel || !compactUpgradeQuery.matches) return;
+
+  upgradePanel.classList.add("is-open");
+  upgradeBackdrop?.classList.add("is-open");
+
+  syncUpgradePanelAccessibility();
+  upgradeCloseButton?.focus();
+}
+
+// Close the Plant Growth card.
+function closeUpgradePanel() {
+  upgradePanel?.classList.remove("is-open");
+  upgradeBackdrop?.classList.remove("is-open");
+
+  syncUpgradePanelAccessibility();
+}
+
+// Update the information for the selected plant.
+function showUpgradeDetails(index) {
+  const plant = plantProgression[index];
+  const gamePlant = activePlants()[index];
+
+  if (!plant) return;
+
+  selectedUpgradeIndex = index;
+
+  const setText = (id, value) => {
+    const element = document.getElementById(id);
+
+    if (element) {
+      element.textContent = String(value ?? "—");
+    }
+  };
+
+  const preview = document.getElementById("upgradePreview");
+
+  if (preview) {
+    preview.src = plant.image;
+    preview.alt = `${plant.name} illustration`;
   }
 
-  // The current game level determines which plants
-  // appear unlocked in the collection.
-  const currentLevel = state.level;
+  setText("upgradeRole", plant.role);
+  setText("upgradeName", plant.name);
+  setText("upgradeDescription", plant.description);
+  setText("upgradeStage", String(plant.level).padStart(2, "0"));
+
+  // Display available gameplay statistics.
+  setText("upgradeDamage", gamePlant?.dmg);
+  setText("upgradeRange", gamePlant?.rng);
+  setText("upgradeSpeed", gamePlant?.spd);
+
+  setText("upgradeMission", gamePlant?.n ?? plant.name);
+  setText(
+    "upgradeMissionDescription",
+    gamePlant?.desc ?? gamePlant?.d ?? plant.description,
+  );
+
+  // Highlight the selected checkpoint.
+  document
+    .querySelectorAll("#evolutionGrid .upgrade-stage")
+    .forEach((stage) => {
+      const selected = Number(stage.dataset.plantIndex) === index;
+
+      stage.classList.toggle("selected", selected);
+      stage.setAttribute("aria-pressed", String(selected));
+    });
+}
+
+// Render the four checkpoints on the winding road.
+export function renderEvolutionCards() {
+  const grid = document.getElementById("evolutionGrid");
+  const unlockedCount = document.getElementById("unlockedPlantCount");
+
+  if (!grid) return;
+
+  const currentLevel = Number(state.level) || 1;
 
   const totalUnlocked = plantProgression.filter(
     (plant) => currentLevel >= plant.level,
   ).length;
 
-  // Update the collection counter.
+  // Preserve the team's collection counter.
   if (unlockedCount) {
     unlockedCount.textContent = `${totalUnlocked} of ${plantProgression.length} unlocked`;
   }
 
-  // Clear the previous cards before rebuilding them.
-  evolutionGrid.innerHTML = "";
+  // Remove previous checkpoints before rendering.
+  grid.replaceChildren();
 
-  plantProgression.forEach((plant) => {
+  plantProgression.forEach((plant, index) => {
     const unlocked = currentLevel >= plant.level;
 
-    const card = document.createElement("article");
-    card.className = "evolution-card";
+    const checkpoint = document.createElement("button");
 
-    if (unlocked) {
-      card.classList.add("is-unlocked");
-    }
+    checkpoint.type = "button";
 
-    if (plant.level === 4) {
-      card.classList.add("is-boss");
-    }
+    checkpoint.className = [
+      "upgrade-stage",
+      `upgrade-stage-${plant.level}`,
+      unlocked ? "unlocked" : "locked",
+    ].join(" ");
 
-    // Create the card content.
-    card.innerHTML = `
-      <div class="evolution-card-top">
-        <span class="evolution-level">
-          LEVEL ${plant.level}
-        </span>
+    checkpoint.dataset.plantIndex = String(index);
 
-        <span class="evolution-status">
-          <i
-            class="${unlocked ? "icon-check-circle-2" : "icon-lock-keyhole"}"
-            aria-hidden="true"
-          ></i>
-          ${unlocked ? "UNLOCKED" : "LOCKED"}
-        </span>
-      </div>
+    checkpoint.setAttribute(
+      "aria-label",
+      `${plant.name}, level ${plant.level}, ${
+        unlocked ? "unlocked" : "locked"
+      }`,
+    );
 
-      <div class="evolution-image">
-        <img
-          src="${plant.image}"
-          alt="${plant.name}"
-        />
-      </div>
+    checkpoint.setAttribute("aria-pressed", "false");
 
-      <div class="evolution-card-body">
-        <h3>${plant.name}</h3>
+    // LOCKED / UNLOCKED
+    const status = document.createElement("span");
+    status.className = "upgrade-stage-state";
+    status.textContent = unlocked ? "UNLOCKED" : "LOCKED";
 
-        <span class="evolution-role">
-          ${plant.role}
-        </span>
+    // Plant name
+    const name = document.createElement("span");
+    name.className = "upgrade-stage-name";
+    name.textContent = plant.level === 4 ? "Boss Castle" : plant.name;
 
-        <p class="evolution-description">
-          ${plant.description}
-        </p>
+    // Plant illustration
+    const image = document.createElement("img");
+    image.className = "stage-plant-image";
+    image.src = plant.image;
+    image.alt = "";
 
-      <div class="evolution-action">
-        <i
-          class="${unlocked ? "icon-check-circle-2" : "icon-lock-keyhole"}"
-          aria-hidden="true"
-        ></i>
+    // Level number
+    const number = document.createElement("span");
+    number.className = "upgrade-stage-number";
+    number.textContent = String(plant.level);
 
-        <div class="evolution-action-text">
-          <strong>${unlocked ? "Available" : "Locked"}</strong>
+    checkpoint.append(status, name, image, number);
 
-          <span>
-            ${
-              unlocked
-                ? "Ready to use in battle"
-                : `Unlocks at Level ${plant.level}`
-            }
-          </span>
-        </div>
-      </div>
+    checkpoint.addEventListener("click", () => {
+      showUpgradeDetails(index);
+      openUpgradePanel();
 
-    </div>
-    `;
+      showEvolutionMessage(
+        unlocked
+          ? `${plant.name} is unlocked.`
+          : `${plant.name} unlocks at Level ${plant.level}.`,
+      );
+    });
 
-    evolutionGrid.appendChild(card);
+    grid.appendChild(checkpoint);
   });
+
+  showUpgradeDetails(selectedUpgradeIndex);
+  syncUpgradePanelAccessibility();
 }
+
+/* ==========================================
+   PLANT GROWTH PANEL CONTROLS
+   ========================================== */
+
+// Close button
+upgradeCloseButton?.addEventListener("click", closeUpgradePanel);
+
+// Close when clicking the backdrop
+upgradeBackdrop?.addEventListener("click", closeUpgradePanel);
+
+// Close when Escape is pressed
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && upgradePanel?.classList.contains("is-open")) {
+    closeUpgradePanel();
+  }
+});
+
+// Close when navigating away
+document.querySelectorAll(".nav-btn").forEach((button) => {
+  button.addEventListener("click", closeUpgradePanel);
+});
+
+// Reset when resizing between desktop and smaller screens
+compactUpgradeQuery.addEventListener("change", () => {
+  closeUpgradePanel();
+});
+
+// Go to Battle
+document.getElementById("upgradeGoBattle")?.addEventListener("click", () => {
+  closeUpgradePanel();
+  setActiveTab("battle");
+});
+
+// Set the initial accessibility state.
+syncUpgradePanelAccessibility();
