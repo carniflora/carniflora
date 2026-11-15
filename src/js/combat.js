@@ -4,6 +4,7 @@ import { effects } from "./effects.js";
 import { maxSpores } from "./economy.js";
 import { pxPosOf } from "./levels.js";
 import { PLANT_BLOCK } from "./constants.js";
+import { updateTowers } from "./towers.js";
 
 // ============================
 // FIND NEAREST TARGET
@@ -24,6 +25,7 @@ function nearest(list, x, y, rng) {
 // update over time
 export function update(deltaTime) {
   state.spores = Math.min(maxSpores(), state.spores + 6 * deltaTime); // spores regenerate 6 per time up to max
+  updateTowers(deltaTime);
   // Advance buff/debuff system (auto-fire + expire + poison drain — 4.1 / 4.5)
   effects.update(deltaTime);
   // check which enemies are still alive

@@ -2,7 +2,12 @@ import { state } from "./state.js";
 import { PLANTS } from "./plants.js";
 import { LEVEL_PATHS } from "./path.js";
 import { pxPosOf } from "./levels.js";
-import { MAP_COLS, MAP_ROWS, MAX_TOWER_DIST_TO_PATH } from "./constants.js";
+import {
+  MAP_COLS,
+  MAP_ROWS,
+  MAX_TOWER_DIST_TO_PATH,
+  TOWER_LIFETIME,
+} from "./constants.js";
 
 // check if a tower can be built on this cell
 function canBuildAt(c, r) {
@@ -67,6 +72,7 @@ export function placeTower(c, r, plantIndex, player = 0) {
     pathIndex: spot.pathIndex,
     startDist: spot.cellIndex,
     plant: plantIndex,
+    timeLeft: TOWER_LIFETIME,
   });
   return true;
 }
@@ -105,4 +111,10 @@ export function deploySelected(plantIndex, player = 0) {
     if (sendOut(tower)) sent = true;
   }
   return sent;
+}
+
+// count down tower timers and remove expired towers
+export function updateTowers(deltaTime) {
+  for (const tower of state.myTowers) tower.timeLeft -= deltaTime;
+  state.myTowers = state.myTowers.filter((t) => t.timeLeft > 0);
 }

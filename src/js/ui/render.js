@@ -98,6 +98,12 @@ export function draw() {
     g.strokeStyle = tower.owner === 0 ? "#fff" : "#7300f7";
     g.lineWidth = 2;
     g.strokeRect(x - 16, y - 16, 32, 32);
+    g.fillStyle = "#fff";
+    g.font = "12px system-ui, sans-serif";
+    g.textAlign = "center";
+    g.fillText(Math.ceil(tower.timeLeft) + "s", x, y + 4);
+    g.fillStyle = tower.timeLeft <= 5 ? "#ff6b6b" : "#fff";
+    g.textAlign = "left";
   });
 
   // placement preview: green if allowed, red if not
