@@ -15,6 +15,7 @@ import {
   renderEvolutionCards,
 } from "./ui/flow.js";
 import { mountInput } from "./ui/input.js";
+import { loadSprites } from "./sprites.js";
 
 // Composition root
 // All mount calls must run before first render
@@ -43,6 +44,7 @@ show(
   "Send carnivorous plants down the path. They bite towers as they pass. Destroy the keep at the end before your swarm runs out.",
   "Start",
 );
+await loadSprites();
 startLoop();
 renderEvolutionCards();
 
