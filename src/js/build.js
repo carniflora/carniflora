@@ -1,17 +1,21 @@
-import { state } from "./state.js";
+import { state as localState } from "./state.js";
 import { maxSpores } from "./economy.js";
 import { TILE, FINAL_MINION, DIST_BETWEEN_MINIONS } from "./constants.js";
 import { pxPosOf, loadLevel } from "./levels.js";
-import { effects } from "./effects.js";
+import { effects as localEffects } from "./effects.js";
 
-export function build() {
+export function build(
+  state = localState,
+  effects = localEffects,
+  random = Math.random,
+) {
   // load the map
   state.map = loadLevel(state.level - 1, state.players);
   state.myTowers = [];
   state.plants = [];
   state.enemies = [];
   state.fx = [];
-  state.spores = maxSpores();
+  state.spores = maxSpores(state);
 
   // create the enemy tower at the end of all paths
   const firstPath = state.map.paths[0];
@@ -45,7 +49,7 @@ export function build() {
     let placed = 0;
 
     for (let attempts = 0; placed < count && attempts < 500; attempts++) {
-      const position = firstMinion + Math.random() * (lastMinion - firstMinion);
+      const position = firstMinion + random() * (lastMinion - firstMinion);
       const [x, y] = pxPosOf(path, position);
 
       // compare real positions along different paths
