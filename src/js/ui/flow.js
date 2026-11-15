@@ -1,3 +1,5 @@
+import { battleService } from "../battleService.js";
+import { Action } from "../network/protocol.js";
 import { dom } from "./dom.js";
 import { state } from "../state.js";
 import { plantProgression } from "./assets.js";
@@ -36,6 +38,10 @@ export function setActivePlayer(p) {
 }
 
 export function deploy(i) {
+  if (battleService.online()) {
+    battleService.submit({ type: Action.DEPLOY, plant: i });
+    return;
+  }
   const k = activePlants()[i];
 
   // Player cannot deploy until the game starts.
@@ -72,6 +78,10 @@ export function deploy(i) {
 }
 
 export function startLevel() {
+  if (battleService.online()) {
+    battleService.submit({ type: Action.RESTART });
+    return;
+  }
   // towerType = null;
   const { canvas } = dom();
   if (session.mode === "boss") {
@@ -104,6 +114,9 @@ export function startLevel() {
 }
 
 export function toggleMode() {
+  if (battleService.online()) {
+    return;
+  }
   const { $ } = dom();
   session.mode = session.mode === "td" ? "boss" : "td";
   startLevel();
@@ -118,6 +131,12 @@ export function toggleMode() {
 }
 
 export function pause() {
+  if (battleService.online()) {
+    battleService.submit({
+      type: activePhase() === "pause" ? Action.RESUME : Action.PAUSE,
+    });
+    return;
+  }
   const { $ } = dom();
   if (activePhase() === "play") {
     setActivePhase("pause");
@@ -159,6 +178,18 @@ export function setBossLane(lane) {
 }
 
 export function primaryAction() {
+  if (battleService.online()) {
+    const type =
+      activePhase() === "menu"
+        ? Action.START
+        : activePhase() === "pause"
+          ? Action.RESUME
+          : activePhase() === "won"
+            ? Action.ADVANCE
+            : Action.RESTART;
+    battleService.submit({ type });
+    return;
+  }
   if (session.mode === "boss") {
     if (session.bossState.state === "pause") pause();
     else startLevel();

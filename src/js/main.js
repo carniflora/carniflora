@@ -1,3 +1,4 @@
+import { mountMultiplayer } from "./ui/multiplayer.js";
 import { state } from "./state.js";
 import { build } from "./build.js";
 import { MAP_COLS, MAP_ROWS, TILE } from "./constants.js";
@@ -45,6 +46,7 @@ show(
 );
 startLoop();
 renderEvolutionCards();
+mountMultiplayer();
 
 document.getElementById("evolutionGrid")?.addEventListener("click", (event) => {
   const checkpoint = event.target.closest(".upgrade-stage");
