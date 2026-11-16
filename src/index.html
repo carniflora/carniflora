@@ -28,7 +28,6 @@
 
   <body>
     <div id="app">
-      <!-- HEADER -->
       <header>
         <h1>Carniflora: Breach</h1>
 
@@ -232,14 +231,13 @@
                   />
                 </svg>
 
-                <!-- TABLET AND PHONE progression road -->
                 <svg
                   class="upgrade-path upgrade-path-tablet"
                   viewBox="0 0 600 760"
                   preserveAspectRatio="none"
                   aria-hidden="true"
                 >
-                  <!-- Outer purple road -->
+                  =
                   <path
                     d="
                       M 380 690
@@ -258,7 +256,6 @@
                     stroke-linejoin="round"
                   />
 
-                  <!-- Lavender road surface -->
                   <path
                     d="
                       M 380 690
@@ -277,7 +274,6 @@
                     stroke-linejoin="round"
                   />
 
-                  <!-- Dashed centre line -->
                   <path
                     d="
                       M 380 690
@@ -480,10 +476,19 @@
 
           <p class="sidebar-label">PLANT INFO</p>
           <div id="detailColor" class="detail-color"></div>
+          <span id="detailRole" class="battle-detail-role"></span>
+
           <h2 id="detailName">Choose a Plant</h2>
-          <p id="detailDescription" class="detail-description">
-            Select a plant to see its abilities.
-          </p>
+
+          <div class="battle-ability-box">
+            <span class="battle-ability-label">
+              SPECIAL ABILITY / MISSION
+            </span>
+
+            <p id="detailDescription" class="detail-description">
+              Select a plant to see its abilities.
+            </p>
+          </div>
 
           <div class="stat-list">
             <div class="stat-row">

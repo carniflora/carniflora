@@ -1,6 +1,6 @@
 import { dom } from "./dom.js";
 import { session, activePlants } from "./session.js";
-import { plantImages } from "./assets.js";
+import { plantImages, plantRoles } from "./assets.js";
 import { showPlantMessage } from "./hud.js";
 
 let navButtons = null;
@@ -103,6 +103,9 @@ export function showPlantDetails(index) {
 
   // Update description.
   $("detailDescription").textContent = plant.desc ?? plant.d;
+
+  // Update plant role and special ability.
+  $("detailRole").textContent = plantRoles[index];
 
   // ==========================================
   //  Display the selected plant illustration
