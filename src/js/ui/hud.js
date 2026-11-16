@@ -47,7 +47,7 @@ export function hud() {
   }
 
   // ===================================================
-  // Disables the Select Plant button.
+  // Update deployement buttons
   // ===================================================
 
   if (session.selectedPlantIndex !== null) {
@@ -59,12 +59,22 @@ export function hud() {
           t.plant === session.selectedPlantIndex &&
           t.owner === session.activePlayer,
       );
-    $("selectPlantBtn").disabled =
+
+    const deploymentDisabled =
       activePhase() !== "play" ||
       !hasTower ||
       battle.spores < plant.cost ||
       (battleService.online() && !battleService.ready());
+
+    $("selectPlantBtn").disabled = deploymentDisabled;
+    $("battleDeployBtn").disabled = deploymentDisabled;
+  } else {
+    $("selectPlantBtn").disabled = true;
+    $("battleDeployBtn").disabled = true;
   }
+
+  // Hide the regular toolbar during Boss Battle.
+  document.querySelector(".battle-toolbar").hidden = session.mode === "boss";
 
   bossDeployButtons.forEach((button, index) => {
     button.disabled =
@@ -116,14 +126,10 @@ export function hud() {
   $("pz").setAttribute("aria-pressed", String(activePhase() === "pause"));
 }
 
-// formerly from messages.js
-
 export function showPlantMessage(message) {
   const { $ } = dom();
   $("plantMessage").textContent = message;
 }
-
-// formerly from overlay.js
 
 export function show(t, m, b) {
   const { $ } = dom();
