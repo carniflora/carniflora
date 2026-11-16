@@ -1,0 +1,38 @@
+.network-panel {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 1rem;
+  min-width: 0;
+}
+
+.network-panel h2 {
+  font-size: 1rem;
+}
+
+.network-panel h2,
+.network-panel label,
+.network-panel p {
+  color: var(--panel);
+}
+
+.network-panel form {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.network-panel input {
+  min-width: 0;
+  width: 100%;
+  padding: 0.6rem;
+  font: inherit;
+  text-transform: uppercase;
+}
+
+.network-panel p {
+  overflow-wrap: anywhere;
+  font-size: 0.85rem;
+}
+
+.network-panel [hidden] {
+  display: none;
+}

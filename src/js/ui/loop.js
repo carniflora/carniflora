@@ -1,3 +1,4 @@
+import { battleService } from "../battleService.js";
 import { dom } from "./dom.js";
 import { session, activePhase } from "./session.js";
 import { state } from "../state.js";
@@ -23,8 +24,13 @@ function loop(timer) {
   const { canvas, ctx: g } = dom();
   const deltaTime = Math.min(0.05, (timer - last) / 1000);
   last = timer;
-  if (session.mode === "boss") updateBossLevel(session.bossState, deltaTime);
-  else if (activePhase() === "play") update(deltaTime);
+  if (!battleService.online()) {
+    if (session.mode === "boss") {
+      updateBossLevel(session.bossState, deltaTime);
+    } else if (activePhase() === "play") {
+      update(deltaTime);
+    }
+  }
 
   // check if game is ended
   const phase = activePhase();

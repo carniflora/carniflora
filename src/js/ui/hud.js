@@ -1,4 +1,5 @@
 import { dom } from "./dom.js";
+import { battleService } from "../battleService.js";
 import { state } from "../state.js";
 import { session, activeBattle, activePhase, activePlants } from "./session.js";
 import { towersOf, maxTowers } from "../towers.js";
@@ -53,9 +54,16 @@ export function hud() {
     const plant = activePlants()[session.selectedPlantIndex];
     const hasTower =
       session.mode === "boss" ||
-      state.myTowers.some((t) => t.plant === session.selectedPlantIndex);
+      state.myTowers.some(
+        (t) =>
+          t.plant === session.selectedPlantIndex &&
+          t.owner === session.activePlayer,
+      );
     $("selectPlantBtn").disabled =
-      activePhase() !== "play" || !hasTower || battle.spores < plant.cost;
+      activePhase() !== "play" ||
+      !hasTower ||
+      battle.spores < plant.cost ||
+      (battleService.online() && !battleService.ready());
   }
 
   bossDeployButtons.forEach((button, index) => {

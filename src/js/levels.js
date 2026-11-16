@@ -87,5 +87,5 @@ export function loadLevel(index, players = 1) {
     for (const { c, r } of p.cells) blockPath.add(c + "," + r);
   }
 
-  return { index, name: def.name, goal: def.goal, paths, blockPath };
+  return { index, players, name: def.name, goal: def.goal, paths, blockPath };
 }

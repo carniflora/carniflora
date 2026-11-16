@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="./css/upgrades.css" />
     <link rel="stylesheet" href="./css/battle.css" />
     <link rel="stylesheet" href="./css/responsive.css" />
+    <link rel="stylesheet" href="./css/multiplayer.css" />
 
     <link
       rel="stylesheet"
@@ -104,6 +105,36 @@
               <i class="icon-chevron-right nav-arrow" aria-hidden="true"></i>
             </button>
           </div>
+
+          <section class="network-panel" aria-label="Online multiplayer">
+            <h2>Online multiplayer</h2>
+            <button class="ctl" id="createSession" type="button">
+              Create Session
+            </button>
+            <form id="joinForm">
+              <label for="sessionKey">Session key</label>
+              <input
+                id="sessionKey"
+                name="sessionKey"
+                maxlength="12"
+                autocomplete="off"
+                autocapitalize="characters"
+                spellcheck="false"
+              />
+              <button class="ctl" id="joinSession" type="submit">
+                Join Session
+              </button>
+            </form>
+            <button class="ctl" id="copySession" type="button" hidden>
+              Copy Key
+            </button>
+            <button class="ctl" id="leaveSession" type="button" hidden>
+              Leave Session
+            </button>
+            <p id="networkStatus" role="status" aria-live="polite">
+              Local play
+            </p>
+          </section>
 
           <div class="nav-footer">
             <span class="nav-status-dot"></span>

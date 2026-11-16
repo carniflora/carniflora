@@ -1,7 +1,8 @@
+import { battleService } from "../battleService.js";
 import { dom } from "./dom.js";
 import { TILE } from "../constants.js";
 import { state } from "../state.js";
-import { placeTower, maxTowers } from "../towers.js";
+import { maxTowers } from "../towers.js";
 import { PLANTS } from "../plants.js";
 import { session, activePhase } from "./session.js";
 import { LANE_Y } from "../bossLevel.js";
@@ -66,8 +67,24 @@ export function mountInput() {
 
     const [c, r] = cellFromEvent(e);
     const plant = PLANTS[session.selectedPlantIndex];
+    if (battleService.online()) {
+      battleService.place(
+        c,
+        r,
+        session.selectedPlantIndex,
+        session.activePlayer,
+      );
+      return;
+    }
 
-    if (placeTower(c, r, session.selectedPlantIndex, session.activePlayer)) {
+    if (
+      battleService.place(
+        c,
+        r,
+        session.selectedPlantIndex,
+        session.activePlayer,
+      )
+    ) {
       showPlantMessage(
         `${plant.n} tower placed. Press deploy to send out plants.`,
       );
@@ -83,6 +100,9 @@ export function mountInput() {
   });
 
   addEventListener("keydown", (e) => {
+    if (e.target.closest?.("input, textarea, select, [contenteditable=true]")) {
+      return;
+    }
     if (
       session.mode === "boss" &&
       (e.key === "ArrowUp" || e.key === "ArrowDown")
@@ -104,7 +124,7 @@ export function mountInput() {
     }
 
     // tab to switch players
-    if (e.code === "Tab" && state.players === 2) {
+    if (e.code === "Tab" && state.players === 2 && !battleService.online()) {
       e.preventDefault();
       setActivePlayer(1 - session.activePlayer);
     }
