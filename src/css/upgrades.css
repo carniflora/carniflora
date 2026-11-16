@@ -1,25 +1,25 @@
-html:has(#upgradesTab.active),
-body:has(#upgradesTab.active) {
+html:has(:is(#upgradesTab, #battleTab).active),
+body:has(:is(#upgradesTab, #battleTab).active) {
   background: #f7f0ff;
 }
 
-#app:has(#upgradesTab.active) {
+#app:has(:is(#upgradesTab, #battleTab).active) {
   background: #f7f0ff;
   max-width: none;
 }
 
-#app:has(#upgradesTab.active) > header h1 {
+#app:has(:is(#upgradesTab, #battleTab).active) > header h1 {
   color: #7046a3;
 }
 
-#app:has(#upgradesTab.active) > header .stats > span {
+#app:has(:is(#upgradesTab, #battleTab).active) > header .stats > span {
   background: #fffaff;
   border-color: #e1cdf9;
   color: #7046a3;
 }
 
-#app:has(#upgradesTab.active) > header .stats b,
-#app:has(#upgradesTab.active) > header .hud-icon {
+#app:has(:is(#upgradesTab, #battleTab).active) > header .stats b,
+#app:has(:is(#upgradesTab, #battleTab).active) > header .hud-icon {
   color: #7046a3;
 }
 
@@ -421,8 +421,8 @@ body:has(#upgradesTab.active) {
   display: none;
 }
 
-/* Bottom navigation while Upgrades is active */
-.game-layout:has(#upgradesTab.active) > .side-nav {
+/* Bottom navigation for Upgrades and Battle */
+.game-layout:has(:is(#upgradesTab, #battleTab).active) > .side-nav {
   position: fixed;
   z-index: 30;
   left: 50%;
@@ -437,21 +437,21 @@ body:has(#upgradesTab.active) {
   box-shadow: 0 5px 18px #6946a11f;
 }
 
-.game-layout:has(#upgradesTab.active) .nav-brand,
-.game-layout:has(#upgradesTab.active) .nav-divider,
-.game-layout:has(#upgradesTab.active) .nav-section-label,
-.game-layout:has(#upgradesTab.active) .nav-footer {
+.game-layout:has(:is(#upgradesTab, #battleTab).active) .nav-brand,
+.game-layout:has(:is(#upgradesTab, #battleTab).active) .nav-divider,
+.game-layout:has(:is(#upgradesTab, #battleTab).active) .nav-section-label,
+.game-layout:has(:is(#upgradesTab, #battleTab).active) .nav-footer {
   display: none;
 }
 
-.game-layout:has(#upgradesTab.active) .nav-links {
+.game-layout:has(:is(#upgradesTab, #battleTab).active) .nav-links {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
   width: 100%;
 }
 
-.game-layout:has(#upgradesTab.active) .side-nav .nav-btn {
+.game-layout:has(:is(#upgradesTab, #battleTab).active) .side-nav .nav-btn {
   justify-content: center;
   min-width: 0;
   min-height: 40px;
@@ -463,16 +463,19 @@ body:has(#upgradesTab.active) {
   font-size: 12px;
 }
 
-.game-layout:has(#upgradesTab.active) .side-nav .nav-btn.active {
+.game-layout:has(:is(#upgradesTab, #battleTab).active)
+  .side-nav
+  .nav-btn.active {
   background: #8c70c8;
   border-color: #8c70c8;
   color: #fff;
 }
 
-.game-layout:has(#upgradesTab.active) .side-nav .nav-icon {
+.game-layout:has(:is(#upgradesTab, #battleTab).active) .side-nav .nav-icon {
   color: inherit;
 }
-.game-layout:has(#upgradesTab.active) .nav-arrow {
+
+.game-layout:has(:is(#upgradesTab, #battleTab).active) .nav-arrow {
   display: none;
 }
 

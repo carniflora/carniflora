@@ -1,6 +1,6 @@
 import { dom } from "./dom.js";
 import { session, activePlants } from "./session.js";
-import { plantImages } from "./assets.js";
+import { plantImages, plantRoles } from "./assets.js";
 import { showPlantMessage } from "./hud.js";
 
 let navButtons = null;
@@ -10,12 +10,34 @@ let tabs = null;
 // before the first setActiveTab call.
 export function mountTabs() {
   const { $ } = dom();
+
+  $("networkToggle").addEventListener("click", () => {
+    const panel = document.querySelector(".network-panel");
+    const isOpen = panel.classList.toggle("is-open");
+
+    $("networkToggle").setAttribute("aria-expanded", String(isOpen));
+  });
+
+  // Close the plant information popup.
+  $("closePlantInfo").addEventListener("click", () => {
+    $("plantDetailsPanel").classList.remove("is-open");
+  });
+
+  // Open or close the plant information popup.
+  $("battlePlantInfoBtn").addEventListener("click", () => {
+    if (session.selectedPlantIndex !== null) {
+      $("plantDetailsPanel").classList.toggle("is-open");
+    }
+  });
+
   navButtons = document.querySelectorAll(".nav-btn[data-tab]");
+
   tabs = {
     plants: $("plantsTab"),
     upgrades: $("upgradesTab"),
     battle: $("battleTab"),
   };
+
   navButtons.forEach((button) => {
     button.addEventListener("click", () => {
       const selectedTab = button.dataset.tab;
@@ -29,27 +51,20 @@ export function mountTabs() {
 // =====================================================
 
 export function setActiveTab(tabName) {
-  // Remove active style
-  // from every navigation button.
   navButtons.forEach((button) => {
     button.classList.remove("active");
   });
 
-  // Hide every tab.
   Object.values(tabs).forEach((tab) => {
     tab.classList.remove("active");
   });
 
-  // Find navigation button
-  // belonging to this tab.
   const selectedButton = document.querySelector(`[data-tab="${tabName}"]`);
 
-  // Highlight selected button.
   if (selectedButton) {
     selectedButton.classList.add("active");
   }
 
-  // Show selected tab.
   if (tabs[tabName]) {
     tabs[tabName].classList.add("active");
   }
@@ -57,7 +72,6 @@ export function setActiveTab(tabName) {
 
 // =====================================================
 // SHOW SELECTED PLANT INFORMATION
-// This fills the right-hand panel.
 // =====================================================
 
 export function showPlantDetails(index) {
@@ -89,6 +103,9 @@ export function showPlantDetails(index) {
 
   // Update description.
   $("detailDescription").textContent = plant.desc ?? plant.d;
+
+  // Update plant role and special ability.
+  $("detailRole").textContent = plantRoles[index];
 
   // ==========================================
   //  Display the selected plant illustration
@@ -128,15 +145,15 @@ export function showPlantDetails(index) {
 
   $("selectPlantBtn").disabled = false;
 
-  document.querySelectorAll(".plant-option").forEach((card) => {
-    card.classList.remove("selected");
-  });
+  // Synchronize plant selection across both pages.
+  document
+    .querySelectorAll(".plant-option, .battle-plant-option")
+    .forEach((card) => {
+      const isSelected = Number(card.dataset.plantIndex) === index;
 
-  const selectedCard = document.querySelector(`[data-plant-index="${index}"]`);
-
-  if (selectedCard) {
-    selectedCard.classList.add("selected");
-  }
+      card.classList.toggle("selected", isSelected);
+      card.setAttribute("aria-pressed", String(isSelected));
+    });
 
   showPlantMessage(`${plant.n} selected`);
 }

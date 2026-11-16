@@ -28,7 +28,6 @@
 
   <body>
     <div id="app">
-      <!-- HEADER -->
       <header>
         <h1>Carniflora: Breach</h1>
 
@@ -105,6 +104,16 @@
               <i class="icon-chevron-right nav-arrow" aria-hidden="true"></i>
             </button>
           </div>
+
+          <button
+            id="networkToggle"
+            class="network-toggle"
+            type="button"
+            aria-expanded="false"
+          >
+            <i class="icon-users" aria-hidden="true"></i>
+            Online Multiplayer
+          </button>
 
           <section class="network-panel" aria-label="Online multiplayer">
             <h2>Online multiplayer</h2>
@@ -222,14 +231,13 @@
                   />
                 </svg>
 
-                <!-- TABLET AND PHONE progression road -->
                 <svg
                   class="upgrade-path upgrade-path-tablet"
                   viewBox="0 0 600 760"
                   preserveAspectRatio="none"
                   aria-hidden="true"
                 >
-                  <!-- Outer purple road -->
+                  =
                   <path
                     d="
                       M 380 690
@@ -248,7 +256,6 @@
                     stroke-linejoin="round"
                   />
 
-                  <!-- Lavender road surface -->
                   <path
                     d="
                       M 380 690
@@ -267,7 +274,6 @@
                     stroke-linejoin="round"
                   />
 
-                  <!-- Dashed centre line -->
                   <path
                     d="
                       M 380 690
@@ -371,7 +377,31 @@
 
           <!-- BATTLE TAB -->
           <div id="battleTab" class="tab-content">
-            <h2 id="battleTitle">Battle</h2>
+            <div class="battle-header">
+              <div class="battle-heading">
+                <span class="battle-eyebrow">Your Battle Journey</span>
+
+                <h2 id="battleTitle">Battle Arena</h2>
+
+                <p>
+                  Deploy your plants, destroy enemy towers, and defeat the
+                  castle.
+                </p>
+              </div>
+
+              <div class="control-buttons">
+                <button class="ctl" id="pz">Pause (P)</button>
+
+                <button class="ctl" id="rs">
+                  <i class="icon-rotate-ccw" aria-hidden="true"></i>
+                  Restart Level
+                </button>
+
+                <button class="ctl" id="bm" aria-pressed="false">
+                  Boss Battle
+                </button>
+              </div>
+            </div>
             <div class="stage">
               <canvas
                 id="c"
@@ -387,6 +417,27 @@
                   <button class="ctl" id="ob"></button>
                 </div>
               </div>
+            </div>
+            <div class="battle-toolbar">
+              <div class="battle-plant-selection">
+                <span class="battle-toolbar-label">Select Your Plant</span>
+
+                <div id="battlePlantGrid" class="battle-plant-grid"></div>
+              </div>
+
+              <button
+                id="battlePlantInfoBtn"
+                class="battle-info-btn"
+                type="button"
+                aria-label="View selected plant information"
+              >
+                <i class="icon-info" aria-hidden="true"></i>
+                Info
+              </button>
+
+              <button id="battleDeployBtn" class="battle-deploy-btn" disabled>
+                Deploy Plant
+              </button>
             </div>
             <div id="bossControls" class="boss-controls" hidden>
               <p class="boss-briefing">
@@ -413,13 +464,31 @@
           </div>
         </section>
 
-        <aside class="plant-details">
+        <aside class="plant-details" id="plantDetailsPanel">
+          <button
+            id="closePlantInfo"
+            class="close-plant-info"
+            type="button"
+            aria-label="Close plant information"
+          >
+            &times;
+          </button>
+
           <p class="sidebar-label">PLANT INFO</p>
           <div id="detailColor" class="detail-color"></div>
+          <span id="detailRole" class="battle-detail-role"></span>
+
           <h2 id="detailName">Choose a Plant</h2>
-          <p id="detailDescription" class="detail-description">
-            Select a plant to see its abilities.
-          </p>
+
+          <div class="battle-ability-box">
+            <span class="battle-ability-label">
+              SPECIAL ABILITY / MISSION
+            </span>
+
+            <p id="detailDescription" class="detail-description">
+              Select a plant to see its abilities.
+            </p>
+          </div>
 
           <div class="stat-list">
             <div class="stat-row">
@@ -489,24 +558,8 @@
       </main>
 
       <div class="game-controls">
-        <div class="control-buttons">
-          <!-- Pause button -->
-          <button class="ctl" id="pz">
-            <i class="icon-pause" aria-hidden="true"></i>
-            <span>Pause (P)</span>
-          </button>
-
-          <!-- Restart button -->
-          <button class="ctl" id="rs">
-            <i class="icon-rotate-ccw" aria-hidden="true"></i>
-            <span>Restart Level</span>
-          </button>
-        </div>
-
         <div class="control-instructions">
           <i class="icon-keyboard" aria-hidden="true"></i>
-
-          <button class="ctl" id="bm" aria-pressed="false">Boss Battle</button>
 
           <span id="battleHint" class="hint">
             Click a plant (or press 1-4), click a tile beside the path to place
