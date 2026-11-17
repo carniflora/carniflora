@@ -9,7 +9,6 @@ import { BOSS_KINDS } from "../plants.js";
 import { bossLaneButtons, bossDeployButtons } from "./bossControls.js";
 import { renderEvolutionCards } from "./flow.js";
 
-// store currently displayed HUD value
 let shown = {};
 
 let lastRenderedEvolutionLevel = null;
@@ -73,7 +72,6 @@ export function hud() {
     $("battleDeployBtn").disabled = true;
   }
 
-  // Hide the regular toolbar during Boss Battle.
   document.querySelector(".battle-toolbar").hidden = session.mode === "boss";
 
   bossDeployButtons.forEach((button, index) => {
