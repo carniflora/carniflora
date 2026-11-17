@@ -35,7 +35,15 @@
           <span>
             <i class="icon-leaf hud-icon" aria-hidden="true"></i>
             Spores
-            <b id="sp">0</b>
+            <b id="sp">0 / 0</b>
+
+            <progress
+              id="sporeProgress"
+              class="spore-progress"
+              value="0"
+              max="120"
+              aria-label="Available spores"
+            ></progress>
           </span>
 
           <span>
@@ -51,6 +59,7 @@
           </span>
 
           <span>
+            <i class="icon-castle" aria-hidden="true"></i>
             Towers
             <b id="tc">0 / 0</b>
           </span>
@@ -90,6 +99,7 @@
             <button class="nav-btn" data-tab="battle">
               <i class="icon-swords nav-icon" aria-hidden="true"></i>
               <span>Battle</span>
+
               <i class="icon-chevron-right nav-arrow" aria-hidden="true"></i>
             </button>
 
@@ -394,7 +404,10 @@
               <!-- Left side: Plant selection -->
               <div class="battle-toolbar">
                 <div class="battle-plant-selection">
-                  <span class="battle-toolbar-label">Select Your Plant</span>
+                  <span class="battle-toolbar-label">
+                    <i class="icon-sprout" aria-hidden="true"></i>
+                    Select Your Plant
+                  </span>
 
                   <div id="battlePlantGrid" class="battle-plant-grid"></div>
                 </div>
@@ -403,9 +416,23 @@
                   <h3>HOW TO DEPLOY</h3>
 
                   <ol>
-                    <li>Select your plant.</li>
-                    <li>Place its tower.</li>
-                    <li>Press Deploy Plant.</li>
+                    <li>
+                      <i
+                        class="icon-mouse-pointer-click"
+                        aria-hidden="true"
+                      ></i>
+                      <span>Select your plant</span>
+                    </li>
+
+                    <li>
+                      <i class="icon-map-pin" aria-hidden="true"></i>
+                      <span>Place its tower</span>
+                    </li>
+
+                    <li>
+                      <i class="icon-sprout" aria-hidden="true"></i>
+                      <span>Deploy your plant</span>
+                    </li>
                   </ol>
                 </div>
 
@@ -415,7 +442,27 @@
               </div>
 
               <!-- Centre: Battle map -->
+              <!-- Centre: Battle map -->
               <div class="stage">
+                <div id="battleStatus" class="battle-status" data-phase="menu">
+                  <span class="battle-status-dot"></span>
+                  <span id="battleStatusText">Ready for Battle</span>
+                </div>
+
+                <div id="castleHealth" class="castle-health" hidden>
+                  <div class="castle-health-heading">
+                    <i class="icon-castle" aria-hidden="true"></i>
+                    <span>Castle Health</span>
+                    <strong id="castleHealthText">100%</strong>
+                  </div>
+
+                  <progress
+                    id="castleHealthProgress"
+                    max="100"
+                    value="100"
+                    aria-label="Castle health"
+                  ></progress>
+                </div>
                 <canvas
                   id="c"
                   width="960"
@@ -425,8 +472,21 @@
 
                 <div id="ov">
                   <div class="box">
+                    <i
+                      id="battleOverlayIcon"
+                      class="icon-swords battle-overlay-icon"
+                      aria-hidden="true"
+                    ></i>
+
                     <h2 id="ot"></h2>
                     <p id="om"></p>
+
+                    <span
+                      id="overlayLevel"
+                      class="battle-overlay-level"
+                      hidden
+                    ></span>
+
                     <button class="ctl" id="ob"></button>
                   </div>
                 </div>
@@ -459,7 +519,10 @@
         </section>
 
         <aside class="plant-details" id="plantDetailsPanel">
-          <p class="sidebar-label">PLANT INFO</p>
+          <p class="sidebar-label">
+            <i class="icon-info" aria-hidden="true"></i>
+            PLANT INFO
+          </p>
           <div id="detailColor" class="detail-color"></div>
           <span id="detailRole" class="battle-detail-role"></span>
 
@@ -544,22 +607,32 @@
 
       <div class="game-controls">
         <div class="control-buttons">
-          <button class="ctl" id="pz">Pause (P)</button>
+          <button class="ctl" id="pz">
+            <i id="pauseIcon" class="icon-pause" aria-hidden="true"></i>
+            <span id="pauseLabel">Pause (P)</span>
+          </button>
 
           <button class="ctl" id="rs">
             <i class="icon-rotate-ccw" aria-hidden="true"></i>
-            Restart Level
+            <span>Restart Level</span>
           </button>
 
-          <button class="ctl" id="bm" aria-pressed="false">Boss Battle</button>
+          <button class="ctl" id="bm" aria-pressed="false">
+            <i class="icon-swords" aria-hidden="true"></i>
+            <span>Boss Battle</span>
+          </button>
+
+          <button class="ctl" id="fullscreenBtn" type="button">
+            <i class="icon-maximize" aria-hidden="true"></i>
+            <span>Fullscreen</span>
+          </button>
         </div>
 
         <div class="control-instructions">
           <i class="icon-keyboard" aria-hidden="true"></i>
 
           <span id="battleHint" class="hint">
-            Click a plant (or press 1-4), click a tile beside the path to place
-            its tower, then deploy.
+            <kbd>1–4</kbd> Plant shortcuts <kbd>P</kbd> Pause / Resume
           </span>
         </div>
       </div>

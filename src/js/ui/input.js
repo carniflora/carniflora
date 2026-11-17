@@ -61,7 +61,7 @@ export function mountInput() {
     }
     if (state.phase !== "play") return;
     if (session.selectedPlantIndex === null) {
-      showPlantMessage("Select a plant first.");
+      showPlantMessage("Select a plant first.", "warning");
       return;
     }
 

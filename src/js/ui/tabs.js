@@ -88,6 +88,11 @@ export function showPlantDetails(index) {
 
   // Update cost.
   $("detailCost").textContent = plant.cost;
+  // Update the Battle deployment button.
+  $("battleDeployBtn").innerHTML = `
+    <strong>Deploy ${plant.n}</strong>
+    <span>${plant.cost} spores</span>
+  `;
 
   // Update description.
   $("detailDescription").textContent = plant.desc ?? plant.d;

@@ -93,15 +93,18 @@ export function mountPlantGrid({ onSelect, onDeploy }) {
     battleCard.dataset.plantIndex = index;
 
     battleCard.innerHTML = `
-    <img src="${plantImages[index]}" alt="${plant.n}" />
+      <img src="${plantImages[index]}" alt="${plant.n}" />
 
-    <div class="battle-plant-text">
-      <strong>${plant.n}</strong>
-      <span>${plant.cost} spores</span>
-    </div>
+      <div class="battle-plant-text">
+        <strong>${plant.n}</strong>
+        <span>${plant.cost} spores</span>
+      </div>
 
-    <span class="battle-plant-key">Level ${index + 1}</span>
-  `;
+      <span class="battle-plant-key">Level ${index + 1}</span>
+
+      <i class="icon-circle-check battle-selected-icon"
+        aria-hidden="true"></i>
+    `;
 
     battleCard.addEventListener("click", () => {
       onSelect(index);
