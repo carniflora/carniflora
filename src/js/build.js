@@ -1,5 +1,4 @@
-import { state } from "./state.js";
-import { maxSpores } from "./economy.js";
+import { state, maxSpores } from "./state.js";
 import { TILE, FINAL_MINION, DIST_BETWEEN_MINIONS } from "./constants.js";
 import { pxPosOf, loadLevel } from "./levels.js";
 import { effects } from "./effects.js";
