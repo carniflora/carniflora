@@ -18,18 +18,6 @@ export function mountTabs() {
     $("networkToggle").setAttribute("aria-expanded", String(isOpen));
   });
 
-  // Close the plant information popup.
-  $("closePlantInfo").addEventListener("click", () => {
-    $("plantDetailsPanel").classList.remove("is-open");
-  });
-
-  // Open or close the plant information popup.
-  $("battlePlantInfoBtn").addEventListener("click", () => {
-    if (session.selectedPlantIndex !== null) {
-      $("plantDetailsPanel").classList.toggle("is-open");
-    }
-  });
-
   navButtons = document.querySelectorAll(".nav-btn[data-tab]");
 
   tabs = {

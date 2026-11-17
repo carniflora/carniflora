@@ -236,16 +236,20 @@ button:focus-visible {
   font-size: 0.82rem;
 }
 .game-layout:has(#battleTab.active) {
-  display: block;
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr) 250px;
+  grid-template-rows: auto auto auto;
+  align-items: stretch;
+  gap: 16px;
   position: relative;
+  max-width: 1700px;
+  margin: 0 auto;
 }
 
-.game-layout:has(#battleTab.active) > .main-panel {
-  min-width: 0;
-  padding: 16px;
-  border: 0;
-  background: transparent;
-  box-shadow: none;
+.game-layout:has(#battleTab.active) > .main-panel,
+#battleTab.active,
+#battleTab .battle-arena-layout {
+  display: contents;
 }
 
 .battle-toolbar {
@@ -340,17 +344,17 @@ button:focus-visible {
 
 .battle-plant-key {
   position: absolute;
-  top: -6px;
-  left: -6px;
-  width: 20px;
-  height: 20px;
-  display: grid;
-  place-items: center;
+  top: -7px;
+  left: 8px;
+  width: auto;
+  height: auto;
+  padding: 4px 10px;
   background: #8c70c8;
   color: #ffffff;
   border-radius: 6px;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .battle-plant-option:hover:not(:disabled) {
@@ -378,27 +382,41 @@ button:focus-visible {
 }
 
 .game-layout:has(#battleTab.active) > .plant-details {
-  display: none;
+  display: flex;
+  flex-direction: column;
+  grid-column: 3;
+  grid-row: 2;
+  gap: 10px;
+
+  position: relative;
+  inset: auto;
+  transform: none;
+
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  min-height: 0;
+  box-sizing: border-box;
+
+  padding: 14px;
+  background: #fffaff;
+  color: #7046a3;
+  border: 1px solid #d8b8f3;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px #6946a11f;
 }
 
 .game-layout:has(#battleTab.active) > .plant-details.is-open {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  position: fixed;
-  top: 50%;
-  right: 32px;
-  left: auto;
-  bottom: auto;
-  transform: translateY(-50%);
-  z-index: 40;
-
-  width: 300px;
-  max-width: calc(100vw - 64px);
-  max-height: 80vh;
+  position: relative;
+  inset: auto;
+  transform: none;
+  width: 100%;
+  max-width: none;
   box-sizing: border-box;
-  overflow-y: auto;
-
   padding: 14px;
   background: #fffaff;
   color: #7046a3;
@@ -795,4 +813,245 @@ button:focus-visible {
   font-size: 11px;
   line-height: 1.5;
   text-align: left;
+}
+
+/* Battle heading */
+
+#battleTab .battle-header {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  width: 100%;
+  max-width: none;
+}
+
+/* Left panel */
+
+#battleTab .battle-toolbar {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  height: 100%;
+  gap: 12px;
+}
+
+/* Battle map */
+
+#battleTab .stage {
+  grid-column: 2;
+  grid-row: 2;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  margin: 0;
+}
+
+/* Boss controls */
+
+#battleTab .boss-controls {
+  grid-column: 1 / -1;
+  grid-row: 3;
+}
+
+#battleTab .battle-toolbar {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 14px;
+}
+
+#battleTab .battle-plant-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(4, minmax(65px, 1fr));
+  flex: 1;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+#battleTab .battle-plant-option {
+  height: 100%;
+  min-height: 65px;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+#battleTab .battle-info-btn,
+#battleTab .battle-deploy-btn {
+  width: 100%;
+  min-height: 42px;
+}
+
+#battleTab .battle-toolbar[hidden] {
+  display: none;
+}
+
+#battleTab .battle-deploy-btn {
+  margin-top: auto;
+  min-height: 44px;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+#app:has(#battleTab.active) .game-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin: 16px auto 0;
+  padding: 12px;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+#app:has(#battleTab.active) .control-buttons {
+  justify-content: center;
+  gap: 10px;
+}
+
+#app:has(#battleTab.active) .control-buttons .ctl {
+  min-width: 130px;
+  padding: 12px 18px;
+  background: #e5d5f5;
+  color: #7046a3;
+  border: 1px solid #dcc9ef;
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+#app:has(#battleTab.active) .control-buttons .ctl:hover {
+  background: #d8c0f1;
+  border-color: #8c70c8;
+}
+
+#app:has(#battleTab.active) .control-instructions {
+  padding: 0;
+  border: 0;
+}
+
+/* Fill the left plant selection panel */
+
+#battleTab .battle-plant-selection {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+#battleTab .battle-plant-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(4, minmax(75px, 1fr));
+  flex: 1;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+#battleTab .battle-plant-option {
+  height: 85px;
+  min-height: 85px;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+#battleTab .battle-plant-option img {
+  width: 50px;
+  height: 50px;
+  flex-shrink: 0;
+}
+
+#battleTab .battle-deploy-btn {
+  margin-top: auto;
+  min-height: 44px;
+  width: 100%;
+}
+
+/* Compact plant selection panel */
+
+#battleTab .battle-toolbar-label {
+  display: block;
+  padding: 12px 6px;
+  background: #f2b3d8;
+  color: #7046a3;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+#battleTab .battle-plant-selection {
+  flex: none;
+}
+
+#battleTab .battle-plant-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(4, 90px);
+  gap: 10px;
+  margin-top: 12px;
+  align-items: stretch;
+}
+
+#battleTab .battle-plant-option {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  min-height: 90px;
+  max-height: none;
+  padding: 12px;
+  gap: 10px;
+  box-sizing: border-box;
+}
+
+#battleTab .battle-plant-option img {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+
+#battleTab .battle-plant-text {
+  flex: 1;
+}
+
+#battleTab .battle-plant-key {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 4px 6px;
+  border-radius: 6px;
+  background: #8c70c8;
+  color: #ffffff;
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+.battle-deploy-guide {
+  margin-top: 4px;
+  padding: 12px;
+  background: #e9dcf8;
+  color: #7046a3;
+  border-radius: 10px;
+}
+
+.battle-deploy-guide h3 {
+  margin: 0 0 8px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.battle-deploy-guide ol {
+  margin: 0;
+  padding-left: 16px;
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+#battleTab .battle-deploy-btn {
+  margin-top: 0;
 }
