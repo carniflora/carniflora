@@ -236,14 +236,23 @@ button:focus-visible {
   font-size: 0.82rem;
 }
 .game-layout:has(#battleTab.active) {
-  display: grid;
+   display: grid;
   grid-template-columns: 250px minmax(0, 1fr) 250px;
   grid-template-rows: auto auto auto;
   align-items: stretch;
-  gap: 16px;
+  gap: 6px;
   position: relative;
+
+  width: 100%;
   max-width: 1700px;
   margin: 0 auto;
+  padding: 16px;
+  box-sizing: border-box;
+
+  background: #fcf8ff;
+  border: 1px solid #dcc6ee;
+  border-radius: 20px;
+  box-shadow: 0 12px 35px rgba(112, 70, 163, 0.08);
 }
 
 .battle-toolbar {
@@ -498,7 +507,7 @@ button:focus-visible {
 
 .battle-heading {
   width: 100%;
-  padding: 16px 0 8px;
+   padding: 16px 0 8px;
   text-align: center;
 }
 
@@ -772,7 +781,7 @@ button:focus-visible {
 }
 
 #battleTab .battle-heading #battleTitle {
-  margin: 4px 0 6px;
+ margin: 4px 0 6px;
   color: #7046a3;
   font-family: "DM Serif Display", Georgia, serif;
   font-size: clamp(30px, 3.2vw, 42px);
@@ -801,11 +810,13 @@ button:focus-visible {
 }
 
 #app:has(#battleTab.active) .game-controls {
-  background: transparent;
-  border: 0;
-  box-shadow: none;
+  grid-column: 1 / -1;
+  grid-row: 4;
+  width: 100%;
   margin: 0;
-  padding: 8px;
+  padding: 12px 0 0;
+  box-sizing: border-box;
+  border-top: 1px solid #dcc6ee;
 }
 
 #app:has(#battleTab.active) .control-instructions {
@@ -953,8 +964,12 @@ button:focus-visible {
 }
 
 #app:has(#battleTab.active) .control-buttons {
-  justify-content: center;
-  gap: 10px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 8px;
 }
 
 #app:has(#battleTab.active) .control-buttons .ctl {
@@ -1167,9 +1182,8 @@ button:focus-visible {
   font-size: 12px;
 }
 #app:has(#battleTab.active) #bm {
-  background: #8c70c8;
-  color: #ffffff;
-  border-color: #8c70c8;
+margin-left: auto;
+  order: 4;
 }
 
 #app:has(#battleTab.active) #bm:hover:not(:disabled) {
