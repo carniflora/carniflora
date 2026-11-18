@@ -344,3 +344,9 @@ header h1 {
 #ob:hover {
   background: #7046a3;
 }
+#app .sidebar {
+  width: min(560px, calc(100% - 24px));
+  height: auto;
+  min-height: 0;
+  padding: 8px;
+}
