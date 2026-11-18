@@ -6,8 +6,6 @@ import { showPlantMessage } from "./hud.js";
 let navButtons = null;
 let tabs = null;
 
-// Queries the nav elements and wires the click listeners. Must be called
-// before the first setActiveTab call.
 export function mountTabs() {
   const { $ } = dom();
 
@@ -25,6 +23,10 @@ export function mountTabs() {
     upgrades: $("upgradesTab"),
     battle: $("battleTab"),
   };
+
+  $("playGameBtn").addEventListener("click", () => {
+    setActiveTab("battle");
+  });
 
   navButtons.forEach((button) => {
     button.addEventListener("click", () => {

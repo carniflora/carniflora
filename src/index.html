@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="./css/battle.css" />
     <link rel="stylesheet" href="./css/responsive.css" />
     <link rel="stylesheet" href="./css/multiplayer.css" />
+    <link rel="stylesheet" href="./css/welcome.css" />
 
     <link
       rel="stylesheet"
@@ -85,21 +86,20 @@
 
           <div class="nav-links">
             <button class="nav-btn active" data-tab="plants">
-              <i class="icon-leaf nav-icon" aria-hidden="true"></i>
-              <span>Plants</span>
-              <i class="icon-chevron-right nav-arrow" aria-hidden="true"></i>
-            </button>
-
-            <button class="nav-btn" data-tab="upgrades">
-              <i class="icon-arrow-big-up-dash nav-icon" aria-hidden="true"></i>
-              <span>Upgrades</span>
+              <i class="icon-house nav-icon" aria-hidden="true"></i>
+              <span>Home</span>
               <i class="icon-chevron-right nav-arrow" aria-hidden="true"></i>
             </button>
 
             <button class="nav-btn" data-tab="battle">
               <i class="icon-swords nav-icon" aria-hidden="true"></i>
               <span>Battle</span>
+              <i class="icon-chevron-right nav-arrow" aria-hidden="true"></i>
+            </button>
 
+            <button class="nav-btn" data-tab="upgrades">
+              <i class="icon-arrow-big-up-dash nav-icon" aria-hidden="true"></i>
+              <span>Upgrades</span>
               <i class="icon-chevron-right nav-arrow" aria-hidden="true"></i>
             </button>
 
@@ -163,22 +163,48 @@
 
         <section class="main-panel">
           <div id="plantsTab" class="tab-content active">
-            <div class="plant-section-header">
-              <div class="plant-heading-text">
-                <span class="section-eyebrow">MEET YOUR PLANTS</span>
-                <h2>Select Your Plant</h2>
-                <p class="tab-description">
-                  Pick a plant and discover what it can do
-                </p>
+            <section class="welcome-screen">
+              <div class="welcome-image">
+                <img
+                  src="./assets/plants/welcome.png"
+                  alt="Carnivorous plants in an enchanted forest"
+                />
               </div>
 
-              <div class="plant-count">
-                <i class="icon-leaf" aria-hidden="true"></i>
-                <span>4 PLANT TYPES</span>
+              <div class="welcome-content">
+                <span class="welcome-eyebrow"> ENTER THE WORLD OF </span>
+
+                <h2>Carniflora: Breach</h2>
+
+                <p>Grow your army. Breach the defenses. Reclaim the garden.</p>
+
+                <div class="welcome-actions">
+                  <button id="playGameBtn" class="welcome-play" type="button">
+                    <i class="icon-swords" aria-hidden="true"></i>
+                    Play Game
+                  </button>
+
+                  <button
+                    id="homeMultiplayerBtn"
+                    class="welcome-multiplayer"
+                    type="button"
+                  >
+                    <i class="icon-users" aria-hidden="true"></i>
+                    Multiplayer
+                  </button>
+
+                  <button id="howToPlayBtn" class="welcome-guide" type="button">
+                    <i class="icon-book-open" aria-hidden="true"></i>
+                    How to Play
+                  </button>
+                </div>
               </div>
+            </section>
+
+            <!-- Temporarily preserve existing JavaScript dependency -->
+            <div hidden>
+              <div id="plantGrid" class="plant-grid"></div>
             </div>
-
-            <div id="plantGrid" class="plant-grid"></div>
           </div>
 
           <div id="upgradesTab" class="tab-content">
