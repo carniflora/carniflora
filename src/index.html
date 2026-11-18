@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="./css/battle.css" />
     <link rel="stylesheet" href="./css/responsive.css" />
     <link rel="stylesheet" href="./css/multiplayer.css" />
+    <link rel="stylesheet" href="./css/welcome.css" />
 
     <link
       rel="stylesheet"
@@ -35,7 +36,15 @@
           <span>
             <i class="icon-leaf hud-icon" aria-hidden="true"></i>
             Spores
-            <b id="sp">0</b>
+            <b id="sp">0 / 0</b>
+
+            <progress
+              id="sporeProgress"
+              class="spore-progress"
+              value="0"
+              max="120"
+              aria-label="Available spores"
+            ></progress>
           </span>
 
           <span>
@@ -51,6 +60,7 @@
           </span>
 
           <span>
+            <i class="icon-castle" aria-hidden="true"></i>
             Towers
             <b id="tc">0 / 0</b>
           </span>
@@ -76,20 +86,20 @@
 
           <div class="nav-links">
             <button class="nav-btn active" data-tab="plants">
-              <i class="icon-leaf nav-icon" aria-hidden="true"></i>
-              <span>Plants</span>
-              <i class="icon-chevron-right nav-arrow" aria-hidden="true"></i>
-            </button>
-
-            <button class="nav-btn" data-tab="upgrades">
-              <i class="icon-arrow-big-up-dash nav-icon" aria-hidden="true"></i>
-              <span>Upgrades</span>
+              <i class="icon-house nav-icon" aria-hidden="true"></i>
+              <span>Home</span>
               <i class="icon-chevron-right nav-arrow" aria-hidden="true"></i>
             </button>
 
             <button class="nav-btn" data-tab="battle">
               <i class="icon-swords nav-icon" aria-hidden="true"></i>
               <span>Battle</span>
+              <i class="icon-chevron-right nav-arrow" aria-hidden="true"></i>
+            </button>
+
+            <button class="nav-btn" data-tab="upgrades">
+              <i class="icon-arrow-big-up-dash nav-icon" aria-hidden="true"></i>
+              <span>Upgrades</span>
               <i class="icon-chevron-right nav-arrow" aria-hidden="true"></i>
             </button>
 
@@ -153,22 +163,48 @@
 
         <section class="main-panel">
           <div id="plantsTab" class="tab-content active">
-            <div class="plant-section-header">
-              <div class="plant-heading-text">
-                <span class="section-eyebrow">MEET YOUR PLANTS</span>
-                <h2>Select Your Plant</h2>
-                <p class="tab-description">
-                  Pick a plant and discover what it can do
-                </p>
+            <section class="welcome-screen">
+              <div class="welcome-image">
+                <img
+                  src="./assets/plants/welcome.png"
+                  alt="Carnivorous plants in an enchanted forest"
+                />
               </div>
 
-              <div class="plant-count">
-                <i class="icon-leaf" aria-hidden="true"></i>
-                <span>4 PLANT TYPES</span>
+              <div class="welcome-content">
+                <span class="welcome-eyebrow"> ENTER THE WORLD OF </span>
+
+                <h2>Carniflora: Breach</h2>
+
+                <p>Grow your army. Breach the defenses. Reclaim the garden.</p>
+
+                <div class="welcome-actions">
+                  <button id="playGameBtn" class="welcome-play" type="button">
+                    <i class="icon-swords" aria-hidden="true"></i>
+                    Play Game
+                  </button>
+
+                  <button
+                    id="homeMultiplayerBtn"
+                    class="welcome-multiplayer"
+                    type="button"
+                  >
+                    <i class="icon-users" aria-hidden="true"></i>
+                    Multiplayer
+                  </button>
+
+                  <button id="howToPlayBtn" class="welcome-guide" type="button">
+                    <i class="icon-book-open" aria-hidden="true"></i>
+                    How to Play
+                  </button>
+                </div>
               </div>
+            </section>
+
+            <!-- Temporarily preserve existing JavaScript dependency -->
+            <div hidden>
+              <div id="plantGrid" class="plant-grid"></div>
             </div>
-
-            <div id="plantGrid" class="plant-grid"></div>
           </div>
 
           <div id="upgradesTab" class="tab-content">
@@ -388,57 +424,101 @@
                   castle.
                 </p>
               </div>
+            </div>
 
-              <div class="control-buttons">
-                <button class="ctl" id="pz">Pause (P)</button>
+            <div class="battle-arena-layout">
+              <!-- Left side: Plant selection -->
+              <div class="battle-toolbar">
+                <div class="battle-plant-selection">
+                  <span class="battle-toolbar-label">
+                    <i class="icon-sprout" aria-hidden="true"></i>
+                    Select Your Plant
+                  </span>
 
-                <button class="ctl" id="rs">
-                  <i class="icon-rotate-ccw" aria-hidden="true"></i>
-                  Restart Level
-                </button>
+                  <div id="battlePlantGrid" class="battle-plant-grid"></div>
+                </div>
 
-                <button class="ctl" id="bm" aria-pressed="false">
-                  Boss Battle
+                <div class="battle-deploy-guide">
+                  <h3>HOW TO DEPLOY</h3>
+
+                  <ol>
+                    <li>
+                      <i
+                        class="icon-mouse-pointer-click"
+                        aria-hidden="true"
+                      ></i>
+                      <span>Select your plant</span>
+                    </li>
+
+                    <li>
+                      <i class="icon-map-pin" aria-hidden="true"></i>
+                      <span>Place its tower</span>
+                    </li>
+
+                    <li>
+                      <i class="icon-sprout" aria-hidden="true"></i>
+                      <span>Deploy your plant</span>
+                    </li>
+                  </ol>
+                </div>
+
+                <button id="battleDeployBtn" class="battle-deploy-btn" disabled>
+                  Deploy Plant
                 </button>
               </div>
-            </div>
-            <div class="stage">
-              <canvas
-                id="c"
-                width="960"
-                height="540"
-                aria-label="Game field"
-              ></canvas>
 
-              <div id="ov">
-                <div class="box">
-                  <h2 id="ot"></h2>
-                  <p id="om"></p>
-                  <button class="ctl" id="ob"></button>
+              <!-- Centre: Battle map -->
+
+              <div class="stage">
+                <div id="battleStatus" class="battle-status" data-phase="menu">
+                  <span class="battle-status-dot"></span>
+                  <span id="battleStatusText">Ready for Battle</span>
+                </div>
+
+                <div id="castleHealth" class="castle-health" hidden>
+                  <div class="castle-health-heading">
+                    <i class="icon-castle" aria-hidden="true"></i>
+                    <span>Castle Health</span>
+                    <strong id="castleHealthText">100%</strong>
+                  </div>
+
+                  <progress
+                    id="castleHealthProgress"
+                    max="100"
+                    value="100"
+                    aria-label="Castle health"
+                  ></progress>
+                </div>
+                <canvas
+                  id="c"
+                  width="960"
+                  height="540"
+                  aria-label="Game field"
+                ></canvas>
+
+                <div id="ov">
+                  <div class="box">
+                    <i
+                      id="battleOverlayIcon"
+                      class="icon-swords battle-overlay-icon"
+                      aria-hidden="true"
+                    ></i>
+
+                    <h2 id="ot"></h2>
+                    <p id="om"></p>
+
+                    <span
+                      id="overlayLevel"
+                      class="battle-overlay-level"
+                      hidden
+                    ></span>
+
+                    <button class="ctl" id="ob"></button>
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="battle-toolbar">
-              <div class="battle-plant-selection">
-                <span class="battle-toolbar-label">Select Your Plant</span>
 
-                <div id="battlePlantGrid" class="battle-plant-grid"></div>
-              </div>
-
-              <button
-                id="battlePlantInfoBtn"
-                class="battle-info-btn"
-                type="button"
-                aria-label="View selected plant information"
-              >
-                <i class="icon-info" aria-hidden="true"></i>
-                Info
-              </button>
-
-              <button id="battleDeployBtn" class="battle-deploy-btn" disabled>
-                Deploy Plant
-              </button>
-            </div>
             <div id="bossControls" class="boss-controls" hidden>
               <p class="boss-briefing">
                 <strong>Harvester breach</strong>
@@ -465,16 +545,10 @@
         </section>
 
         <aside class="plant-details" id="plantDetailsPanel">
-          <button
-            id="closePlantInfo"
-            class="close-plant-info"
-            type="button"
-            aria-label="Close plant information"
-          >
-            &times;
-          </button>
-
-          <p class="sidebar-label">PLANT INFO</p>
+          <p class="sidebar-label">
+            <i class="icon-info" aria-hidden="true"></i>
+            PLANT INFO
+          </p>
           <div id="detailColor" class="detail-color"></div>
           <span id="detailRole" class="battle-detail-role"></span>
 
@@ -558,12 +632,33 @@
       </main>
 
       <div class="game-controls">
+        <div class="control-buttons">
+          <button class="ctl" id="pz">
+            <i id="pauseIcon" class="icon-pause" aria-hidden="true"></i>
+            <span id="pauseLabel">Pause (P)</span>
+          </button>
+
+          <button class="ctl" id="rs">
+            <i class="icon-rotate-ccw" aria-hidden="true"></i>
+            <span>Restart Level</span>
+          </button>
+
+          <button class="ctl" id="bm" aria-pressed="false">
+            <i class="icon-swords" aria-hidden="true"></i>
+            <span>Boss Battle</span>
+          </button>
+
+          <button class="ctl" id="fullscreenBtn" type="button">
+            <i class="icon-maximize" aria-hidden="true"></i>
+            <span>Fullscreen</span>
+          </button>
+        </div>
+
         <div class="control-instructions">
           <i class="icon-keyboard" aria-hidden="true"></i>
 
           <span id="battleHint" class="hint">
-            Click a plant (or press 1-4), click a tile beside the path to place
-            its tower, then deploy.
+            <kbd>1–4</kbd> Plant shortcuts <kbd>P</kbd> Pause / Resume
           </span>
         </div>
       </div>

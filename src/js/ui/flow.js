@@ -46,7 +46,7 @@ export function deploy(i) {
 
   // Player cannot deploy until the game starts.
   if (activePhase() !== "play") {
-    showPlantMessage("Start the battle before deploying a plant.");
+    showPlantMessage("Start the battle before deploying a plant.", "warning");
     return;
   }
 
@@ -56,15 +56,13 @@ export function deploy(i) {
       (t) => t.plant === i && t.owner === session.activePlayer,
     )
   ) {
-    showPlantMessage(
-      `Place a ${k.n} tower first then click a tile next to the path.`,
-    );
+    showPlantMessage(`Place a ${k.n} tower first.`, "warning");
     return;
   }
 
   // Tell the player when they do not have enough spores.
   if (activeBattle().spores < k.cost) {
-    showPlantMessage(`You need ${k.cost} spores to deploy ${k.n}.`);
+    showPlantMessage(`You need ${k.cost} spores to deploy ${k.n}.`, "error");
     return;
   }
 
@@ -74,6 +72,7 @@ export function deploy(i) {
     session.mode === "boss"
       ? `${k.n} deployed to lane ${session.bossState.selectedLane + 1}.`
       : `${k.n} deployed!`,
+    "success",
   );
 }
 
@@ -99,7 +98,7 @@ export function startLevel() {
   const { $ } = dom();
   $("bossControls").hidden = session.mode !== "boss";
   $("battleTitle").textContent =
-    session.mode === "boss" ? "Battle / Harvester Breach" : "Battle";
+    session.mode === "boss" ? "Boss Battle" : "Battle Arena";
   $("battleHint").textContent =
     session.mode === "boss"
       ? "Click a lane or use ↑/↓ to choose it. Keys 1–4 deploy plants. P pauses."
@@ -118,8 +117,27 @@ export function toggleMode() {
     return;
   }
   const { $ } = dom();
+
   session.mode = session.mode === "td" ? "boss" : "td";
   startLevel();
+
+  //replce those two line of code
+  //session.mode = session.mode === "td" ? "boss" : "td";
+  //startLevel();
+  // replce it with this below bolck of code
+  //session.mode = session.mode === "td" ? "boss" : "td";
+  //startLevel();
+
+  //if (session.mode === "boss") {
+  // setActivePhase("pause");
+
+  //show(
+  //  "Boss Battle",
+  // "Prepare for the challenge. Deploy your plants and defeat the Harvester.",
+  //  "Start Battle",
+  //);
+  //}
+
   $("bm").textContent =
     session.mode === "boss" ? "Normal Battle" : "Boss Battle";
   $("bm").setAttribute("aria-pressed", String(session.mode === "boss"));

@@ -40,11 +40,17 @@ setPlayers(state.players === 2 ? 2 : 1);
 showPlantDetails(0);
 setActiveTab("battle");
 show(
-  "Carniflora: Breach",
-  "Send carnivorous plants down the path. They bite towers as they pass. Destroy the keep at the end before your swarm runs out.",
-  "Start",
+  "Ready for Battle?",
+  "Deploy your carnivorous plants, destroy enemy towers, and conquer the castle before your swarm runs out.",
+  "Start Battle",
 );
 startLoop();
+// TO see the message on the screen when u win uncomment state.phase = "won"; it shows the message in the battle
+//state.phase = "won";
+
+// TO see the message on the screen when u lost uncomment state.phase = "lost"; it shows the message in the battle
+
+//state.phase = "lost";
 renderEvolutionCards();
 mountMultiplayer();
 
@@ -118,3 +124,18 @@ upgradeTabletQuery.addEventListener("change", () => {
 });
 
 syncUpgradePanelAccessibility();
+
+const fullscreenBtn = document.getElementById("fullscreenBtn");
+const battleStage = document.querySelector("#battleTab .stage");
+
+fullscreenBtn.addEventListener("click", async () => {
+  try {
+    if (document.fullscreenElement) {
+      await document.exitFullscreen();
+    } else {
+      await battleStage.requestFullscreen();
+    }
+  } catch (error) {
+    console.error("Fullscreen failed:", error);
+  }
+});

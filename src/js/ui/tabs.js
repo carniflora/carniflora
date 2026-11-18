@@ -6,8 +6,6 @@ import { showPlantMessage } from "./hud.js";
 let navButtons = null;
 let tabs = null;
 
-// Queries the nav elements and wires the click listeners. Must be called
-// before the first setActiveTab call.
 export function mountTabs() {
   const { $ } = dom();
 
@@ -18,18 +16,6 @@ export function mountTabs() {
     $("networkToggle").setAttribute("aria-expanded", String(isOpen));
   });
 
-  // Close the plant information popup.
-  $("closePlantInfo").addEventListener("click", () => {
-    $("plantDetailsPanel").classList.remove("is-open");
-  });
-
-  // Open or close the plant information popup.
-  $("battlePlantInfoBtn").addEventListener("click", () => {
-    if (session.selectedPlantIndex !== null) {
-      $("plantDetailsPanel").classList.toggle("is-open");
-    }
-  });
-
   navButtons = document.querySelectorAll(".nav-btn[data-tab]");
 
   tabs = {
@@ -37,6 +23,10 @@ export function mountTabs() {
     upgrades: $("upgradesTab"),
     battle: $("battleTab"),
   };
+
+  $("playGameBtn").addEventListener("click", () => {
+    setActiveTab("battle");
+  });
 
   navButtons.forEach((button) => {
     button.addEventListener("click", () => {
@@ -100,6 +90,11 @@ export function showPlantDetails(index) {
 
   // Update cost.
   $("detailCost").textContent = plant.cost;
+  // Update the Battle deployment button.
+  $("battleDeployBtn").innerHTML = `
+    <strong>Deploy ${plant.n}</strong>
+    <span>${plant.cost} spores</span>
+  `;
 
   // Update description.
   $("detailDescription").textContent = plant.desc ?? plant.d;
