@@ -23,8 +23,8 @@ function load(src) {
 
 export async function loadSprites() {
   const names = [...new Set(PLANTS.map((k) => k.sheet))];
-  await Promise.all(
-    names.map(async (n) => {
+  await Promise.all([
+    ...names.map(async (n) => {
       const base = `assets/carniflora-${n}-sheet16-1x`;
       images[n] = {
         1: await load(`${base}.png`),
@@ -47,7 +47,7 @@ export async function loadSprites() {
         `assets/carniflora-tree-plants-sheet4-1x-p2-${P2_COLOUR}.png`,
       );
     })(),
-  );
+  ]);
 }
 
 function frameFor(obj, now) {
