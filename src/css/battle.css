@@ -237,13 +237,23 @@ button:focus-visible {
 }
 .game-layout:has(#battleTab.active) {
   display: grid;
-  grid-template-columns: 250px minmax(0, 1fr) 250px;
-  grid-template-rows: auto auto auto;
+  grid-template-columns: 240px minmax(0, 1fr) 240px;
+  grid-template-rows: auto auto auto auto auto;
+
   align-items: stretch;
-  gap: 16px;
+  gap: 12px;
+
   position: relative;
+  width: 100%;
   max-width: 1700px;
   margin: 0 auto;
+  padding: 16px;
+  box-sizing: border-box;
+
+  background: #f5effc;
+  border: 1px solid #dcc6ee;
+  border-radius: 20px;
+  box-shadow: 0 12px 35px rgba(112, 70, 163, 0.08);
 }
 
 .battle-toolbar {
@@ -450,14 +460,20 @@ button:focus-visible {
 }
 
 .game-layout .network-toggle {
-  display: block;
-  margin: 8px auto 0;
-  padding: 6px 12px;
-  background: transparent;
-  border: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin: 0;
+  padding: 10px 12px;
+  background: #f2eafb;
+  border: 1px solid #dcc6ee;
+  border-radius: 8px;
   color: #7046a3;
   font-size: 12px;
   font-weight: 600;
+  white-space: nowrap;
   cursor: pointer;
 }
 
@@ -468,16 +484,17 @@ button:focus-visible {
 .game-layout .network-panel.is-open {
   display: flex;
   flex-direction: column;
-  position: absolute;
-  bottom: calc(100% + 12px);
-  right: 0;
-  width: min(320px, 100%);
-  padding: 16px;
-  background: #fffaff;
+  position: static;
+  grid-column: 1 / -1;
+  gap: 20px;
+  width: 100%;
+  padding: 24px;
+  box-sizing: border-box;
+  background: #faf6fc;
   color: #7046a3;
   border: 1px solid #dcc9ef;
   border-radius: 16px;
-  box-shadow: 0 8px 24px #6946a133;
+  box-shadow: none;
 }
 
 .game-layout .network-panel .ctl {
@@ -627,10 +644,6 @@ button:focus-visible {
 
 #app .game-controls {
   display: none;
-}
-
-#app:has(#battleTab.active) .game-controls {
-  display: flex;
 }
 
 #ov.hide {
@@ -800,14 +813,6 @@ button:focus-visible {
   border-color: #8c70c8;
 }
 
-#app:has(#battleTab.active) .game-controls {
-  background: transparent;
-  border: 0;
-  box-shadow: none;
-  margin: 0;
-  padding: 8px;
-}
-
 #app:has(#battleTab.active) .control-instructions {
   border: 0;
 }
@@ -941,25 +946,38 @@ button:focus-visible {
 }
 
 #app:has(#battleTab.active) .game-controls {
+  grid-column: 1 / -1;
+  grid-row: 4;
+
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   gap: 12px;
-  margin: 16px auto 0;
-  padding: 12px;
+
+  width: 100%;
+  margin: 0;
+  padding: 10px 0;
+  box-sizing: border-box;
+
   background: transparent;
-  border: 0;
+  border: none;
   box-shadow: none;
 }
 
 #app:has(#battleTab.active) .control-buttons {
-  justify-content: center;
-  gap: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 8px;
 }
 
 #app:has(#battleTab.active) .control-buttons .ctl {
-  min-width: 130px;
-  padding: 12px 18px;
+  flex: 0 0 auto;
+  min-width: 0;
+  padding: 10px 14px;
   background: #e5d5f5;
   color: #7046a3;
   border: 1px solid #dcc9ef;
@@ -1167,6 +1185,8 @@ button:focus-visible {
   font-size: 12px;
 }
 #app:has(#battleTab.active) #bm {
+  margin-left: auto;
+  order: 4;
   background: #8c70c8;
   color: #ffffff;
   border-color: #8c70c8;
@@ -1440,5 +1460,238 @@ button:focus-visible {
   #battleTab #ov {
     border-radius: inherit;
     inset: 0;
+  }
+}
+#battleTab .battle-hud .stats {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  width: 100%;
+}
+
+#battleTab .battle-hud .stats > span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+
+  background: #fcf8ff;
+  border: 1px solid #dcc6ee;
+  border-radius: 999px;
+
+  color: #7046a3;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 12px rgba(112, 70, 163, 0.06);
+}
+
+#battleTab .battle-hud .stats b {
+  color: #7046a3;
+}
+
+#battleTab .battle-hud .stats > span i {
+  color: #8c70c8;
+}
+
+#app:has(#battleTab.active) > header {
+  display: none;
+}
+.game-layout .network-toggle:hover {
+  background: #e5d5f5;
+}
+#app:has(#battleTab.active) .side-nav {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 1.4fr);
+  align-items: stretch;
+  gap: 8px;
+  width: min(1000px, calc(100% - 32px));
+  position: relative;
+  grid-column: 1 / -1;
+  grid-row: 5;
+  left: auto;
+  bottom: auto;
+  transform: none;
+  margin: 8px auto 0;
+  height: auto;
+  box-sizing: border-box;
+}
+
+#app:has(#battleTab.active) .nav-links {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+#app:has(#battleTab.active) .network-toggle {
+  width: 100%;
+  margin: 0;
+  padding: 8px;
+  box-sizing: border-box;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+#app .network-panel.is-open {
+  display: flex;
+  flex-direction: column;
+  position: static;
+  grid-column: 1 / -1;
+  gap: 16px;
+  width: 100%;
+  padding: 16px;
+  box-sizing: border-box;
+  background: #f3edfa;
+  border: 1px solid #dcc9ef;
+  border-radius: 16px;
+  color: #7046a3;
+}
+
+#app .lobby-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+}
+
+#app .lobby-heading > i {
+  font-size: 28px;
+  color: #8c70c8;
+}
+
+#app .lobby-heading h2 {
+  font-family: inherit;
+  font-size: 22px;
+  font-weight: 600;
+  color: #7046a3;
+  margin: 0 0 4px;
+}
+
+#app .lobby-heading p {
+  color: #927bb2;
+  font-size: 13px;
+  margin: 0;
+}
+
+#app .lobby-heading .lobby-badge {
+  margin-left: auto;
+  padding: 5px 12px;
+  background: #d4ebe2;
+  color: #247957;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+#app .lobby-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  width: 100%;
+}
+
+#app .lobby-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  background: #faf6fc;
+  border: none;
+  border-radius: 14px;
+  text-align: center;
+}
+
+#app .lobby-icon {
+  font-size: 28px;
+  color: #8c70c8;
+}
+
+#app .lobby-card h3 {
+  color: #7046a3;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+#app .lobby-card p {
+  font-size: 13px;
+  color: #927bb2;
+  margin: 0;
+}
+
+#app .lobby-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+#app .lobby-card label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+#app .lobby-card input {
+  width: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+  background: #f3edfa;
+  border: 1px solid #dcc9ef;
+  border-radius: 10px;
+  color: #7046a3;
+  font-size: 14px;
+  text-align: center;
+}
+
+#app .lobby-card input::placeholder {
+  color: #927bb2;
+  text-transform: none;
+  opacity: 1;
+}
+
+#app .lobby-card #createSession {
+  width: 100%;
+  margin-top: auto;
+  padding: 12px;
+  background: #8c70c8;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+#app .lobby-card #joinSession {
+  width: 100%;
+  padding: 12px;
+  background: #e5d5f5;
+  color: #7046a3;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+#app .lobby-status {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  color: #7046a3;
+  font-size: 13px;
+}
+
+@media (max-width: 650px) {
+  #app .lobby-options {
+    grid-template-columns: 1fr;
   }
 }

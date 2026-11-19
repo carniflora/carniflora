@@ -58,6 +58,16 @@ export function setActiveTab(tabName) {
   if (tabs[tabName]) {
     tabs[tabName].classList.add("active");
   }
+
+  const stats = document.querySelector(".stats");
+  const battleHud = document.getElementById("battleHud");
+  const header = document.querySelector("#app > header");
+
+  if (tabName === "battle") {
+    battleHud.appendChild(stats);
+  } else {
+    header.appendChild(stats);
+  }
 }
 
 // =====================================================
