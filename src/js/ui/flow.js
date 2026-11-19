@@ -1,7 +1,7 @@
 import { battleService } from "../battleService.js";
 import { Action } from "../network/protocol.js";
 import { dom } from "./dom.js";
-import { state } from "../state.js";
+import { state, saveProgress } from "../state.js";
 import { plantProgression } from "./assets.js";
 
 import {
@@ -22,7 +22,6 @@ import {
   selectBossLane,
 } from "../bossLevel.js";
 
-import { saveProgress } from "../progress.js";
 import { LEVEL_PATHS } from "../path.js";
 import { MAP_COLS, MAP_ROWS, TILE } from "../constants.js";
 import { setActiveTab, showPlantDetails } from "./tabs.js";

@@ -1,8 +1,7 @@
 import { mountMultiplayer } from "./ui/multiplayer.js";
-import { state } from "./state.js";
+import { state, loadProgress } from "./state.js";
 import { build } from "./build.js";
 import { MAP_COLS, MAP_ROWS, TILE } from "./constants.js";
-import { loadProgress } from "./progress.js";
 import { dom, resizeCanvas } from "./ui/dom.js";
 import { mountPlantGrid } from "./ui/plantGrid.js";
 import { show } from "./ui/hud.js";

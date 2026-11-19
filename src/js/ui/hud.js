@@ -1,9 +1,8 @@
 import { dom } from "./dom.js";
 import { battleService } from "../battleService.js";
-import { state } from "../state.js";
+import { state, maxSpores } from "../state.js";
 import { session, activeBattle, activePhase, activePlants } from "./session.js";
 import { towersOf, maxTowers } from "../towers.js";
-import { maxSpores } from "../economy.js";
 import { SPORE_CAP, LANE_NAMES } from "../bossLevel.js";
 import { BOSS_KINDS } from "../plants.js";
 import { bossLaneButtons, bossDeployButtons } from "./bossControls.js";

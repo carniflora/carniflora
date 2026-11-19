@@ -1,7 +1,6 @@
 import { battleService } from "../battleService.js";
-import { state } from "../state.js";
+import { state, loadProgress } from "../state.js";
 import { build } from "../build.js";
-import { loadProgress } from "../progress.js";
 import { MAP_COLS, MAP_ROWS, TILE } from "../constants.js";
 import { session } from "./session.js";
 import { dom, resizeCanvas } from "./dom.js";
