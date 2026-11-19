@@ -1,0 +1,141 @@
+.game-layout:has(#plantsTab.active) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.game-layout:has(#plantsTab.active) > .main-panel {
+  grid-column: 1 / -1;
+  background: transparent;
+  border: none;
+  padding: 0;
+  box-shadow: none;
+}
+
+.game-layout:has(#plantsTab.active) #plantDetailsPanel {
+  display: none;
+}
+
+#app:has(#plantsTab.active) .stats {
+  display: none;
+}
+
+#app:has(#plantsTab.active) .game-controls {
+  display: none;
+}
+
+.welcome-screen {
+  width: 100%;
+  max-width: 900px;
+  box-sizing: border-box;
+  margin: 20px auto;
+  padding: 24px;
+  background: #fcf8ff;
+  border: 1px solid #dcc6ee;
+  border-radius: 24px;
+  box-shadow: 0 16px 45px rgba(112, 70, 163, 0.12);
+}
+
+.welcome-image {
+  width: 100%;
+  height: clamp(200px, 28vw, 400px);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.welcome-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.welcome-content {
+  text-align: center;
+  padding: 24px 16px 10px;
+}
+
+.welcome-eyebrow {
+  color: #9471b7;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+}
+
+.welcome-content h2 {
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: #7046a3;
+  margin: 14px 0;
+}
+
+.welcome-content p {
+  color: #796296;
+  font-size: 1rem;
+  margin-bottom: 24px;
+}
+
+.welcome-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.welcome-actions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: min(100%, 260px);
+  padding: 15px 20px;
+  border-radius: 12px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.welcome-actions button:hover {
+  transform: translateY(-2px);
+}
+
+.welcome-play {
+  background: #8c70c8;
+  border: none;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.welcome-multiplayer {
+  background: #eee4f8;
+  border: 1px solid #cdb5e9;
+  color: #7046a3;
+}
+
+.welcome-guide {
+  background: transparent;
+  border: none;
+  color: #7046a3;
+}
+
+.game-layout:has(#plantsTab.active) > .side-nav {
+  display: none;
+}
+html:has(#plantsTab.active),
+body:has(#plantsTab.active) {
+  min-height: 100vh;
+  margin: 0;
+  background: #f5effc;
+}
+
+#app:has(#plantsTab.active) > header {
+  display: none;
+}
+#app:has(#plantsTab.active) {
+  min-height: 100vh;
+  box-sizing: border-box;
+  background: transparent;
+}
+#app:has(#plantsTab.active) {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+}

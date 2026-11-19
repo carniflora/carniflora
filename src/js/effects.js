@@ -1,4 +1,4 @@
-import { state } from "./state.js";
+import { state as localState } from "./state.js";
 
 // Event catalog (5 buffs, 5 debuffs)
 export const EVENTS = [
@@ -109,69 +109,73 @@ export class RNG {
 }
 
 // Effects engine (DOM-free, testable with vitest)
-export const effects = {
-  active: [], // [{ event, remaining, mod }]
-  history: [], // traceability log
-  rng: null,
-  timer: 0,
-  interval: 18, // seconds between auto-spawns
+export function createEffects(state) {
+  return {
+    active: [], // [{ event, remaining, mod }]
+    history: [], // traceability log
+    rng: null,
+    timer: 0,
+    interval: 18, // seconds between auto-spawns
 
-  reset(seed = Date.now() | 0) {
-    this.active = [];
-    this.history = [];
-    this.timer = 0;
-    this.rng = new RNG(seed);
-  },
-
-  // call inside game.js update()
-  update(dt) {
-    // expire + tick
-    for (let i = this.active.length - 1; i >= 0; i--) {
-      const a = this.active[i];
-      a.remaining -= dt;
-      if (a.mod && a.mod.hpDrainPerSec) {
-        // poison: drain HP from all plants
-        for (const p of state.plants) p.hp -= a.mod.hpDrainPerSec * dt;
-      }
-      if (a.remaining <= 0) {
-        this.history.push({ ev: a.event, action: "expired" });
-        this.active.splice(i, 1);
-      }
-    }
-    // auto-fire
-    this.timer += dt;
-    if (this.timer >= this.interval) {
+    reset(seed = Date.now() | 0) {
+      this.active = [];
+      this.history = [];
       this.timer = 0;
-      this.fire();
-    }
-  },
+      this.rng = new RNG(seed);
+    },
 
-  // Force a specific event (for tests / debug), or random from catalog
-  fire(forceEvent = null) {
-    let ev = forceEvent;
-    if (typeof ev === "string") ev = EVENTS.find((e) => e.id === ev);
-    const event = ev ?? EVENTS[Math.floor(this.rng.next() * EVENTS.length)];
-    this.active.push({ event, remaining: event.dur, mod: event.mod });
-    this.history.push({ ev: event, action: "applied" });
-    return event;
-  },
+    // call inside game.js update()
+    update(dt) {
+      // expire + tick
+      for (let i = this.active.length - 1; i >= 0; i--) {
+        const a = this.active[i];
+        a.remaining -= dt;
+        if (a.mod && a.mod.hpDrainPerSec) {
+          // poison: drain HP from all plants
+          for (const p of state.plants) p.hp -= a.mod.hpDrainPerSec * dt;
+        }
+        if (a.remaining <= 0) {
+          this.history.push({ ev: a.event, action: "expired" });
+          this.active.splice(i, 1);
+        }
+      }
+      // auto-fire
+      this.timer += dt;
+      if (this.timer >= this.interval) {
+        this.timer = 0;
+        this.fire();
+      }
+    },
 
-  // SINGLE CHOKE-POINT: effective stat multiplier
-  eff(stat, base = 1) {
-    let m = base;
-    for (const a of this.active) {
-      if (a.mod && a.mod[stat]) m *= a.mod[stat];
-    }
-    return m;
-  },
+    // Force a specific event (for tests / debug), or random from catalog
+    fire(forceEvent = null) {
+      let ev = forceEvent;
+      if (typeof ev === "string") ev = EVENTS.find((e) => e.id === ev);
+      const event = ev ?? EVENTS[Math.floor(this.rng.next() * EVENTS.length)];
+      this.active.push({ event, remaining: event.dur, mod: event.mod });
+      this.history.push({ ev: event, action: "applied" });
+      return event;
+    },
 
-  // for HUD display
-  displayList() {
-    return this.active.map((a) => ({
-      icon: a.event.icon,
-      name: a.event.name,
-      kind: a.event.kind,
-      remaining: Math.ceil(a.remaining),
-    }));
-  },
-};
+    // SINGLE CHOKE-POINT: effective stat multiplier
+    eff(stat, base = 1) {
+      let m = base;
+      for (const a of this.active) {
+        if (a.mod && a.mod[stat]) m *= a.mod[stat];
+      }
+      return m;
+    },
+
+    // for HUD display
+    displayList() {
+      return this.active.map((a) => ({
+        icon: a.event.icon,
+        name: a.event.name,
+        kind: a.event.kind,
+        remaining: Math.ceil(a.remaining),
+      }));
+    },
+  };
+}
+
+export const effects = createEffects(localState);

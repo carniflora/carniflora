@@ -1,3 +1,5 @@
+import { battleService } from "../battleService.js";
+import { Action } from "../network/protocol.js";
 import { dom } from "./dom.js";
 import { state } from "../state.js";
 import { plantProgression } from "./assets.js";
@@ -36,11 +38,15 @@ export function setActivePlayer(p) {
 }
 
 export function deploy(i) {
+  if (battleService.online()) {
+    battleService.submit({ type: Action.DEPLOY, plant: i });
+    return;
+  }
   const k = activePlants()[i];
 
   // Player cannot deploy until the game starts.
   if (activePhase() !== "play") {
-    showPlantMessage("Start the battle before deploying a plant.");
+    showPlantMessage("Start the battle before deploying a plant.", "warning");
     return;
   }
 
@@ -50,15 +56,13 @@ export function deploy(i) {
       (t) => t.plant === i && t.owner === session.activePlayer,
     )
   ) {
-    showPlantMessage(
-      `Place a ${k.n} tower first then click a tile next to the path.`,
-    );
+    showPlantMessage(`Place a ${k.n} tower first.`, "warning");
     return;
   }
 
   // Tell the player when they do not have enough spores.
   if (activeBattle().spores < k.cost) {
-    showPlantMessage(`You need ${k.cost} spores to deploy ${k.n}.`);
+    showPlantMessage(`You need ${k.cost} spores to deploy ${k.n}.`, "error");
     return;
   }
 
@@ -68,10 +72,15 @@ export function deploy(i) {
     session.mode === "boss"
       ? `${k.n} deployed to lane ${session.bossState.selectedLane + 1}.`
       : `${k.n} deployed!`,
+    "success",
   );
 }
 
 export function startLevel() {
+  if (battleService.online()) {
+    battleService.submit({ type: Action.RESTART });
+    return;
+  }
   // towerType = null;
   const { canvas } = dom();
   if (session.mode === "boss") {
@@ -89,7 +98,7 @@ export function startLevel() {
   const { $ } = dom();
   $("bossControls").hidden = session.mode !== "boss";
   $("battleTitle").textContent =
-    session.mode === "boss" ? "Battle / Harvester Breach" : "Battle";
+    session.mode === "boss" ? "Boss Battle" : "Battle Arena";
   $("battleHint").textContent =
     session.mode === "boss"
       ? "Click a lane or use ↑/↓ to choose it. Keys 1–4 deploy plants. P pauses."
@@ -104,9 +113,31 @@ export function startLevel() {
 }
 
 export function toggleMode() {
+  if (battleService.online()) {
+    return;
+  }
   const { $ } = dom();
+
   session.mode = session.mode === "td" ? "boss" : "td";
   startLevel();
+
+  //replce those two line of code
+  //session.mode = session.mode === "td" ? "boss" : "td";
+  //startLevel();
+  // replce it with this below bolck of code
+  //session.mode = session.mode === "td" ? "boss" : "td";
+  //startLevel();
+
+  //if (session.mode === "boss") {
+  // setActivePhase("pause");
+
+  //show(
+  //  "Boss Battle",
+  // "Prepare for the challenge. Deploy your plants and defeat the Harvester.",
+  //  "Start Battle",
+  //);
+  //}
+
   $("bm").textContent =
     session.mode === "boss" ? "Normal Battle" : "Boss Battle";
   $("bm").setAttribute("aria-pressed", String(session.mode === "boss"));
@@ -118,6 +149,12 @@ export function toggleMode() {
 }
 
 export function pause() {
+  if (battleService.online()) {
+    battleService.submit({
+      type: activePhase() === "pause" ? Action.RESUME : Action.PAUSE,
+    });
+    return;
+  }
   const { $ } = dom();
   if (activePhase() === "play") {
     setActivePhase("pause");
@@ -159,6 +196,18 @@ export function setBossLane(lane) {
 }
 
 export function primaryAction() {
+  if (battleService.online()) {
+    const type =
+      activePhase() === "menu"
+        ? Action.START
+        : activePhase() === "pause"
+          ? Action.RESUME
+          : activePhase() === "won"
+            ? Action.ADVANCE
+            : Action.RESTART;
+    battleService.submit({ type });
+    return;
+  }
   if (session.mode === "boss") {
     if (session.bossState.state === "pause") pause();
     else startLevel();

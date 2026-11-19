@@ -1,0 +1,16 @@
+name = "carniflora"
+main = "server/worker.js"
+compatibility_date = "2026-09-30"
+
+[assets]
+directory = "./src"
+binding = "ASSETS"
+run_worker_first = ["/api/*"]
+
+[[durable_objects.bindings]]
+name = "ROOMS"
+class_name = "GameRoom"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["GameRoom"]

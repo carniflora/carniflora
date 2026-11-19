@@ -7,6 +7,11 @@ import { canPlaceTower } from "../towers.js";
 import { effects } from "../effects.js";
 import { drawPlant, drawEnemy, drawTree } from "../sprites.js";
 
+const MINION_SIZE = 48;
+const KEEP_SIZE = 96;
+const TREE_SIZE = TILE * 1.2;
+const SPRITE_SIZE = 48;
+
 function healthBar(x, y, width, valueHp, maxHp, colour) {
   const { ctx: g } = dom();
   g.fillStyle = "rgba(0,0,0,.55)";
@@ -32,7 +37,6 @@ export function draw() {
   g.lineJoin = "round";
 
   for (const path of state.map.paths) {
-    // get each path from the level paths
     g.beginPath();
     path.cells.forEach((cell, i) => {
       const x = (cell.c + 0.5) * TILE;
@@ -48,10 +52,7 @@ export function draw() {
     g.stroke();
   }
 
-  const MINION_SIZE = 48;
-  const KEEP_SIZE = 96;
-
-  // draw the dead enemies first so everything else is above them
+  // dead enemies first so everything else is drawn above them
   for (const enemy of state.enemies) {
     if (enemy.hp > 0) continue;
     g.fillStyle = "#2b2f2a";
@@ -60,14 +61,15 @@ export function draw() {
     g.fill();
   }
 
-  // draw living enemies after
+  // living enemies
   for (const enemy of state.enemies) {
     if (enemy.hp <= 0) continue;
 
     const size = enemy.keep ? KEEP_SIZE : MINION_SIZE;
 
     if (!drawEnemy(g, enemy, now, size)) {
-      g.fillStyle = enemy.slow > 0 ? "#7f8fa3" : "#9aa0a6"; // if enemy slowed use first colour otherwise other
+      // fallback: the old shapes
+      g.fillStyle = enemy.slow > 0 ? "#7f8fa3" : "#9aa0a6";
       if (enemy.keep) {
         g.fillRect(
           enemy.x - enemy.radius,
@@ -88,103 +90,108 @@ export function draw() {
     }
     healthBar(
       enemy.x,
-      enemy.y + enemy.radius + 4,
+      enemy.y + size / 2 + 2,
       enemy.keep ? 60 : 34,
       enemy.hp,
       enemy.max,
       "#e05a4a",
     );
+  } // ← end of the living-enemies loop
 
-    const TREE_SIZE = TILE * 1.2;
-    // draw the number of towers that are allowed in the level
-    state.myTowers.forEach((tower) => {
-      const x = (tower.c + 0.5) * TILE;
-      const y = (tower.r + 0.5) * TILE;
-      const baseY = y + TILE * 0.45;
+  // towers (trees)
+  state.myTowers.forEach((tower) => {
+    const x = (tower.c + 0.5) * TILE;
+    const y = (tower.r + 0.5) * TILE;
+    const baseY = y + TILE * 0.45;
 
-      g.strokeStyle = tower.owner === 0 ? "#fff" : "#7300f7";
-      g.lineWidth = 2;
+    // owner ring under the trunk
+    g.strokeStyle = tower.owner === 0 ? "#fff" : "#7300f7";
+    g.lineWidth = 2;
+    g.beginPath();
+    g.ellipse(x, baseY - 3, TILE * 0.36, TILE * 0.14, 0, 0, 7);
+    g.stroke();
+
+    if (!drawTree(g, tower, x, baseY, TREE_SIZE)) {
+      // fallback: the old box
+      g.fillStyle = PLANTS[tower.plant].col;
+      g.fillRect(x - 16, y - 16, 32, 32);
+      g.strokeRect(x - 16, y - 16, 32, 32);
+    }
+
+    // countdown timer under the tree
+    g.font = "12px system-ui, sans-serif";
+    g.textAlign = "center";
+    g.fillStyle = tower.timeLeft <= 5 ? "#ff6b6b" : "#fff";
+    g.fillText(Math.ceil(tower.timeLeft) + "s", x, baseY + 14);
+    g.textAlign = "left";
+  });
+
+  // placement preview: green if allowed, red if not
+  if (
+    session.hoverCell &&
+    state.phase === "play" &&
+    session.selectedPlantIndex !== null
+  ) {
+    const [c, r] = session.hoverCell;
+    g.fillStyle = canPlaceTower(
+      c,
+      r,
+      session.selectedPlantIndex,
+      session.activePlayer,
+    )
+      ? "rgba(143,212,90,.35)"
+      : "rgba(224,69,123,.35)";
+    g.fillRect(c * TILE, r * TILE, TILE, TILE);
+  }
+
+  // plants that are sent out (drawn after towers so they sit on top)
+  for (const p of state.plants) {
+    const k = PLANTS[p.plant];
+    if (!drawPlant(g, p, now, SPRITE_SIZE)) {
+      g.fillStyle = k.col;
       g.beginPath();
-      g.ellipse(x, baseY - 3, TILE * 0.36, TILE * 0.14, 0, 0, 7);
+      g.arc(p.x, p.y, k.radius, 0, 7);
+      g.fill();
+      g.strokeStyle = p.owner === 0 ? "#fff" : "#7300f7";
       g.stroke();
+      g.fillStyle = "rgba(0,0,0,.45)";
+      g.beginPath();
+      g.arc(p.x, p.y, k.radius * 0.45, 0, 7);
+      g.fill();
+    }
+    healthBar(p.x, p.y - SPRITE_SIZE / 2 - 2, 20, p.hp, k.hp, "#8fd45a");
+  }
 
-      if (!drawTree(g, tower, x, baseY, TREE_SIZE)) {
-        const plant = PLANTS[tower.plant];
-        g.fillStyle = plant.col;
-        g.fillRect(x - 16, y - 16, 32, 32);
-        g.strokeRect(x - 16, y - 16, 32, 32);
-      }
+  // attack effects
+  for (const f of state.fx) {
+    g.strokeStyle = f.colour;
+    g.lineWidth = 2;
+    g.globalAlpha = Math.min(1, f.timer * 6);
+    if (f.ring) {
+      g.beginPath();
+      g.arc(f.x1, f.y1, f.ring * (1 - f.timer / 0.3), 0, 7);
+      g.stroke();
+    } else {
+      g.beginPath();
+      g.moveTo(f.x1, f.y1);
+      g.lineTo(f.x2, f.y2);
+      g.stroke();
+    }
+    g.globalAlpha = 1;
+  }
+
+  // ── Active buffs/debuffs HUD strip (EPIC 4 / US 6.5) ──────────────────
+  const active = effects.displayList();
+  if (active.length) {
+    g.font = "13px system-ui, sans-serif";
+    g.textBaseline = "top";
+    active.forEach((d, i) => {
+      const y = 12 + i * 18;
+      g.fillStyle = "rgba(0,0,0,.5)";
+      g.fillRect(8, y - 2, 168, 16);
+      g.fillStyle = d.kind === "buff" ? "#4ade80" : "#f87171";
+      g.fillText(`${d.icon} ${d.name}  ${d.remaining}s`, 14, y);
     });
-
-    // placement preview: green if allowed, red if not
-    if (
-      session.hoverCell &&
-      state.phase === "play" &&
-      session.selectedPlantIndex !== null
-    ) {
-      const [c, r] = session.hoverCell;
-      g.fillStyle = canPlaceTower(
-        c,
-        r,
-        session.selectedPlantIndex,
-        session.activePlayer,
-      )
-        ? "rgba(143,212,90,.35)"
-        : "rgba(224,69,123,.35)";
-      g.fillRect(c * TILE, r * TILE, TILE, TILE);
-    }
-
-    const SPRITE_SIZE = 48;
-
-    // draw plants that are sent out -- plants above enemies/mytowers because drawn after
-    for (const p of state.plants) {
-      const k = PLANTS[p.plant];
-      if (!drawPlant(g, p, now, SPRITE_SIZE)) {
-        g.fillStyle = k.col;
-        g.beginPath();
-        g.arc(p.x, p.y, k.radius, 0, 7);
-        g.fill();
-        g.strokeStyle = p.owner === 0 ? "#fff" : "#7300f7";
-        g.stroke();
-        g.fillStyle = "rgba(0,0,0,.45)";
-        g.arc(p.x, p.y, k.radius * 0.45, 0, 7);
-        g.fill();
-      }
-
-      healthBar(p.x, p.y - k.radius - 8, 20, p.hp, k.hp, "#8fd45a");
-    }
-
-    // draw the effects
-    for (const f of state.fx) {
-      g.strokeStyle = f.colour;
-      g.lineWidth = 2;
-      g.globalAlpha = Math.min(1, f.timer * 6);
-      if (f.ring) {
-        g.beginPath();
-        g.arc(f.x1, f.y1, f.ring * (1 - f.timer / 0.3), 0, 7);
-        g.stroke();
-      } else {
-        g.beginPath();
-        g.moveTo(f.x1, f.y1);
-        g.lineTo(f.x2, f.y2);
-        g.stroke();
-      }
-      g.globalAlpha = 1;
-    }
-
-    // ── Active buffs/debuffs HUD strip (EPIC 4 / US 6.5) ──────────────────
-    const active = effects.displayList();
-    if (active.length) {
-      g.font = "13px system-ui, sans-serif";
-      g.textBaseline = "top";
-      active.forEach((d, i) => {
-        const y = 12 + i * 18;
-        g.fillStyle = "rgba(0,0,0,.5)";
-        g.fillRect(8, y - 2, 168, 16);
-        g.fillStyle = d.kind === "buff" ? "#4ade80" : "#f87171";
-        g.fillText(`${d.icon} ${d.name}  ${d.remaining}s`, 14, y);
-      });
-      g.textBaseline = "alphabetic";
-    }
+    g.textBaseline = "alphabetic";
   }
 }

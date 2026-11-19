@@ -1,20 +1,21 @@
 import { LEVEL_PATHS } from "./path.js";
 
-export const state = {
-  phase: "menu",
-  level: 1,
-  players: 1,
-  spores: 0,
-  map: null,
-  enemies: [],
-  keep: null,
-  plants: [],
-  myTowers: [],
-  fx: [],
-};
+export function createState() {
+  return {
+    phase: "menu",
+    level: 1,
+    players: 1,
+    spores: 0,
+    map: null,
+    enemies: [],
+    keep: null,
+    plants: [],
+    myTowers: [],
+    fx: [],
+  };
+}
 
-// economy -- how spores are counted
-export const maxSpores = () => (state.players === 2 ? 180 : 120); // set the number of spores available for the level (180 for 2 players or 120 for 1)
+export const state = createState();
 
 // progress
 const STORAGE_KEY = "carniflora.level";
@@ -49,3 +50,7 @@ export function saveProgress(level) {
     // Storage restrictions must not interrupt play.
   }
 }
+
+// economy -- how spores are counted
+export const maxSpores = (localState = state) =>
+  localState.players === 2 ? 180 : 120; // set the number of spores available for the level (180 for 2 players or 120 for 1)

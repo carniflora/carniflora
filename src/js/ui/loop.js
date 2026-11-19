@@ -1,3 +1,4 @@
+import { battleService } from "../battleService.js";
 import { dom } from "./dom.js";
 import { session, activePhase } from "./session.js";
 import { state } from "../state.js";
@@ -23,8 +24,13 @@ function loop(timer) {
   const { canvas, ctx: g } = dom();
   const deltaTime = Math.min(0.05, (timer - last) / 1000);
   last = timer;
-  if (session.mode === "boss") updateBossLevel(session.bossState, deltaTime);
-  else if (activePhase() === "play") update(deltaTime);
+  if (!battleService.online()) {
+    if (session.mode === "boss") {
+      updateBossLevel(session.bossState, deltaTime);
+    } else if (activePhase() === "play") {
+      update(deltaTime);
+    }
+  }
 
   // check if game is ended
   const phase = activePhase();
@@ -43,15 +49,15 @@ function loop(timer) {
       );
     else if (phase === "won")
       show(
-        "Keep breached",
-        "Level " + state.level + " cleared.",
-        state.level < LEVEL_PATHS.length ? "Next level" : "Replay level",
+        "Victory!",
+        `Congratulations! You successfully completed Level ${state.level}.`,
+        state.level < LEVEL_PATHS.length ? "Next Level" : "Replay Level",
       );
     else if (phase === "lost")
       show(
-        "The swarm withered",
-        "No plants left and not enough spores.",
-        "Retry",
+        "Battle Defeated",
+        "Your swarm has run out of plants and spores. Regroup and try again.",
+        "Retry Battle",
       );
     lastPhase = phase;
   }

@@ -1,9 +1,9 @@
-import { state } from "./state.js";
+import { state as localState, maxSpores } from "./state.js";
 import { PLANTS } from "./plants.js";
-import { effects } from "./effects.js";
-import { maxSpores } from "./economy.js";
+import { effects as localEffects } from "./effects.js";
 import { pxPosOf } from "./levels.js";
 import { PLANT_BLOCK } from "./constants.js";
+import { updateTowers } from "./towers.js";
 
 // ============================
 // FIND NEAREST TARGET
@@ -22,8 +22,9 @@ function nearest(list, x, y, rng) {
 }
 
 // update over time
-export function update(deltaTime) {
-  state.spores = Math.min(maxSpores(), state.spores + 6 * deltaTime); // spores regenerate 6 per time up to max
+export function update(deltaTime, state = localState, effects = localEffects) {
+  state.spores = Math.min(maxSpores(state), state.spores + 6 * deltaTime); // spores regenerate 6 per time up to max
+  updateTowers(deltaTime, state);
   // Advance buff/debuff system (auto-fire + expire + poison drain — 4.1 / 4.5)
   effects.update(deltaTime);
   // check which enemies are still alive
@@ -151,19 +152,22 @@ export function update(deltaTime) {
   state.fx = state.fx.filter((f) => f.timer > 0);
 
   // Win.
-  if (state.keep.hp <= 0) end(true);
+  if (state.keep.hp <= 0) {
+    end("won", state);
+  }
 
   // Lose.
   else if (
     !state.plants.length &&
     state.spores < Math.min(...PLANTS.map((k) => k.cost))
-  )
-    end(false);
+  ) {
+    end("lost", state);
+  }
 }
 
 // =======================
 // END LEVEL
 // ======================
-export function end(win) {
-  state.phase = win ? "won" : "lost";
+export function end(phase, state = localState) {
+  state.phase = phase;
 }

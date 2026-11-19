@@ -7,3 +7,6 @@ export const PLANT_BLOCK = 0.5;
 export const MAP_COLS = 14;
 export const MAP_ROWS = 10;
 export const TILE = 64;
+
+// for towers.js
+export const TOWER_LIFETIME = 30;

@@ -1,3 +1,4 @@
+import { mountMultiplayer } from "./ui/multiplayer.js";
 import { state } from "./state.js";
 import { build } from "./build.js";
 import { MAP_COLS, MAP_ROWS, TILE } from "./constants.js";
@@ -40,13 +41,20 @@ setPlayers(state.players === 2 ? 2 : 1);
 showPlantDetails(0);
 setActiveTab("battle");
 show(
-  "Carniflora: Breach",
-  "Send carnivorous plants down the path. They bite towers as they pass. Destroy the keep at the end before your swarm runs out.",
-  "Start",
+  "Ready for Battle?",
+  "Deploy your carnivorous plants, destroy enemy towers, and conquer the castle before your swarm runs out.",
+  "Start Battle",
 );
 await loadSprites();
 startLoop();
+// TO see the message on the screen when u win uncomment state.phase = "won"; it shows the message in the battle
+//state.phase = "won";
+
+// TO see the message on the screen when u lost uncomment state.phase = "lost"; it shows the message in the battle
+
+//state.phase = "lost";
 renderEvolutionCards();
+mountMultiplayer();
 
 document.getElementById("evolutionGrid")?.addEventListener("click", (event) => {
   const checkpoint = event.target.closest(".upgrade-stage");
@@ -118,3 +126,18 @@ upgradeTabletQuery.addEventListener("change", () => {
 });
 
 syncUpgradePanelAccessibility();
+
+const fullscreenBtn = document.getElementById("fullscreenBtn");
+const battleStage = document.querySelector("#battleTab .stage");
+
+fullscreenBtn.addEventListener("click", async () => {
+  try {
+    if (document.fullscreenElement) {
+      await document.exitFullscreen();
+    } else {
+      await battleStage.requestFullscreen();
+    }
+  } catch (error) {
+    console.error("Fullscreen failed:", error);
+  }
+});
