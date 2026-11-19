@@ -1,7 +1,6 @@
-import { state as localState } from "./state.js";
+import { state as localState, maxSpores } from "./state.js";
 import { PLANTS } from "./plants.js";
 import { effects as localEffects } from "./effects.js";
-import { maxSpores } from "./economy.js";
 import { pxPosOf } from "./levels.js";
 import { PLANT_BLOCK } from "./constants.js";
 import { updateTowers } from "./towers.js";

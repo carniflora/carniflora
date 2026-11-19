@@ -1,8 +1,7 @@
 import { mountMultiplayer } from "./ui/multiplayer.js";
-import { state } from "./state.js";
+import { state, loadProgress } from "./state.js";
 import { build } from "./build.js";
 import { MAP_COLS, MAP_ROWS, TILE } from "./constants.js";
-import { loadProgress } from "./progress.js";
 import { dom, resizeCanvas } from "./ui/dom.js";
 import { mountPlantGrid } from "./ui/plantGrid.js";
 import { show } from "./ui/hud.js";
@@ -16,6 +15,7 @@ import {
   renderEvolutionCards,
 } from "./ui/flow.js";
 import { mountInput } from "./ui/input.js";
+import { loadSprites } from "./sprites.js";
 
 // Composition root
 // All mount calls must run before first render
@@ -44,6 +44,7 @@ show(
   "Deploy your carnivorous plants, destroy enemy towers, and conquer the castle before your swarm runs out.",
   "Start Battle",
 );
+await loadSprites();
 startLoop();
 // TO see the message on the screen when u win uncomment state.phase = "won"; it shows the message in the battle
 //state.phase = "won";

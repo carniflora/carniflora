@@ -1,6 +1,7 @@
 export const PLANTS = [
   {
     n: "Flytrap",
+    sheet: "snap",
     cost: 30,
     hp: 140,
     spd: 0.7,
@@ -13,6 +14,7 @@ export const PLANTS = [
   },
   {
     n: "Sundew",
+    sheet: "thorn",
     cost: 40,
     hp: 55,
     spd: 1,
@@ -25,6 +27,7 @@ export const PLANTS = [
   },
   {
     n: "Pitcher",
+    sheet: "pip",
     cost: 60,
     hp: 220,
     spd: 0.5,
@@ -37,6 +40,7 @@ export const PLANTS = [
   },
   {
     n: "Rafflesia",
+    sheet: "sunny",
     cost: 90,
     hp: 90,
     spd: 0.25,
@@ -57,6 +61,7 @@ export const PLANTS = [
 export const BOSS_KINDS = [
   {
     n: "Flytrap",
+    sheet: "snap",
     cost: 40,
     hp: 150,
     spd: 65,
@@ -69,6 +74,7 @@ export const BOSS_KINDS = [
   },
   {
     n: "Sundew",
+    sheet: "thorn",
     cost: 30,
     hp: 60,
     spd: 75,
@@ -81,6 +87,7 @@ export const BOSS_KINDS = [
   },
   {
     n: "Pitcher",
+    sheet: "pip",
     cost: 60,
     hp: 240,
     spd: 52,
@@ -93,6 +100,7 @@ export const BOSS_KINDS = [
   },
   {
     n: "Rafflesia",
+    sheet: "sunny",
     cost: 90,
     hp: 100,
     spd: 48,

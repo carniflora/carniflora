@@ -5,6 +5,12 @@ import { PLANTS } from "../plants.js";
 import { TILE } from "../constants.js";
 import { canPlaceTower } from "../towers.js";
 import { effects } from "../effects.js";
+import { drawPlant, drawEnemy, drawTree } from "../sprites.js";
+
+const MINION_SIZE = 48;
+const KEEP_SIZE = 96;
+const TREE_SIZE = TILE * 1.2;
+const SPRITE_SIZE = 48;
 
 function healthBar(x, y, width, valueHp, maxHp, colour) {
   const { ctx: g } = dom();
@@ -16,6 +22,8 @@ function healthBar(x, y, width, valueHp, maxHp, colour) {
 
 export function draw() {
   const { canvas, ctx: g } = dom();
+  const now = performance.now();
+
   // clear the canvas
   g.clearRect(0, 0, canvas.width, canvas.height);
   const bg = g.createLinearGradient(0, 0, 0, canvas.height);
@@ -29,7 +37,6 @@ export function draw() {
   g.lineJoin = "round";
 
   for (const path of state.map.paths) {
-    // get each path from the level paths
     g.beginPath();
     path.cells.forEach((cell, i) => {
       const x = (cell.c + 0.5) * TILE;
@@ -45,64 +52,77 @@ export function draw() {
     g.stroke();
   }
 
-  // draw the enemies on the screen
+  // dead enemies first so everything else is drawn above them
   for (const enemy of state.enemies) {
-    if (enemy.hp <= 0) {
-      g.fillStyle = "#2b2f2a";
-      g.beginPath();
-      g.arc(enemy.x, enemy.y, enemy.radius * 0.8, 0, 7);
-      g.fill();
-      continue;
-    }
-    g.strokeStyle = "rgba(255,200,160,.10)";
-    g.lineWidth = 1;
+    if (enemy.hp > 0) continue;
+    g.fillStyle = "#2b2f2a";
     g.beginPath();
-    g.arc(enemy.x, enemy.y, enemy.rng, 0, 7);
-    g.stroke();
-    g.fillStyle = enemy.slow > 0 ? "#7f8fa3" : "#9aa0a6"; // if enemy slowed use first colour otherwise other
-    if (enemy.keep) {
-      g.fillRect(
-        enemy.x - enemy.radius,
-        enemy.y - enemy.radius,
-        enemy.radius * 2,
-        enemy.radius * 2,
-      );
-      g.fillStyle = "#c0392b";
-      g.fillRect(enemy.x - 4, enemy.y - enemy.radius - 14, 4, 14);
-      g.fillRect(enemy.x, enemy.y - enemy.radius - 14, 14, 8);
-    } else {
-      g.beginPath();
-      g.arc(enemy.x, enemy.y, enemy.radius, 0, 7);
-      g.fill();
-      g.fillStyle = "#6c7279";
-      g.fillRect(enemy.x - 5, enemy.y - enemy.radius - 6, 10, 8);
+    g.arc(enemy.x, enemy.y, enemy.radius * 0.8, 0, 7);
+    g.fill();
+  }
+
+  // living enemies
+  for (const enemy of state.enemies) {
+    if (enemy.hp <= 0) continue;
+
+    const size = enemy.keep ? KEEP_SIZE : MINION_SIZE;
+
+    if (!drawEnemy(g, enemy, now, size)) {
+      // fallback: the old shapes
+      g.fillStyle = enemy.slow > 0 ? "#7f8fa3" : "#9aa0a6";
+      if (enemy.keep) {
+        g.fillRect(
+          enemy.x - enemy.radius,
+          enemy.y - enemy.radius,
+          enemy.radius * 2,
+          enemy.radius * 2,
+        );
+        g.fillStyle = "#c0392b";
+        g.fillRect(enemy.x - 4, enemy.y - enemy.radius - 14, 4, 14);
+        g.fillRect(enemy.x, enemy.y - enemy.radius - 14, 14, 8);
+      } else {
+        g.beginPath();
+        g.arc(enemy.x, enemy.y, enemy.radius, 0, 7);
+        g.fill();
+        g.fillStyle = "#6c7279";
+        g.fillRect(enemy.x - 5, enemy.y - enemy.radius - 6, 10, 8);
+      }
     }
     healthBar(
       enemy.x,
-      enemy.y + enemy.radius + 4,
+      enemy.y + size / 2 + 2,
       enemy.keep ? 60 : 34,
       enemy.hp,
       enemy.max,
       "#e05a4a",
     );
-  }
+  } // ← end of the living-enemies loop
 
-  // draw the number of towers that are allowed in the level
+  // towers (trees)
   state.myTowers.forEach((tower) => {
     const x = (tower.c + 0.5) * TILE;
     const y = (tower.r + 0.5) * TILE;
-    const plant = PLANTS[tower.plant];
+    const baseY = y + TILE * 0.45;
 
-    g.fillStyle = plant.col;
-    g.fillRect(x - 16, y - 16, 32, 32);
+    // owner ring under the trunk
     g.strokeStyle = tower.owner === 0 ? "#fff" : "#7300f7";
     g.lineWidth = 2;
-    g.strokeRect(x - 16, y - 16, 32, 32);
-    g.fillStyle = "#fff";
+    g.beginPath();
+    g.ellipse(x, baseY - 3, TILE * 0.36, TILE * 0.14, 0, 0, 7);
+    g.stroke();
+
+    if (!drawTree(g, tower, x, baseY, TREE_SIZE)) {
+      // fallback: the old box
+      g.fillStyle = PLANTS[tower.plant].col;
+      g.fillRect(x - 16, y - 16, 32, 32);
+      g.strokeRect(x - 16, y - 16, 32, 32);
+    }
+
+    // countdown timer under the tree
     g.font = "12px system-ui, sans-serif";
     g.textAlign = "center";
-    g.fillText(Math.ceil(tower.timeLeft) + "s", x, y + 4);
     g.fillStyle = tower.timeLeft <= 5 ? "#ff6b6b" : "#fff";
+    g.fillText(Math.ceil(tower.timeLeft) + "s", x, baseY + 14);
     g.textAlign = "left";
   });
 
@@ -124,23 +144,25 @@ export function draw() {
     g.fillRect(c * TILE, r * TILE, TILE, TILE);
   }
 
-  // draw plants that are sent out -- plants above enemies/mytowers because drawn after
+  // plants that are sent out (drawn after towers so they sit on top)
   for (const p of state.plants) {
     const k = PLANTS[p.plant];
-    g.fillStyle = k.col;
-    g.beginPath();
-    g.arc(p.x, p.y, k.radius, 0, 7);
-    g.fill();
-    g.strokeStyle = p.owner === 0 ? "#fff" : "#7300f7";
-    g.stroke();
-    g.fillStyle = "rgba(0,0,0,.45)";
-    g.beginPath();
-    g.arc(p.x, p.y, k.radius * 0.45, 0, 7);
-    g.fill();
-    healthBar(p.x, p.y - k.radius - 8, 20, p.hp, k.hp, "#8fd45a");
+    if (!drawPlant(g, p, now, SPRITE_SIZE)) {
+      g.fillStyle = k.col;
+      g.beginPath();
+      g.arc(p.x, p.y, k.radius, 0, 7);
+      g.fill();
+      g.strokeStyle = p.owner === 0 ? "#fff" : "#7300f7";
+      g.stroke();
+      g.fillStyle = "rgba(0,0,0,.45)";
+      g.beginPath();
+      g.arc(p.x, p.y, k.radius * 0.45, 0, 7);
+      g.fill();
+    }
+    healthBar(p.x, p.y - SPRITE_SIZE / 2 - 2, 20, p.hp, k.hp, "#8fd45a");
   }
 
-  // draw the effects
+  // attack effects
   for (const f of state.fx) {
     g.strokeStyle = f.colour;
     g.lineWidth = 2;

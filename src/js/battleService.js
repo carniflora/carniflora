@@ -1,10 +1,9 @@
-import { state } from "./state.js";
+import { state, loadProgress, saveProgress } from "./state.js";
 import { effects } from "./effects.js";
 import { applySnapshot } from "./battle.js";
 import { placeTower } from "./towers.js";
 import { connectSocket, createSession } from "./network/transport.js";
 import { Action, KEY_PATTERN, GRACE_MS } from "./network/protocol.js";
-import { loadProgress, saveProgress } from "./progress.js";
 
 const STORAGE_KEY = "carniflora.session";
 let connection = null;
