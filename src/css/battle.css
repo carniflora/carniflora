@@ -701,17 +701,20 @@ button:focus-visible {
 }
 
 #app:has(#battleTab.active) .plant-details .detail-color {
-  width: 70px;
-  height: 70px;
-  margin: 4px auto;
-  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  margin: 8px auto;
+  background: transparent !important;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
   overflow: hidden;
 }
 
 #app:has(#battleTab.active) .detail-color img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 #app:has(#battleTab.active) #detailName {
@@ -922,10 +925,11 @@ button:focus-visible {
 }
 
 #battleTab .battle-plant-option {
-  height: 100%;
-  min-height: 65px;
+  position: relative;
+  min-height: 105px;
   padding: 10px;
-  box-sizing: border-box;
+  gap: 8px;
+  align-items: center;
 }
 
 #battleTab .battle-info-btn,
@@ -1011,16 +1015,16 @@ button:focus-visible {
 }
 
 #battleTab .battle-plant-option {
-  height: 85px;
-  min-height: 85px;
+  position: relative;
+  min-height: 105px;
   padding: 10px;
-  box-sizing: border-box;
+  gap: 8px;
+  align-items: center;
 }
 
 #battleTab .battle-plant-option img {
-  width: 50px;
-  height: 50px;
-  flex-shrink: 0;
+  width: 54px;
+  height: 54px;
 }
 
 #battleTab .battle-deploy-btn {
@@ -1048,44 +1052,63 @@ button:focus-visible {
 #battleTab .battle-plant-grid {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: repeat(4, 90px);
+  grid-template-rows: repeat(4, minmax(110px, auto));
   gap: 10px;
   margin-top: 12px;
   align-items: stretch;
 }
 
 #battleTab .battle-plant-option {
-  display: flex;
+  position: relative;
+  display: grid;
+  grid-template-columns: 68px minmax(0, 1fr);
+  grid-template-rows: auto auto;
   align-items: center;
-  justify-content: flex-start;
-  height: 100%;
-  min-height: 90px;
+  gap: 4px 8px;
+  height: auto;
+  min-height: 110px;
   max-height: none;
-  padding: 12px;
-  gap: 10px;
+  padding: 10px;
   box-sizing: border-box;
 }
 
 #battleTab .battle-plant-option img {
-  width: 44px;
-  height: 44px;
-  flex-shrink: 0;
+  grid-column: 1;
+  grid-row: 1 / 3;
+  width: 68px;
+  height: 80px;
+  object-fit: contain;
+  border: none;
+  border-radius: 0;
 }
 
 #battleTab .battle-plant-text {
-  flex: 1;
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
+  text-align: left;
 }
 
 #battleTab .battle-plant-key {
   position: static;
+  grid-column: 2;
+  grid-row: 2;
+  justify-self: end;
   width: auto;
   height: auto;
-  padding: 4px 6px;
+  margin: 0;
+  transform: none;
+  padding: 5px 8px;
   border-radius: 6px;
   background: #8c70c8;
   color: #ffffff;
-  font-size: 9px;
+  font-size: 12px;
   white-space: nowrap;
+  font-weight: 600;
 }
 
 #battleTab .battle-deploy-btn {
@@ -1185,8 +1208,8 @@ button:focus-visible {
   font-size: 12px;
 }
 #app:has(#battleTab.active) #bm {
-  margin-left: auto;
-  order: 4;
+  margin: 0;
+  order: 0;
   background: #8c70c8;
   color: #ffffff;
   border-color: #8c70c8;
@@ -1694,4 +1717,484 @@ button:focus-visible {
   #app .lobby-options {
     grid-template-columns: 1fr;
   }
+}
+
+#battleTab .battle-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+#battleTab .battle-quick-actions {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+#battleTab .battle-quick-actions .ctl,
+#battleTab .battle-shortcuts summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  padding: 0;
+  box-sizing: border-box;
+  background: #e9ddf6;
+  color: #7046a3;
+  border: 1px solid #dcc9ef;
+  border-radius: 9px;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+#battleTab .battle-quick-actions .ctl:hover,
+#battleTab .battle-shortcuts summary:hover {
+  background: #d8c0f1;
+}
+
+#battleTab .control-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+#battleTab .battle-shortcuts[open] {
+  width: auto;
+  position: relative;
+}
+
+#battleTab .shortcuts-panel {
+  position: absolute;
+  top: 0;
+  left: calc(100% + 20px);
+  z-index: 50;
+  width: 260px;
+  padding: 16px;
+  box-sizing: border-box;
+  background: #f3edfa;
+  border: 1px solid #dcc9ef;
+  border-radius: 16px;
+  color: #7046a3;
+  box-shadow: 0 6px 20px rgba(112, 70, 163, 0.08);
+}
+
+#battleTab .shortcuts-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+#battleTab .shortcuts-heading > i {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  background: #e5d5f5;
+  color: #7046a3;
+  border-radius: 9px;
+  font-size: 20px;
+}
+
+#battleTab .shortcuts-heading h3 {
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-weight: 600;
+  color: #7046a3;
+}
+
+#battleTab .shortcuts-heading p {
+  margin: 0;
+  font-size: 11px;
+  color: #8064a6;
+}
+
+#battleTab .shortcuts-category {
+  margin: 12px 0 8px;
+  color: #8064a6;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+#battleTab .shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  background: #faf6fc;
+  border-radius: 8px;
+  color: #7046a3;
+  font-size: 12px;
+}
+
+#battleTab .shortcut-row > i {
+  color: #8c70c8;
+  font-size: 16px;
+}
+
+#battleTab .shortcut-row > span {
+  flex: 1;
+}
+
+#battleTab .shortcut-row kbd {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  background: #e5d5f5;
+  color: #7046a3;
+  border: 1px solid #dcc9ef;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+#battleTab .shortcuts-divider {
+  height: 1px;
+  background: #dcc9ef;
+  margin: 14px 0;
+}
+
+#battleTab .shortcuts-panel .hint {
+  margin: 12px 0 0;
+  color: #8064a6;
+  font-size: 11px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+#battleTab.active ~ .plant-details .plant-profile-stats,
+#app:has(#battleTab.active) .plant-profile-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  padding: 8px 0;
+  border: none;
+}
+
+#app .profile-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+#app .profile-stat-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #7046a3;
+  font-size: 12px;
+}
+
+#app .profile-stat-heading span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#app .profile-stat-heading strong {
+  color: #7046a3;
+  font-size: 12px;
+  font-weight: 600;
+  background: transparent;
+  padding: 0;
+}
+
+#app .profile-stat-track {
+  width: 100%;
+  height: 7px;
+  background: #eee5f6;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+#app .profile-stat-fill {
+  width: 0%;
+  height: 100%;
+  border-radius: 20px;
+  transition: width 0.35s ease;
+}
+
+#app .health-fill {
+  background: #71b99a;
+}
+
+#app .damage-fill {
+  background: #d98ba9;
+}
+
+#app .range-fill {
+  background: #8c70c8;
+}
+
+#app .speed-fill {
+  background: #d8b36b;
+}
+
+#app .profile-deployment-cost {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 12px 8px;
+  background: #e5d5f5;
+  color: #7046a3;
+  border-radius: 9px;
+  font-size: 12px;
+}
+
+#app .profile-deployment-cost strong {
+  color: #7046a3;
+  font-weight: 600;
+}
+
+#battleTab .battle-plant-role {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: normal;
+  line-height: 1.4;
+}
+
+#battleTab .battle-plant-text strong {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+#battleTab .battle-plant-role i {
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+#battleTab .battle-plant-role.role-0 {
+  color: #568b69;
+}
+
+#battleTab .battle-plant-role.role-1 {
+  color: #98712e;
+}
+
+#battleTab .battle-plant-role.role-2 {
+  color: #5483a8;
+}
+
+#battleTab .battle-plant-role.role-3 {
+  color: #b45c87;
+}
+
+#battleTab .battle-plant-cost {
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+#plantDetailsPanel[data-plant="0"] {
+  --profile-accent: #477b55;
+  --profile-background: #dceee1;
+}
+
+#plantDetailsPanel[data-plant="1"] {
+  --profile-accent: #98712e;
+  --profile-background: #f5e8c8;
+}
+
+#plantDetailsPanel[data-plant="2"] {
+  --profile-accent: #5483a8;
+  --profile-background: #dceaf6;
+}
+
+#plantDetailsPanel[data-plant="3"] {
+  --profile-accent: #a84e7c;
+  --profile-background: #f3d9e7;
+}
+
+#app:has(#battleTab.active) #plantDetailsPanel .sidebar-label,
+#app:has(#battleTab.active) #plantDetailsPanel .battle-detail-role {
+  background: var(--profile-background, #f3d9e7);
+  color: var(--profile-accent, #7046a3);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+#app:has(#battleTab.active) #plantDetailsPanel .battle-ability-box {
+  background: var(--profile-background, #e5d5f5);
+  color: var(--profile-accent, #7046a3);
+  transition: background-color 0.3s ease;
+}
+
+#plantDetailsPanel .battle-ability-label,
+#plantDetailsPanel .detail-description {
+  color: var(--profile-accent, #7046a3);
+}
+
+#app #plantDetailsPanel .profile-deployment-cost {
+  background: var(--profile-background, #e5d5f5);
+  color: var(--profile-accent, #7046a3);
+  transition: background-color 0.3s ease;
+}
+
+#battleTab .battle-plant-option[data-plant-index="0"] {
+  --plant-accent: #477b55;
+  --plant-background: #dceee1;
+}
+
+#battleTab .battle-plant-option[data-plant-index="1"] {
+  --plant-accent: #98712e;
+  --plant-background: #f5e8c8;
+}
+
+#battleTab .battle-plant-option[data-plant-index="2"] {
+  --plant-accent: #5483a8;
+  --plant-background: #dceaf6;
+}
+
+#battleTab .battle-plant-option[data-plant-index="3"] {
+  --plant-accent: #a84e7c;
+  --plant-background: #f3d9e7;
+}
+#battleTab .battle-plant-option.selected {
+  background: var(--plant-background);
+  border: 2px solid var(--plant-accent);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+}
+
+#battleTab .battle-plant-option.selected .battle-selected-icon {
+  color: var(--plant-accent);
+}
+
+#battleTab .battle-plant-option.selected .battle-plant-key {
+  background: var(--plant-accent);
+  color: #ffffff;
+}
+
+#battleTab .battle-plant-option {
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+#battleTab #ov .mission-briefing {
+  width: min(90%, 480px);
+  padding: 28px;
+  box-sizing: border-box;
+  background: #faf6fc;
+  border: 1px solid #dcc9ef;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 16px 40px rgba(112, 70, 163, 0.15);
+}
+
+#battleTab #overlayLevel:not([hidden]) {
+  display: inline-flex;
+  padding: 6px 14px;
+  margin-bottom: 18px;
+  background: #e5d5f5;
+  color: #7046a3;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+#battleTab .mission-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 12px;
+  background: transparent;
+  color: #8c70c8;
+}
+
+#battleTab .mission-icon i {
+  font-size: 32px;
+  margin: 0;
+}
+
+#battleTab .mission-briefing #ot {
+  font-size: 30px;
+  color: #7046a3;
+  margin: 0 0 12px;
+}
+
+#battleTab .mission-briefing #om {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #8064a6;
+  margin: 0 0 18px;
+}
+
+#battleTab .mission-stats:not([hidden]) {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 20px 0;
+}
+
+#battleTab .mission-stats[hidden] {
+  display: none;
+}
+
+#battleTab .mission-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 8px;
+  background: #f0e7f8;
+  border-radius: 12px;
+}
+
+#battleTab .mission-stat i {
+  font-size: 22px;
+  color: #8c70c8;
+}
+
+#battleTab .mission-stat strong {
+  font-size: 22px;
+  color: #7046a3;
+}
+
+#battleTab .mission-stat span {
+  font-size: 12px;
+  color: #8064a6;
+}
+
+#battleTab .mission-briefing #ob {
+  width: 100%;
+  padding: 14px;
+  background: #8c70c8;
+  border: none;
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#battleTab .mission-briefing #ob:hover {
+  background: #7046a3;
+}
+#battleTab .mission-briefing #ob:focus,
+#battleTab .mission-briefing #ob:focus-visible {
+  outline: 2px solid #8c70c8;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px rgba(140, 112, 200, 0.15);
 }

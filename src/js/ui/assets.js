@@ -1,8 +1,8 @@
 export const plantImages = [
-  "./assets/plants/flytrap.png",
-  "./assets/plants/sundew.png",
-  "./assets/plants/pitcher.png",
-  "./assets/plants/rafflesia.png",
+  "./assets/plants/flytrap-icon.png",
+  "./assets/plants/sundew-icon.png",
+  "./assets/plants/pitcher-icon.png",
+  "./assets/plants/rafflesia-icon.png",
 ];
 
 //==========================================
@@ -57,7 +57,6 @@ export const plantRoles = [
   "Splash Damage", // Rafflesia
 ];
 
-// Lucide icons for each combat role
 export const plantRoleIcons = [
   "icon-shield", // Flytrap
   "icon-crosshair", // Sundew

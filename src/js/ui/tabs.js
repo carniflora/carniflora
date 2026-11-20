@@ -83,23 +83,36 @@ export function showPlantDetails(index) {
   // Remember selected plant.
   session.selectedPlantIndex = index;
 
-  // Update plant name.
-  $("detailName").textContent = plant.n;
+  // Apply the selected plant's profile colour.
+  $("plantDetailsPanel").dataset.plant = index;
 
-  // Update health.
+  // Update plant statistics.
   $("detailHealth").textContent = plant.hp;
-
-  // Update damage.
   $("detailDamage").textContent = plant.dmg;
-
-  // Update range.
   $("detailRange").textContent = plant.rng;
-
-  // Update speed.
   $("detailSpeed").textContent = plant.spd;
+  $("detailCost").textContent = `${plant.cost} spores`;
 
-  // Update cost.
-  $("detailCost").textContent = plant.cost;
+  // Calculate the maximum value of each statistic.
+  const plants = activePlants();
+
+  const maxHealth = Math.max(...plants.map((p) => p.hp));
+  const maxDamage = Math.max(...plants.map((p) => p.dmg));
+  const maxRange = Math.max(...plants.map((p) => p.rng));
+  const maxSpeed = Math.max(...plants.map((p) => p.spd));
+
+  // Update the statistic progress bars.
+  const updateStatBar = (id, value, max) => {
+    const percentage =
+      max > 0 ? Math.min(100, Math.max(0, (value / max) * 100)) : 0;
+
+    $(id).style.width = `${percentage}%`;
+  };
+
+  updateStatBar("healthBar", plant.hp, maxHealth);
+  updateStatBar("damageBar", plant.dmg, maxDamage);
+  updateStatBar("rangeBar", plant.rng, maxRange);
+  updateStatBar("speedBar", plant.spd, maxSpeed);
   // Update the Battle deployment button.
   $("battleDeployBtn").innerHTML = `
     <strong>Deploy ${plant.n}</strong>
@@ -150,7 +163,6 @@ export function showPlantDetails(index) {
 
   $("selectPlantBtn").disabled = false;
 
-  // Synchronize plant selection across both pages.
   document
     .querySelectorAll(".plant-option, .battle-plant-option")
     .forEach((card) => {

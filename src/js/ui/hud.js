@@ -186,13 +186,23 @@ export function showPlantMessage(message, type = "info") {
 
 export function show(t, m, b) {
   const { $ } = dom();
-
-  $("ot").textContent = t;
-  $("om").textContent = m;
-  $("ob").textContent = b;
-
   const phase = activePhase();
 
+  const isMission = phase === "menu";
+
+  $("ot").textContent =
+    isMission && session.mode !== "boss" && state.level === 1
+      ? "The First Breach"
+      : t;
+
+  $("om").textContent =
+    isMission && session.mode !== "boss" && state.level === 1
+      ? "Grow your army. Break the defenses. Reclaim the garden."
+      : m;
+
+  $("ob").textContent = isMission ? "Begin Mission" : b;
+
+  // Update overlay icon.
   const overlayIcons = {
     menu: "icon-swords",
     pause: "icon-pause-circle",
@@ -205,11 +215,19 @@ export function show(t, m, b) {
 
   $("ov").dataset.phase = phase;
 
+  // Update mission badge.
   const levelBadge = $("overlayLevel");
 
-  levelBadge.textContent = `Level ${state.level}`;
-  levelBadge.hidden = phase !== "menu";
+  levelBadge.textContent =
+    session.mode === "boss"
+      ? "BOSS MISSION"
+      : `MISSION ${String(state.level).padStart(2, "0")}`;
 
+  levelBadge.hidden = !isMission;
+
+  $("missionStats").hidden = true;
+
+  // Display overlay.
   $("ov").classList.remove("hide");
   $("ob").focus();
 }

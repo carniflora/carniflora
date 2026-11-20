@@ -9,7 +9,6 @@ export function mountPlantGrid({ onSelect, onDeploy }) {
   const battlePlantGrid = $("battlePlantGrid");
 
   PLANTS.forEach((plant, index) => {
-    // Create button.
     const card = document.createElement("button");
 
     card.type = "button";
@@ -95,9 +94,18 @@ export function mountPlantGrid({ onSelect, onDeploy }) {
     battleCard.innerHTML = `
       <img src="${plantImages[index]}" alt="${plant.n}" />
 
-      <div class="battle-plant-text">
+        <div class="battle-plant-text">
         <strong>${plant.n}</strong>
-        <span>${plant.cost} spores</span>
+
+        <span class="battle-plant-role role-${index}">
+          <i class="${plantRoleIcons[index]}" aria-hidden="true"></i>
+          ${plantRoles[index]}
+        </span>
+
+        <span class="battle-plant-cost">
+          <i class="icon-leaf" aria-hidden="true"></i>
+          ${plant.cost} spores
+        </span>
       </div>
 
       <span class="battle-plant-key">Level ${index + 1}</span>
@@ -113,7 +121,6 @@ export function mountPlantGrid({ onSelect, onDeploy }) {
     battlePlantGrid.appendChild(battleCard);
   });
 
-  // Shared deployment function.
   function deploySelectedPlant() {
     if (session.selectedPlantIndex === null) {
       return;
