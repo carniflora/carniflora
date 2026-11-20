@@ -103,6 +103,10 @@ button:focus-visible {
   gap: 8px;
 }
 
+.boss-lanes:has(> :nth-child(4):not([hidden])) {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .boss-lane-button {
   padding: 10px 6px;
   border: 1px solid var(--line);
@@ -3136,4 +3140,9 @@ button:focus-visible {
 #battleTab .battle-plant-option.is-locked .battle-plant-key {
   background: #e5d9f2;
   color: #927bb2;
+}
+
+#battleTab .boss-lane-button[hidden],
+#battleTab #bossPlayer[hidden] {
+  display: none;
 }

@@ -3,9 +3,13 @@ import { battleService } from "../battleService.js";
 import { state, maxSpores } from "../state.js";
 import { session, activeBattle, activePhase, activePlants } from "./session.js";
 import { towersOf, maxTowers } from "../towers.js";
-import { SPORE_CAP, LANE_NAMES } from "../bossLevel.js";
+import { SPORE_CAP, bossLaneOwner } from "../bossLevel.js";
 import { BOSS_KINDS } from "../plants.js";
-import { bossLaneButtons, bossDeployButtons } from "./bossControls.js";
+import {
+  BOSS_KEYS,
+  bossLaneButtons,
+  bossDeployButtons,
+} from "./bossControls.js";
 import { renderEvolutionCards } from "./flow.js";
 
 // store currently displayed HUD value
@@ -83,7 +87,9 @@ function updateBossMission(battle, phase) {
 
   updateObjective(
     "objectiveLowerTank",
-    battle.tanks.some((tank) => tank.lane === 2 && tank.hp <= 0),
+    battle.tanks.some(
+      (tank) => tank.lane === battle.laneY.length - 1 && tank.hp <= 0,
+    ),
   );
 
   updateObjective("objectiveBoss", bossDefeated);
@@ -213,20 +219,37 @@ export function hud() {
   // Hide the regular toolbar during Boss Battle.
   document.querySelector(".battle-toolbar").hidden = session.mode === "boss";
 
+  const coop = session.mode === "boss" && battle.selectedLanes.length === 2;
+  $("bossPlayer").hidden = !coop;
+  if (coop) {
+    const label = `Player ${session.activePlayer + 1} controls | Switch player`;
+    if ($("bossPlayer").textContent !== label) {
+      $("bossPlayer").textContent = label;
+    }
+  }
   bossDeployButtons.forEach((button, index) => {
+    const key = BOSS_KEYS[coop ? session.activePlayer : 0][index];
+    const hint = button.querySelector("kbd");
+    if (hint.textContent !== key) {
+      hint.textContent = key;
+    }
     button.disabled =
       session.mode !== "boss" ||
       activePhase() !== "play" ||
       battle.spores < BOSS_KINDS[index].cost;
   });
   bossLaneButtons.forEach((button, lane) => {
+    button.hidden = session.mode !== "boss" || lane >= battle.laneY.length;
+    if (button.hidden) {
+      return;
+    }
+    const owner = bossLaneOwner(battle, lane);
     button.disabled =
-      session.mode !== "boss" || !["play", "pause"].includes(activePhase());
+      owner !== session.activePlayer ||
+      !["play", "pause"].includes(activePhase());
     button.setAttribute(
       "aria-pressed",
-      String(
-        session.mode === "boss" && lane === session.bossState.selectedLane,
-      ),
+      String(session.mode === "boss" && battle.selectedLanes.includes(lane)),
     );
     if (session.mode === "boss") {
       const tank = battle.tanks.find((target) => target.lane === lane);
@@ -240,13 +263,14 @@ export function hud() {
                   (tower) => tower.type === "cannon" && tower.hp > 0,
                 )
               ? "Centre staging"
-              : LANE_NAMES[lane];
+              : battle.laneNames[lane];
       const label = button.querySelector(".boss-lane-name");
 
-      if (label && label.textContent !== target) {
-        label.textContent = target;
+      const name = coop ? `P${owner + 1} / ${target}` : target;
+      if (label && label.textContent !== name) {
+        label.textContent = name;
       }
-      const selected = lane === session.bossState.selectedLane;
+      const selected = battle.selectedLanes.includes(lane);
 
       const completed =
         lane === 1

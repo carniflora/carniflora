@@ -1,13 +1,12 @@
 import { battleService } from "../battleService.js";
-import { state, loadProgress } from "../state.js";
+import { state, normalLevel, BOSS_LEVEL } from "../state.js";
 import { build } from "../build.js";
 import { MAP_COLS, MAP_ROWS, TILE } from "../constants.js";
 import { session } from "./session.js";
 import { dom, resizeCanvas } from "./dom.js";
 import { setActiveTab, showPlantDetails } from "./tabs.js";
-import { setPlayers } from "./flow.js";
+import { restoreCampaign, setPlayers } from "./flow.js";
 import { show, showPlantMessage } from "./hud.js";
-import { resetPhase } from "./loop.js";
 
 export function mountMultiplayer() {
   const { $ } = dom();
@@ -36,6 +35,10 @@ export function mountMultiplayer() {
       session.mode = "td";
       state.phase = "menu";
       setPlayers(2);
+      if (state.level === BOSS_LEVEL) {
+        state.level = normalLevel(state.level);
+        build();
+      }
       resizeCanvas(MAP_COLS * TILE, MAP_ROWS * TILE);
       $("bossControls").hidden = true;
       $("battleTitle").textContent = "Online Battle";
@@ -96,14 +99,8 @@ export function mountMultiplayer() {
     },
     end(reason) {
       session.activePlayer = 0;
-      state.level = loadProgress();
       setPlayers(1);
-      build();
-      state.phase = "menu";
-      resetPhase();
-      $("battleTitle").textContent = "Battle";
-      $("battleHint").textContent =
-        "Select a plant, place its tower beside the path, then deploy.";
+      restoreCampaign();
       status.textContent = reason;
       show("Session ended", reason, "Start local battle");
       controls();

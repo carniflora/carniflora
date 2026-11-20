@@ -1,4 +1,4 @@
-import { state, loadProgress, saveProgress } from "./state.js";
+import { state, loadProgress, saveProgress, normalLevel } from "./state.js";
 import { effects } from "./effects.js";
 import { applySnapshot } from "./battle.js";
 import { placeTower } from "./towers.js";
@@ -109,7 +109,7 @@ export const battleService = {
     return ready;
   },
   async create() {
-    const result = await createSession(loadProgress());
+    const result = await createSession(normalLevel(loadProgress()));
     open(result.key, result.token);
   },
   join(key) {

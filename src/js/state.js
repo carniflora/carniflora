@@ -22,13 +22,15 @@ export const state = createState();
 // progress
 const STORAGE_KEY = "carniflora.level";
 const FIRST_LEVEL = 1;
+export const BOSS_LEVEL = LEVEL_PATHS.length + 1;
+
+// Online rooms and normal battle replays use tower-defense maps.
+export function normalLevel(level) {
+  return Math.min(level, LEVEL_PATHS.length);
+}
 
 function validLevel(level) {
-  return (
-    Number.isInteger(level) &&
-    level >= FIRST_LEVEL &&
-    level <= LEVEL_PATHS.length
-  );
+  return Number.isInteger(level) && level >= FIRST_LEVEL && level <= BOSS_LEVEL;
 }
 
 export function loadProgress() {

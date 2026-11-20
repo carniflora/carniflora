@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createBattle } from "../src/js/battle.js";
 import { Action, GRACE_MS } from "../src/js/network/protocol.js";
+import { createSession } from "../src/js/network/transport.js";
+import { BOSS_LEVEL } from "../src/js/state.js";
 
 const driver = vi.hoisted(() => ({
   send: vi.fn(() => true),
@@ -49,6 +51,13 @@ afterEach(() => {
 });
 
 describe("Online battle service", () => {
+  it("opens a normal room from a local boss checkpoint", async () => {
+    local.setItem("carniflora.level", BOSS_LEVEL);
+    await service.create();
+    expect(createSession).toHaveBeenLastCalledWith(BOSS_LEVEL - 1);
+    expect(local.getItem("carniflora.level")).toBe(String(BOSS_LEVEL));
+  });
+
   it("submits intent without changing local combat and never resends commands", async () => {
     await service.create();
     const battle = createBattle(1);
