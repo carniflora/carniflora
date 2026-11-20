@@ -696,17 +696,62 @@
               </div>
 
               <div class="battle-heading">
-                <span class="battle-eyebrow">Your Battle Journey</span>
+                <span id="battleEyebrow" class="battle-eyebrow">
+                  Your Battle Journey
+                </span>
 
                 <h2 id="battleTitle">Battle Arena</h2>
 
-                <p>
+                <p id="battleSubtitle">
                   Deploy your plants, destroy enemy towers, and defeat the
                   castle.
                 </p>
               </div>
 
               <div id="battleHud" class="battle-hud"></div>
+
+              <!-- Boss Mission Progress -->
+              <div
+                id="bossMissionProgress"
+                class="boss-mission-progress"
+                hidden
+              >
+                <div id="bossPhaseDefence" class="boss-phase">
+                  <div class="boss-phase-icon">
+                    <i class="icon-shield"></i>
+                  </div>
+
+                  <div class="boss-phase-content">
+                    <span>PHASE 01</span>
+                    <strong>Break Defences</strong>
+                    <small class="boss-phase-status">Pending</small>
+                  </div>
+                </div>
+
+                <div id="bossPhaseCore" class="boss-phase">
+                  <div class="boss-phase-icon">
+                    <i class="icon-target"></i>
+                  </div>
+
+                  <div class="boss-phase-content">
+                    <span>PHASE 02</span>
+                    <strong>Expose Core</strong>
+                    <small class="boss-phase-status">Pending</small>
+                  </div>
+                </div>
+
+                <div id="bossPhaseVictory" class="boss-phase">
+                  <div class="boss-phase-icon">
+                    <i class="icon-trophy"></i>
+                  </div>
+
+                  <div class="boss-phase-content">
+                    <span>PHASE 03</span>
+                    <strong>Defeat Boss</strong>
+                    <small class="boss-phase-status">Pending</small>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div class="battle-arena-layout">
@@ -820,28 +865,74 @@
                 </div>
               </div>
             </div>
-
             <div id="bossControls" class="boss-controls" hidden>
-              <p class="boss-briefing">
-                <strong>Harvester breach</strong>
-                <span id="bossObjective"
-                  >Break both armoured tanks to expose the furnace. Rafflesia
-                  blasts pierce armour.</span
-                >
-              </p>
-              <div
-                id="bossLanes"
-                class="boss-lanes"
-                role="group"
-                aria-label="Choose deployment lane"
-              ></div>
-              <p id="bossHazard" class="boss-hazard" role="status"></p>
-              <div
-                id="bossDeploy"
-                class="boss-deploy"
-                role="group"
-                aria-label="Deploy plants in the boss battle"
-              ></div>
+              <!-- Left: Plant Arsenal -->
+              <aside class="boss-arsenal">
+                <span class="battle-toolbar-label">
+                  <i class="icon-sprout" aria-hidden="true"></i>
+                  Plant Arsenal
+                </span>
+
+                <p class="boss-arsenal-subtitle">Assemble your army</p>
+
+                <div
+                  id="bossDeploy"
+                  class="boss-deploy"
+                  role="group"
+                  aria-label="Deploy plants in the boss battle"
+                ></div>
+
+                <div class="boss-strategy-tip">
+                  <h4>
+                    <i class="icon-lightbulb"></i>
+                    Strategy Tip
+                  </h4>
+
+                  <p>
+                    Combine Rafflesia and Sundew to weaken the boss defences.
+                  </p>
+                </div>
+              </aside>
+
+              <!-- Centre: Attack Controls -->
+              <section class="boss-attack-panel">
+                <div class="boss-attack-heading">
+                  <div class="boss-attack-title">
+                    <i class="icon-target" aria-hidden="true"></i>
+                    <h3>Attack Direction</h3>
+                  </div>
+
+                  <span id="bossAttackCounter" class="boss-attack-counter">
+                    0/2 tanks breached
+                  </span>
+                </div>
+
+                <p class="boss-briefing">
+                  <strong>Harvester breach</strong>
+                  <span id="bossObjective">
+                    Break both armoured tanks to expose the furnace. Rafflesia
+                    blasts pierce armour.
+                  </span>
+                </p>
+
+                <div
+                  id="bossLanes"
+                  class="boss-lanes"
+                  role="group"
+                  aria-label="Choose deployment lane"
+                ></div>
+
+                <div class="boss-attack-footer">
+                  <span class="boss-lane-shortcut">
+                    <i class="icon-keyboard" aria-hidden="true"></i>
+                    <i class="icon-arrow-up" aria-hidden="true"></i>
+                    <i class="icon-arrow-down" aria-hidden="true"></i>
+                    Switch lanes
+                  </span>
+
+                  <p id="bossHazard" class="boss-hazard" role="status"></p>
+                </div>
+              </section>
             </div>
           </div>
         </section>
@@ -935,6 +1026,41 @@
           </button>
 
           <p id="plantMessage" class="plant-message" role="status"></p>
+
+          <div
+            id="bossMissionObjectives"
+            class="boss-mission-objectives"
+            hidden
+          >
+            <h4>
+              <i class="icon-target"></i>
+              Mission Objectives
+            </h4>
+
+            <div id="bossTankCount" class="boss-objective-count">
+              0/2 tanks breached
+            </div>
+
+            <div id="objectiveUpperTank" class="boss-objective">
+              <i class="icon-circle"></i>
+              <span>Destroy upper tank</span>
+            </div>
+
+            <div id="objectiveCannon" class="boss-objective">
+              <i class="icon-circle"></i>
+              <span>Disable centre cannon</span>
+            </div>
+
+            <div id="objectiveLowerTank" class="boss-objective">
+              <i class="icon-circle"></i>
+              <span>Destroy lower tank</span>
+            </div>
+
+            <div id="objectiveBoss" class="boss-objective">
+              <i class="icon-circle"></i>
+              <span>Defeat Apex Harvester</span>
+            </div>
+          </div>
         </aside>
       </main>
     </div>

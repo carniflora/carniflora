@@ -1386,3 +1386,357 @@
     top: 18% !important;
   }
 }
+/* ==========================================
+   BOSS BATTLE RESPONSIVE LAYOUT
+   ========================================== */
+
+@media (min-width: 1251px) {
+  #battleTab .boss-controls:not([hidden]) {
+    display: contents;
+  }
+
+  #battleTab .boss-arsenal {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: stretch;
+  }
+
+  #battleTab .boss-deploy {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #battleTab .boss-attack-panel {
+    grid-column: 2;
+    grid-row: 3;
+  }
+}
+
+@media (max-width: 1250px) {
+  #battleTab .boss-controls:not([hidden]) {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    grid-column: 1 / -1;
+  }
+
+  #battleTab .boss-deploy {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  #battleTab .boss-attack-panel {
+    order: -1;
+  }
+}
+
+@media (max-width: 650px) {
+  #battleTab .boss-deploy {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #battleTab .boss-lanes {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 650px) {
+  .boss-mission-progress:not([hidden]) {
+    grid-template-columns: 1fr;
+  }
+}
+@media (min-width: 651px) and (max-width: 1250px) {
+  #battleTab .boss-deploy {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 650px) {
+  #battleTab .boss-deploy-button {
+    grid-template-columns: 38px minmax(0, 1fr) 16px;
+    padding: 8px;
+  }
+
+  .boss-plant-image {
+    width: 38px;
+    height: 48px;
+  }
+
+  #battleTab .boss-lane-button {
+    min-height: 75px;
+  }
+}
+@media (min-width: 1251px) {
+  #battleTab:has(#bossControls:not([hidden])) .stage:not(:fullscreen) {
+    height: auto;
+    align-self: start;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .stage:not(:fullscreen) canvas {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+
+  #battleTab .boss-arsenal {
+    align-self: start;
+  }
+}
+/* Boss Battle — Fix Attack Direction overlap */
+
+@media (min-width: 1251px) {
+  #battleTab:has(#bossControls:not([hidden])) .stage:not(:fullscreen) {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: start;
+    height: auto;
+    margin: 0;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-attack-panel {
+    grid-column: 2;
+    grid-row: 3;
+    align-self: start;
+    margin: 0;
+  }
+
+  #battleTab .boss-arsenal {
+    grid-column: 1;
+    grid-row: 2 / 4;
+    align-self: stretch;
+  }
+
+  .game-layout:has(#battleTab.active #bossControls:not([hidden]))
+    > .plant-details {
+    grid-column: 3;
+    grid-row: 2 / 4;
+    height: auto;
+    align-self: stretch;
+  }
+}
+/* Boss Battle — Compact Desktop Layout */
+
+@media (min-width: 1251px) {
+  /* Reduce header spacing */
+
+  #battleTab:has(#bossControls:not([hidden])) .battle-header {
+    gap: 8px;
+    padding: 0;
+    margin-bottom: 0;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .battle-heading {
+    margin: 0;
+    padding: 0;
+    gap: 4px;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) #battleTitle {
+    font-size: 2rem;
+    margin: 4px 0;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .battle-hud {
+    margin: 8px 0;
+  }
+
+  /* Reduce battlefield height while preserving proportions */
+
+  #battleTab:has(#bossControls:not([hidden])) .stage:not(:fullscreen) {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    height: auto;
+    margin: 0;
+    align-self: start;
+  }
+
+  /* Reduce sidebar spacing */
+
+  #battleTab .boss-arsenal {
+    padding: 10px;
+    gap: 8px;
+  }
+
+  #battleTab .boss-deploy {
+    gap: 7px;
+  }
+
+  #battleTab .boss-plant-card {
+    padding: 6px;
+    gap: 4px;
+  }
+
+  #battleTab .boss-plant-image {
+    width: 48px;
+    height: 52px;
+  }
+
+  /* Compact attack cards */
+
+  #battleTab .boss-attack-panel {
+    padding: 10px;
+  }
+
+  #battleTab .boss-lane-button {
+    min-height: 66px;
+    padding: 8px;
+  }
+
+  #battleTab .boss-attack-footer {
+    margin-top: 6px;
+    padding-top: 6px;
+  }
+
+  .game-layout:has(#battleTab.active #bossControls:not([hidden]))
+    > .plant-details {
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .game-layout:has(#battleTab.active #bossControls:not([hidden]))
+    .battle-ability-box {
+    min-height: 65px;
+  }
+}
+/* Match Boss Battle and Upgrades page height */
+
+@media (min-width: 1251px) {
+  .game-layout:has(#battleTab.active #bossControls:not([hidden])) {
+    min-height: calc(100dvh - 24px);
+    padding: 14px;
+    gap: 12px;
+    box-sizing: border-box;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .battle-header {
+    margin: 0;
+    padding: 0;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .stage canvas {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+
+  #battleTab .boss-attack-panel {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+/* ==========================================
+   BOSS BATTLE — SIDEBAR REFINEMENT
+   ========================================== */
+
+@media (min-width: 1251px) {
+  /* Left sidebar */
+
+  #battleTab .boss-arsenal {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  #battleTab .boss-deploy {
+    flex: 1;
+    grid-template-rows: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  #battleTab .boss-plant-card {
+    justify-content: space-between;
+    padding: 10px;
+    gap: 6px;
+  }
+
+  #battleTab .boss-plant-profile {
+    grid-template-columns: 62px minmax(0, 1fr);
+    align-items: center;
+    flex: 1;
+  }
+
+  #battleTab .boss-plant-image {
+    width: 62px;
+    height: 72px;
+  }
+
+  #battleTab .boss-plant-information strong {
+    font-size: 14px;
+  }
+
+  #battleTab .boss-plant-role,
+  #battleTab .boss-plant-cost {
+    font-size: 11px;
+  }
+
+  #battleTab .boss-plant-card .boss-deploy-button {
+    min-height: 32px;
+    font-size: 11px;
+  }
+
+  #battleTab .boss-strategy-tip {
+    margin-top: 0;
+    padding: 12px;
+  }
+
+  /* Right sidebar */
+
+  #app:has(#battleTab.active #bossControls:not([hidden])) #plantDetailsPanel {
+    padding: 12px;
+    gap: 10px;
+    justify-content: space-between;
+  }
+
+  /* Circular plant portrait */
+
+  #app:has(#battleTab.active #bossControls:not([hidden]))
+    #plantDetailsPanel
+    .detail-color {
+    width: 112px;
+    height: 112px;
+    margin: 4px auto;
+    padding: 10px;
+    box-sizing: border-box;
+    background: var(--profile-background, #dcecdf) !important;
+    border: 1px solid var(--profile-accent, #477b55);
+    border-radius: 50%;
+  }
+
+  #app:has(#battleTab.active #bossControls:not([hidden]))
+    #plantDetailsPanel
+    .detail-color
+    img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    image-rendering: pixelated;
+  }
+
+  /* Special ability */
+
+  #app:has(#battleTab.active #bossControls:not([hidden]))
+    #plantDetailsPanel
+    .battle-ability-box {
+    min-height: 65px;
+    padding: 12px;
+  }
+
+  /* Plant statistics */
+
+  #app:has(#battleTab.active #bossControls:not([hidden]))
+    #plantDetailsPanel
+    .plant-profile-stats {
+    gap: 14px;
+  }
+
+  #app:has(#battleTab.active #bossControls:not([hidden]))
+    #plantDetailsPanel
+    .profile-stat-track {
+    height: 7px;
+  }
+
+  /* Selected plant message */
+
+  #app:has(#battleTab.active #bossControls:not([hidden]))
+    #plantDetailsPanel
+    .plant-message {
+    margin: 0;
+  }
+}

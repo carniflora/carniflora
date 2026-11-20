@@ -2,41 +2,123 @@ import { dom } from "./dom.js";
 import { LANE_NAMES } from "../bossLevel.js";
 import { BOSS_KINDS } from "../plants.js";
 
-// The live button arrays. hud() mutates these elements, so it must
-// receive these same arrays, never copies.
+import { plantImages, plantRoles, plantRoleIcons } from "./assets.js";
+import { showPlantDetails } from "./tabs.js";
+import { session } from "./session.js";
+
 export let bossLaneButtons = [];
 export let bossDeployButtons = [];
 
-// Builds the lane and deploy buttons. onLane(lane) selects a lane,
-// onDeploy(index) selects and sends out that plant.
+const laneIcons = ["icon-shield", "icon-crosshair", "icon-shield"];
+
+const laneDescriptions = [
+  "Armoured defence",
+  "Enemy artillery",
+  "Armoured defence",
+];
+
 export function mountBossControls({ onLane, onDeploy }) {
   const { $ } = dom();
 
+  $("bossLanes").replaceChildren();
+  $("bossDeploy").replaceChildren();
+
+  // Attack direction buttons
   bossLaneButtons = LANE_NAMES.map((name, lane) => {
     const button = document.createElement("button");
+
+    button.type = "button";
     button.className = "boss-lane-button";
-    button.textContent = `${lane + 1} / ${name}`;
+    button.dataset.lane = lane;
     button.setAttribute("aria-pressed", "false");
+
+    button.innerHTML = `
+      <i class="${laneIcons[lane]} boss-lane-icon"
+        aria-hidden="true"></i>
+
+      <div class="boss-lane-content">
+        <strong class="boss-lane-name">${name}</strong>
+
+        <span class="boss-lane-description">
+          ${laneDescriptions[lane]}
+        </span>
+
+        <span class="boss-lane-number">
+          Lane ${lane + 1}
+        </span>
+      </div>
+    `;
+
     button.addEventListener("click", () => onLane(lane));
+
     $("bossLanes").appendChild(button);
+
     return button;
   });
 
-  // Keep all four deployment choices within reach while watching the boss fight.
+  // Plant Arsenal cards
   bossDeployButtons = BOSS_KINDS.map((plant, index) => {
+    const card = document.createElement("div");
+
+    card.className = "boss-plant-card";
+    card.dataset.plantIndex = index;
+
+    // Plant information
+    const profile = document.createElement("button");
+
+    profile.type = "button";
+    profile.className = "boss-plant-profile";
+
+    profile.innerHTML = `
+    <img
+      src="${plantImages[index]}"
+      alt="${plant.n}"
+      class="boss-plant-image"
+    />
+
+    <div class="boss-plant-information">
+      <strong>${plant.n}</strong>
+
+      <span class="boss-plant-role">
+        <i class="${plantRoleIcons[index]}" aria-hidden="true"></i>
+        ${plantRoles[index]}
+      </span>
+
+      <span class="boss-plant-cost">
+        <i class="icon-leaf" aria-hidden="true"></i>
+        ${plant.cost} spores
+      </span>
+    </div>
+  `;
+
+    // Show plant profile without deploying.
+    profile.addEventListener("click", () => {
+      session.selectedPlantIndex = index;
+      showPlantDetails(index);
+    });
+
+    // Individual deployment button
     const button = document.createElement("button");
+
+    button.type = "button";
     button.className = "boss-deploy-button";
-    button.style.setProperty("--plant-color", plant.col);
-    button.title = `${plant.d}. Deploy with ${index + 1}.`;
+
     button.setAttribute(
       "aria-label",
       `Deploy ${plant.n}, ${plant.cost} spores`,
     );
-    button.innerHTML = `<kbd>${index + 1}</kbd><strong>${plant.n}</strong><span>${plant.cost} spores</span>`;
-    button.addEventListener("click", () => {
-      onDeploy(index);
-    });
-    $("bossDeploy").appendChild(button);
+
+    button.innerHTML = `
+    <i class="icon-sprout" aria-hidden="true"></i>
+    Deploy ${plant.n}
+  `;
+
+    button.addEventListener("click", () => onDeploy(index));
+
+    card.append(profile, button);
+
+    $("bossDeploy").appendChild(card);
+
     return button;
   });
 }

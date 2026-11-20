@@ -13,11 +13,89 @@ let shown = {};
 
 let lastRenderedEvolutionLevel = null;
 
+function updateBossMission(battle, phase) {
+  const { $ } = dom();
+  const isBoss = session.mode === "boss";
+
+  $("bossMissionProgress").hidden = !isBoss;
+  $("bossMissionObjectives").hidden = !isBoss;
+
+  $("battleEyebrow").textContent = isBoss
+    ? "CHAPTER V · THE FINAL SIEGE"
+    : "Your Battle Journey";
+
+  $("battleSubtitle").textContent = isBoss
+    ? "Break the defences. Expose the core. Defeat the Apex Harvester."
+    : "Deploy your plants, destroy enemy towers, and defeat the castle.";
+
+  if (!isBoss) return;
+
+  const coreExposed = battle.phase === "core";
+  const bossDefeated = phase === "won";
+
+  const tanksDestroyed = battle.tanks.filter((tank) => tank.hp <= 0).length;
+
+  const cannonDestroyed = !battle.towers.some(
+    (tower) => tower.type === "cannon" && tower.hp > 0,
+  );
+
+  $("bossTankCount").textContent = `${tanksDestroyed}/2 tanks breached`;
+
+  function updatePhase(id, completed, active) {
+    const element = $(id);
+
+    element.classList.toggle("is-completed", completed);
+    element.classList.toggle("is-active", active);
+
+    element.querySelector(".boss-phase-status").textContent = completed
+      ? "Completed"
+      : active
+        ? "In progress"
+        : "Pending";
+  }
+
+  updatePhase(
+    "bossPhaseDefence",
+    coreExposed || bossDefeated,
+    !coreExposed && !bossDefeated,
+  );
+
+  updatePhase("bossPhaseCore", coreExposed || bossDefeated, false);
+
+  updatePhase("bossPhaseVictory", bossDefeated, coreExposed && !bossDefeated);
+
+  function updateObjective(id, completed) {
+    const element = $(id);
+
+    element.classList.toggle("is-completed", completed);
+
+    element.querySelector("i").className = completed
+      ? "icon-check-circle"
+      : "icon-circle";
+  }
+
+  updateObjective(
+    "objectiveUpperTank",
+    battle.tanks.some((tank) => tank.lane === 0 && tank.hp <= 0),
+  );
+
+  updateObjective("objectiveCannon", cannonDestroyed);
+
+  updateObjective(
+    "objectiveLowerTank",
+    battle.tanks.some((tank) => tank.lane === 2 && tank.hp <= 0),
+  );
+
+  updateObjective("objectiveBoss", bossDefeated);
+}
+
 export function hud() {
   const { $ } = dom();
   const battle = activeBattle();
   // Update the battle status indicator.
   const phase = activePhase();
+
+  updateBossMission(battle, phase);
 
   const battleStatuses = {
     menu: "Ready for Battle",
@@ -44,6 +122,10 @@ export function hud() {
   // Update enemy castle health.
   const castleHealth = $("castleHealth");
   const keep = battle.keep;
+
+  if (session.mode === "boss" && session.selectedPlantIndex !== null) {
+    $("detailName").textContent = BOSS_KINDS[session.selectedPlantIndex].n;
+  }
 
   castleHealth.hidden =
     session.mode === "boss" || !keep || activePhase() === "menu";
@@ -151,12 +233,43 @@ export function hud() {
                 )
               ? "Centre staging"
               : LANE_NAMES[lane];
-      const label = `${lane + 1} / ${target}`;
-      if (button.textContent !== label) button.textContent = label;
+      const label = button.querySelector(".boss-lane-name");
+
+      if (label && label.textContent !== target) {
+        label.textContent = target;
+      }
+      const selected = lane === session.bossState.selectedLane;
+
+      const completed =
+        lane === 1
+          ? !battle.towers.some(
+              (tower) => tower.type === "cannon" && tower.hp > 0,
+            )
+          : battle.tanks.some((tank) => tank.lane === lane && tank.hp <= 0);
+
+      button.classList.toggle("is-completed", completed);
+
+      const badge = button.querySelector(".boss-lane-number");
+
+      if (badge) {
+        badge.innerHTML = completed
+          ? '<i class="icon-check-circle" aria-hidden="true"></i> Destroyed'
+          : selected
+            ? '<i class="icon-check" aria-hidden="true"></i> Selected'
+            : `Lane ${lane + 1}`;
+      }
     }
   });
   if (session.mode === "boss") {
     const tanksLeft = battle.tanks.filter((tank) => tank.hp > 0).length;
+
+    const breached = 2 - tanksLeft;
+    const attackCounter = $("bossAttackCounter");
+
+    attackCounter.textContent = `${breached}/2 tanks breached`;
+
+    attackCounter.classList.toggle("is-completed", breached === 2);
+
     const objective =
       battle.phase === "core"
         ? "Core exposed. All lanes converge. Use Rafflesia to pierce armour and keep healing support alive. Mist speed +25%."
@@ -165,7 +278,7 @@ export function hud() {
       $("bossObjective").textContent = objective;
     const hazard = battle.spray
       ? `Lane ${battle.spray.lane + 1}: ${battle.spray.stage === "warning" ? "herbicide incoming — reinforce another lane" : "herbicide active"}.`
-      : "Spray targets the largest lane group. Spread your waves. ↑/↓ selects a lane; 1–4 deploys.";
+      : "Spread your army across lanes.";
     if ($("bossHazard").textContent !== hazard)
       $("bossHazard").textContent = hazard;
   }

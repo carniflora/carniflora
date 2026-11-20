@@ -2198,3 +2198,863 @@ button:focus-visible {
   outline-offset: 3px;
   box-shadow: 0 0 0 4px rgba(140, 112, 200, 0.15);
 }
+/* ==========================================
+   BOSS BATTLE — COMMAND CENTRE
+   ========================================== */
+
+#battleTab .boss-arsenal {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  background: #fffaff;
+  border: 1px solid #d8b8f3;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px #6946a11f;
+  min-width: 0;
+}
+
+.boss-arsenal-heading,
+.boss-attack-heading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #7046a3;
+}
+
+.boss-arsenal-heading h3,
+.boss-attack-heading h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.boss-arsenal-subtitle {
+  margin: 0;
+  text-align: center;
+  color: #987bad;
+  font-size: 11px;
+}
+
+/* Plant deployment cards */
+
+#battleTab .boss-deploy {
+  display: grid;
+  gap: 10px;
+}
+
+#battleTab .boss-deploy-button {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  align-items: center;
+  gap: 6px;
+  padding: 14px 10px;
+  min-height: 80px;
+  width: 100%;
+  background: var(--boss-card-bg);
+  color: var(--boss-card-text);
+  border: 1px solid var(--boss-card-border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+/* Flytrap */
+
+.boss-deploy-button:nth-child(1) {
+  --boss-card-bg: #dcecdf;
+  --boss-card-text: #47785c;
+  --boss-card-border: #a9d4b7;
+}
+
+/* Sundew */
+
+.boss-deploy-button:nth-child(2) {
+  --boss-card-bg: #f4e6c5;
+  --boss-card-text: #98712e;
+  --boss-card-border: #dfc38e;
+}
+
+/* Pitcher */
+
+.boss-deploy-button:nth-child(3) {
+  --boss-card-bg: #dfeaf5;
+  --boss-card-text: #5184a6;
+  --boss-card-border: #abc8df;
+}
+
+/* Rafflesia */
+
+.boss-deploy-button:nth-child(4) {
+  --boss-card-bg: #f0dbe6;
+  --boss-card-text: #b15c85;
+  --boss-card-border: #d9a5bf;
+}
+
+#battleTab .boss-deploy-button strong {
+  font-size: 13px;
+  color: var(--boss-card-text);
+}
+
+#battleTab .boss-deploy-button span {
+  font-size: 11px;
+  color: var(--boss-card-text);
+}
+
+#battleTab .boss-deploy-button kbd {
+  padding: 5px 7px;
+  border-radius: 6px;
+  background: #ffffffaa;
+  color: var(--boss-card-text);
+}
+
+#battleTab .boss-deploy-button:hover:not(:disabled) {
+  background: var(--boss-card-bg);
+  border-color: var(--boss-card-text);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px #7046a322;
+}
+
+.boss-keyboard-guide {
+  margin-top: auto;
+  padding: 10px;
+  text-align: center;
+  background: #eee4f7;
+  color: #7046a3;
+  border-radius: 8px;
+  font-size: 11px;
+}
+
+/* Attack direction panel */
+
+#battleTab .boss-attack-panel {
+  padding: 12px;
+  background: #fffaff;
+  border: 1px solid #d8b8f3;
+  border-radius: 14px;
+  min-width: 0;
+}
+
+.boss-attack-heading {
+  justify-content: flex-start;
+}
+
+#battleTab .boss-lanes {
+  gap: 8px;
+}
+
+#battleTab .boss-lane-button {
+  padding: 12px 8px;
+  background: #eee4f7;
+  border: 1px solid #d8b8f3;
+  border-radius: 10px;
+  color: #7046a3;
+  font-size: 12px;
+  font-weight: 600;
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+
+#battleTab .boss-lane-button[aria-pressed="true"] {
+  background: #9174cc;
+  border-color: #9174cc;
+  color: white;
+  box-shadow: 0 4px 12px #9174cc33;
+}
+
+#battleTab .boss-briefing {
+  font-size: 11px;
+  color: #806797;
+}
+
+#battleTab .boss-hazard {
+  min-height: 0;
+  color: #98712e;
+  font-size: 11px;
+}
+
+/* ==========================================
+   BOSS MISSION PROGRESSION
+   ========================================== */
+
+.boss-mission-progress[hidden],
+.boss-mission-objectives[hidden] {
+  display: none;
+}
+
+.boss-mission-progress:not([hidden]) {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 20px auto 0;
+  width: 100%;
+  max-width: 900px;
+}
+
+.boss-phase {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #fffaff;
+  border: 1px solid #dcc6ee;
+  border-radius: 12px;
+}
+
+.boss-phase-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  background: #eee4f7;
+  color: #9174cc;
+  border-radius: 10px;
+  font-size: 18px;
+}
+
+.boss-phase-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.boss-phase-content span {
+  color: #a184bc;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+
+.boss-phase-content strong {
+  color: #7046a3;
+  font-size: 13px;
+}
+
+.boss-phase-status {
+  color: #987bad;
+  font-size: 10px;
+}
+
+.boss-phase.is-active {
+  background: #e8dcf5;
+  border-color: #9174cc;
+}
+
+.boss-phase.is-active .boss-phase-icon {
+  background: #9174cc;
+  color: white;
+}
+
+.boss-phase.is-completed {
+  background: #dcecdf;
+  border-color: #a9d4b7;
+}
+
+.boss-phase.is-completed .boss-phase-icon {
+  background: #78b795;
+  color: white;
+}
+
+/* Boss Strategy Tip */
+
+.boss-strategy-tip {
+  margin-top: auto;
+  padding: 12px;
+  background: #f0e7f8;
+  border-radius: 10px;
+  color: #7046a3;
+}
+
+.boss-strategy-tip h4 {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0 0 8px;
+  font-size: 11px;
+}
+
+.boss-strategy-tip p {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.boss-arsenal .boss-keyboard-guide {
+  margin-top: 0;
+}
+
+/* Mission Objectives */
+
+.boss-mission-objectives {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #e2d0ef;
+}
+
+.boss-mission-objectives h4 {
+  margin: 0;
+  color: #7046a3;
+  font-size: 11px;
+}
+
+.boss-objective-count {
+  padding: 7px;
+  background: #f4e6c5;
+  color: #98712e;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 11px;
+}
+
+.boss-objective {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #806797;
+  font-size: 11px;
+}
+
+.boss-objective.is-completed {
+  color: #47785c;
+}
+/* ==========================================
+   BOSS ARSENAL — PLANT CARDS
+   ========================================== */
+
+#battleTab .boss-deploy-button {
+  position: relative;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 20px;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 8px;
+  min-height: 90px;
+}
+
+/* Plant sprite */
+
+.boss-plant-image {
+  width: 48px;
+  height: 58px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  transition: transform 0.2s ease;
+}
+
+.boss-deploy-button:hover:not(:disabled) .boss-plant-image {
+  transform: translateY(-3px);
+}
+
+/* Plant information */
+
+.boss-plant-information {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  text-align: left;
+}
+
+#battleTab .boss-plant-information strong {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+#battleTab .boss-plant-ability {
+  font-size: 10px;
+  line-height: 1.4;
+  opacity: 0.85;
+}
+
+#battleTab .boss-plant-cost {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* Keyboard shortcut */
+
+#battleTab .boss-deploy-button kbd {
+  grid-row: 1;
+  grid-column: 3;
+  align-self: start;
+  justify-self: end;
+  font-size: 10px;
+}
+
+/* Recommended plant badge */
+
+#battleTab .boss-recommended {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 5px;
+  background: #ffffff99;
+  color: #a34d79;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* ==========================================
+   BOSS ATTACK DIRECTION
+   ========================================== */
+
+#battleTab .boss-lane-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 100px;
+  padding: 12px 8px;
+  border-radius: 12px;
+}
+
+.boss-lane-icon {
+  font-size: 23px;
+  color: #9174cc;
+}
+
+.boss-lane-name {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.boss-lane-description {
+  font-size: 10px;
+  color: #987bad;
+}
+
+.boss-lane-number {
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: #ffffff99;
+  color: #7046a3;
+  font-size: 10px;
+}
+
+#battleTab .boss-lane-button[aria-pressed="true"] .boss-lane-icon,
+#battleTab .boss-lane-button[aria-pressed="true"] .boss-lane-description {
+  color: #ffffff;
+}
+
+#battleTab .boss-lane-button[aria-pressed="true"] .boss-lane-number {
+  background: #7046a3;
+  color: white;
+}
+
+#battleTab .boss-lane-button[aria-pressed="true"] .boss-lane-number {
+  font-weight: 600;
+}
+/* ==========================================
+   BOSS BATTLE — MINIMAL PLANT ARSENAL
+   ========================================== */
+
+#battleTab .boss-arsenal {
+  gap: 12px;
+  padding: 12px;
+}
+
+#battleTab .boss-deploy {
+  gap: 10px;
+}
+
+/* Plant card colours */
+
+.boss-plant-card[data-plant-index="0"] {
+  --plant-accent: #477b55;
+  --plant-background: #dceee1;
+}
+
+.boss-plant-card[data-plant-index="1"] {
+  --plant-accent: #98712e;
+  --plant-background: #f5e8c8;
+}
+
+.boss-plant-card[data-plant-index="2"] {
+  --plant-accent: #5483a8;
+  --plant-background: #dceaf6;
+}
+
+.boss-plant-card[data-plant-index="3"] {
+  --plant-accent: #a84e7c;
+  --plant-background: #f3d9e7;
+}
+
+/* Match normal Battle plant cards */
+
+#battleTab .boss-plant-card {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 8px;
+  background: #f3edfa;
+  border: 1px solid #d8b8f3;
+  border-radius: 12px;
+  min-width: 0;
+  transition: background 0.2s ease;
+}
+
+#battleTab .boss-plant-card:hover {
+  background: var(--plant-background);
+  border-color: var(--plant-accent);
+}
+
+/* Plant profile */
+
+#battleTab .boss-plant-profile {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+#battleTab .boss-plant-image {
+  width: 58px;
+  height: 66px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+#battleTab .boss-plant-information {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+#battleTab .boss-plant-information strong {
+  font-size: 14px;
+  color: #7046a3;
+}
+
+#battleTab .boss-plant-role {
+  color: var(--plant-accent);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+#battleTab .boss-plant-cost {
+  color: #987bad;
+  font-size: 10px;
+}
+
+/* Individual Deploy button */
+
+#battleTab .boss-plant-card .boss-deploy-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  min-height: 30px;
+  width: 100%;
+  padding: 7px;
+  background: var(--plant-background);
+  color: var(--plant-accent);
+  border: 1px solid transparent;
+  border-radius: 7px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+#battleTab .boss-plant-card .boss-deploy-button:hover:not(:disabled) {
+  background: var(--plant-accent);
+  color: white;
+  transform: none;
+}
+
+#battleTab .boss-plant-card .boss-deploy-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+/* Remove unnecessary mission panels */
+
+#battleTab #bossMissionProgress,
+#bossMissionObjectives {
+  display: none;
+}
+
+/* Compact attack lane buttons */
+
+#battleTab .boss-lane-button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 10px 6px;
+  border-radius: 8px;
+}
+
+#battleTab .boss-lane-icon {
+  font-size: 14px;
+}
+
+#battleTab .boss-lane-description,
+#battleTab .boss-lane-number {
+  display: none;
+}
+
+/* Simplify the attack direction panel */
+
+#battleTab .boss-attack-panel {
+  padding: 10px;
+}
+
+#battleTab .boss-briefing {
+  display: none;
+}
+/* ==========================================
+   BOSS ATTACK LANES — MILESTONE DESIGN
+   ========================================== */
+
+#battleTab .boss-lane-button[data-lane="0"] {
+  --lane-background: #d3e9d9;
+  --lane-accent: #477b55;
+}
+
+#battleTab .boss-lane-button[data-lane="1"] {
+  --lane-background: #ede3f6;
+  --lane-accent: #8061b5;
+}
+
+#battleTab .boss-lane-button[data-lane="2"] {
+  --lane-background: #fff0cc;
+  --lane-accent: #98712e;
+}
+
+#battleTab .boss-lane-button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+
+  min-height: 80px;
+  padding: 12px;
+
+  background: var(--lane-background);
+  color: var(--lane-accent);
+
+  border: 1px solid transparent;
+  border-radius: 12px;
+  text-align: left;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+#battleTab .boss-lane-icon {
+  font-size: 24px;
+  color: var(--lane-accent);
+  flex-shrink: 0;
+}
+
+#battleTab .boss-lane-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+#battleTab .boss-lane-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--lane-accent);
+}
+
+#battleTab .boss-lane-description {
+  display: block;
+  font-size: 11px;
+  color: var(--lane-accent);
+}
+
+#battleTab .boss-lane-number {
+  display: inline-flex;
+  padding: 3px 10px;
+
+  background: #00000008;
+  color: var(--lane-accent);
+
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 20px;
+}
+
+/* Selected lane */
+
+#battleTab .boss-lane-button[aria-pressed="true"] {
+  background: var(--lane-background);
+  border-color: var(--lane-accent);
+  color: var(--lane-accent);
+  box-shadow: none;
+}
+
+#battleTab .boss-lane-button[aria-pressed="true"] .boss-lane-icon,
+#battleTab .boss-lane-button[aria-pressed="true"] .boss-lane-description {
+  color: var(--lane-accent);
+}
+
+#battleTab .boss-lane-button[aria-pressed="true"] .boss-lane-number {
+  background: var(--lane-accent);
+  color: white;
+}
+
+#battleTab .boss-lane-button.is-completed {
+  --lane-background: #d3e9d9;
+  --lane-accent: #477b55;
+}
+
+#battleTab .boss-lane-button:hover:not(:disabled) {
+  border-color: var(--lane-accent);
+  box-shadow: 0 3px 10px #7046a315;
+}
+/* ==========================================
+   BOSS ATTACK PANEL — FINAL POLISH
+   ========================================== */
+
+#battleTab .boss-attack-panel {
+  padding: 12px;
+  background: #fffaff;
+  border: 1px solid #d8b8f3;
+  border-radius: 14px;
+}
+
+/* Panel heading */
+
+#battleTab .boss-attack-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.boss-attack-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #7046a3;
+}
+
+.boss-attack-title h3 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* Tank progress badge */
+
+.boss-attack-counter {
+  padding: 5px 10px;
+  background: #f5e8c8;
+  color: #98712e;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.boss-attack-counter.is-completed {
+  background: #d3e9d9;
+  color: #477b55;
+}
+
+/* Attack lane cards */
+
+#battleTab .boss-lanes {
+  gap: 10px;
+  align-items: stretch;
+}
+
+#battleTab .boss-lane-button {
+  min-height: 82px;
+  padding: 12px;
+  gap: 12px;
+  border-radius: 10px;
+}
+
+#battleTab .boss-lane-icon {
+  font-size: 26px;
+}
+
+#battleTab .boss-lane-content {
+  gap: 4px;
+}
+
+#battleTab .boss-lane-name {
+  font-size: 13px;
+}
+
+#battleTab .boss-lane-description {
+  font-size: 11px;
+}
+
+#battleTab .boss-lane-number {
+  padding: 3px 10px;
+  font-size: 10px;
+}
+
+/* Footer and keyboard instructions */
+
+.boss-attack-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid #e9ddf3;
+}
+
+.boss-lane-shortcut {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #987bad;
+  font-size: 10px;
+}
+
+#battleTab .boss-attack-footer .boss-hazard {
+  margin: 0;
+  min-height: 0;
+  color: #98712e;
+  font-size: 10px;
+}
+
+/* Hide Towers counter during boss mode */
+
+.game-layout:has(#battleTab.active #bossControls:not([hidden]))
+  #battleHud
+  .stats
+  > span:has(#tc) {
+  display: none;
+}
+#battleTab .boss-lane-number {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+#battleTab .boss-lane-number i {
+  font-size: 10px;
+}
