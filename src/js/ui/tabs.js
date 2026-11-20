@@ -61,10 +61,13 @@ export function setActiveTab(tabName) {
 
   const stats = document.querySelector(".stats");
   const battleHud = document.getElementById("battleHud");
+  const upgradeHud = document.getElementById("upgradeHud");
   const header = document.querySelector("#app > header");
 
   if (tabName === "battle") {
     battleHud.appendChild(stats);
+  } else if (tabName === "upgrades") {
+    upgradeHud.appendChild(stats);
   } else {
     header.appendChild(stats);
   }
