@@ -51,7 +51,11 @@ function loop(timer) {
       show(
         "Victory!",
         `Congratulations! You successfully completed Level ${state.level}.`,
-        state.level < LEVEL_PATHS.length ? "Next Level" : "Replay Level",
+        state.level < LEVEL_PATHS.length
+          ? "Next Level"
+          : battleService.online()
+            ? "Replay Level"
+            : "Start Boss Battle",
       );
     else if (phase === "lost")
       show(

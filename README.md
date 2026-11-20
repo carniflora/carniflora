@@ -30,6 +30,17 @@
 Run `npm run dev`, then open the printed URL. Wrangler serves the game and
 WebSocket backend together. Static-only hosting supports local play only.
 
+## Local boss co-op
+
+After winning level 3, choose **Start Boss Battle** to advance. The boss
+checkpoint survives a refresh in both solo and local co-op.
+
+Switch to **2 Players** and enter **Boss Battle**. Both players share spores.
+Player 1 uses W/S to select lanes 1-2 and 1-4 to deploy. Player 2 uses
+the arrow keys to select lanes 3-4 and 7, 8, 9, or 0 to deploy.
+For mouse or touch, use **Switch player** above the lane buttons.
+Break both outer tanks to expose the shared furnace.
+
 ## Online multiplayer
 
 1. Select **Create Session** and share the generated key.

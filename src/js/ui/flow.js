@@ -1,7 +1,13 @@
 import { battleService } from "../battleService.js";
 import { Action } from "../network/protocol.js";
 import { dom } from "./dom.js";
-import { state, saveProgress } from "../state.js";
+import {
+  state,
+  loadProgress,
+  saveProgress,
+  BOSS_LEVEL,
+  normalLevel,
+} from "../state.js";
 import { plantProgression } from "./assets.js";
 
 import {
@@ -22,7 +28,6 @@ import {
   selectBossLane,
 } from "../bossLevel.js";
 
-import { LEVEL_PATHS } from "../path.js";
 import { MAP_COLS, MAP_ROWS, TILE } from "../constants.js";
 import { setActiveTab, showPlantDetails } from "./tabs.js";
 import { hud, showPlantMessage, show } from "./hud.js";
@@ -36,7 +41,7 @@ export function setActivePlayer(p) {
   showPlantMessage(`Player ${p + 1} active.`);
 }
 
-export function deploy(i) {
+export function deploy(i, player = session.activePlayer) {
   if (battleService.online()) {
     battleService.submit({ type: Action.DEPLOY, plant: i });
     return;
@@ -51,6 +56,7 @@ export function deploy(i) {
 
   // the plant needs a tower to come out of
   if (
+    session.mode !== "boss" &&
     !state.myTowers.some(
       (t) => t.plant === i && t.owner === session.activePlayer,
     )
@@ -65,17 +71,28 @@ export function deploy(i) {
     return;
   }
 
-  if (session.mode === "boss") spawnBossPlant(session.bossState, i);
-  else deploySelected(i, session.activePlayer);
+  if (session.mode === "boss") {
+    if (!spawnBossPlant(session.bossState, i, undefined, player)) {
+      return;
+    }
+  } else {
+    deploySelected(i, session.activePlayer);
+  }
   showPlantMessage(
     session.mode === "boss"
-      ? `${k.n} deployed to lane ${session.bossState.selectedLane + 1}.`
+      ? `${k.n} deployed to lane ${session.bossState.selectedLanes[player] + 1}.`
       : `${k.n} deployed!`,
     "success",
   );
 }
 
-export function startLevel() {
+export function restoreCampaign() {
+  state.level = loadProgress();
+  session.mode = state.level === BOSS_LEVEL ? "boss" : "td";
+  startLevel("menu");
+}
+
+export function startLevel(phase = "play") {
   if (battleService.online()) {
     battleService.submit({ type: Action.RESTART });
     return;
@@ -83,26 +100,34 @@ export function startLevel() {
   // towerType = null;
   const { canvas } = dom();
   if (session.mode === "boss") {
-    session.bossState = createBossLevelState();
+    session.bossState = createBossLevelState(state.players);
     canvas.width = 960;
     canvas.height = 540;
   } else {
+    state.level = normalLevel(state.level);
     build();
-    state.phase = "play";
     canvas.width = MAP_COLS * TILE;
     canvas.height = MAP_ROWS * TILE;
   }
+  setActivePhase(phase);
   resetPhase();
 
   const { $ } = dom();
+  const boss = session.mode === "boss";
+  if ($("bm").getAttribute("aria-pressed") !== String(boss)) {
+    $("bm").textContent = boss ? "Normal Battle" : "Boss Battle";
+    $("bm").setAttribute("aria-pressed", String(boss));
+  }
   $("bossControls").hidden = session.mode !== "boss";
   $("battleTitle").textContent =
     session.mode === "boss" ? "Boss Battle" : "Battle Arena";
   $("battleHint").textContent =
     session.mode === "boss"
-      ? "Click a lane or use ↑/↓ to choose it. Keys 1–4 deploy plants. P pauses."
+      ? state.players === 2
+        ? "P1: W/S and 1-4. P2: Up/Down and 7, 8, 9, 0. Share spores. P pauses."
+        : "Click a lane or use ↑/↓ to choose it. Keys 1–4 deploy plants. P pauses."
       : "Click a plant (or press 1–4), click a tile beside the path to place its tower, then deploy.";
-  $("ov").classList.add("hide");
+  $("ov").classList.toggle("hide", phase === "play");
   showPlantMessage(
     session.mode === "boss"
       ? "Choose a lane, then deploy plants to break the chemical tanks."
@@ -120,26 +145,6 @@ export function toggleMode() {
   session.mode = session.mode === "td" ? "boss" : "td";
   startLevel();
 
-  //replce those two line of code
-  //session.mode = session.mode === "td" ? "boss" : "td";
-  //startLevel();
-  // replce it with this below bolck of code
-  //session.mode = session.mode === "td" ? "boss" : "td";
-  //startLevel();
-
-  //if (session.mode === "boss") {
-  // setActivePhase("pause");
-
-  //show(
-  //  "Boss Battle",
-  // "Prepare for the challenge. Deploy your plants and defeat the Harvester.",
-  //  "Start Battle",
-  //);
-  //}
-
-  $("bm").textContent =
-    session.mode === "boss" ? "Normal Battle" : "Boss Battle";
-  $("bm").setAttribute("aria-pressed", String(session.mode === "boss"));
   setActiveTab("battle");
   if (session.selectedPlantIndex !== null)
     showPlantDetails(session.selectedPlantIndex);
@@ -185,12 +190,14 @@ export function setPlayers(n) {
   );
 }
 
-export function setBossLane(lane) {
-  if (session.mode !== "boss" || !selectBossLane(session.bossState, lane))
+export function setBossLane(lane, player = session.activePlayer) {
+  if (
+    session.mode !== "boss" ||
+    !selectBossLane(session.bossState, lane, player)
+  ) {
     return;
-  showPlantMessage(
-    `Lane ${lane + 1} selected. Deploy with keys 1–4 or the plant buttons.`,
-  );
+  }
+  showPlantMessage(`Player ${player + 1} selected lane ${lane + 1}.`);
   hud();
 }
 
@@ -227,8 +234,12 @@ export function primaryAction() {
 
   // Next level.
   if (state.phase === "won") {
-    state.level = Math.min(state.level + 1, LEVEL_PATHS.length);
+    state.level++;
     saveProgress(state.level);
+    if (state.level === BOSS_LEVEL) {
+      toggleMode();
+      return;
+    }
   }
 
   // Retry / next level.

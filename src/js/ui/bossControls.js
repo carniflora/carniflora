@@ -1,6 +1,11 @@
 import { dom } from "./dom.js";
-import { LANE_NAMES } from "../bossLevel.js";
+import { COOP_LANE_NAMES } from "../bossLevel.js";
 import { BOSS_KINDS } from "../plants.js";
+
+export const BOSS_KEYS = [
+  ["1", "2", "3", "4"],
+  ["7", "8", "9", "0"],
+];
 
 // The live button arrays. hud() mutates these elements, so it must
 // receive these same arrays, never copies.
@@ -12,7 +17,7 @@ export let bossDeployButtons = [];
 export function mountBossControls({ onLane, onDeploy }) {
   const { $ } = dom();
 
-  bossLaneButtons = LANE_NAMES.map((name, lane) => {
+  bossLaneButtons = COOP_LANE_NAMES.map((name, lane) => {
     const button = document.createElement("button");
     button.className = "boss-lane-button";
     button.textContent = `${lane + 1} / ${name}`;
@@ -27,7 +32,7 @@ export function mountBossControls({ onLane, onDeploy }) {
     const button = document.createElement("button");
     button.className = "boss-deploy-button";
     button.style.setProperty("--plant-color", plant.col);
-    button.title = `${plant.d}. Deploy with ${index + 1}.`;
+    button.title = plant.d;
     button.setAttribute(
       "aria-label",
       `Deploy ${plant.n}, ${plant.cost} spores`,

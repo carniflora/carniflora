@@ -3,8 +3,7 @@ import {
   WORLD_WIDTH,
   BOSS_PATH,
   KILLZONE_OFFSET,
-  LANE_Y,
-  LANE_NAMES,
+  bossLaneOwner,
   TAU,
   atBossPath,
   getDistAtX,
@@ -49,12 +48,14 @@ function bar(ctx, x, y, width, hp, max, color, height = 4) {
 }
 
 function pathPoints(state, lane) {
-  const points = BOSS_PATH.map(([x]) => atBossPath(getDistAtX(x), lane));
+  const points = BOSS_PATH.map(([x]) =>
+    atBossPath(getDistAtX(x), lane, state.laneY),
+  );
   if (state.phase === "core")
     points.splice(
       points.length - 1,
       1,
-      [1560, LANE_Y[lane]],
+      [1560, state.laneY[lane]],
       [1800, 290],
       [1840, 290],
     );
@@ -84,11 +85,15 @@ function drawGround(ctx, state, width) {
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, width, 540);
   ctx.fillStyle = "rgba(143,212,90,0.06)";
-  ctx.fillRect(0, LANE_Y[state.selectedLane] - 55, width, 110);
+  const spacing = state.laneY[1] - state.laneY[0];
+  for (const lane of state.selectedLanes) {
+    ctx.fillRect(0, state.laneY[lane] - spacing / 2, width, spacing);
+  }
   ctx.strokeStyle = "rgba(143,212,90,0.16)";
   ctx.lineWidth = 1;
   ctx.setLineDash([5, 9]);
-  for (const y of [235, 345]) {
+  for (const center of state.laneY.slice(1)) {
+    const y = center - spacing / 2;
     ctx.beginPath();
     ctx.moveTo(0, y);
     ctx.lineTo(width, y);
@@ -281,17 +286,18 @@ function drawWorld(ctx, state) {
     ctx.lineTo(x + 5, y + 4);
     ctx.stroke();
   }
-  LANE_Y.forEach((_, lane) => drawPath(ctx, pathPoints(state, lane)));
+  state.laneY.forEach((_, lane) => drawPath(ctx, pathPoints(state, lane)));
   if (state.spray) {
     const s = state.spray;
-    const y = LANE_Y[s.lane] - 51;
+    const height = state.laneY[1] - state.laneY[0] - 8;
+    const y = state.laneY[s.lane] - height / 2;
     const firing = s.stage === "firing";
     ctx.fillStyle = firing ? "rgba(240,68,113,0.38)" : "rgba(232,176,74,0.12)";
-    ctx.fillRect(s.x1, y, s.x2 - s.x1, 102);
+    ctx.fillRect(s.x1, y, s.x2 - s.x1, height);
     ctx.strokeStyle = firing ? PINK : "#e8b04a";
     ctx.lineWidth = 2;
     ctx.setLineDash(firing ? [] : [8, 6]);
-    ctx.strokeRect(s.x1, y, s.x2 - s.x1, 102);
+    ctx.strokeRect(s.x1, y, s.x2 - s.x1, height);
     ctx.setLineDash([]);
     text(
       ctx,
@@ -316,9 +322,13 @@ function drawWorld(ctx, state) {
     bar(ctx, m.x, m.y - 18, 22, m.hp, m.max, PINK);
   }
   state.plants.forEach((p) => drawPlant(ctx, p, state.elapsed));
-  for (let lane = 0; lane < 3; lane++) {
-    const [x, y] = atBossPath(getDistAtX(state.leftEdge + 85), lane);
-    const selected = lane === state.selectedLane;
+  for (let lane = 0; lane < state.laneY.length; lane++) {
+    const [x, y] = atBossPath(
+      getDistAtX(state.leftEdge + 85),
+      lane,
+      state.laneY,
+    );
+    const selected = state.selectedLanes.includes(lane);
     ctx.lineWidth = selected ? 2 : 1;
     circle(
       ctx,
@@ -330,7 +340,11 @@ function drawWorld(ctx, state) {
     );
     text(
       ctx,
-      selected ? "DEPLOY" : `0${lane + 1}`,
+      selected
+        ? state.selectedLanes.length > 1
+          ? `P${bossLaneOwner(state, lane) + 1} DEPLOY`
+          : "DEPLOY"
+        : `0${lane + 1}`,
       x,
       y + 35,
       selected ? "#a9e67b" : MUTED,
@@ -484,15 +498,15 @@ function drawHUD(ctx, state, width) {
       11,
       "center",
     );
-  for (let lane = 0; lane < 3; lane++) {
-    const selected = state.selectedLane === lane;
+  for (let lane = 0; lane < state.laneY.length; lane++) {
+    const selected = state.selectedLanes.includes(lane);
     ctx.fillStyle = "rgba(9,24,16,0.88)";
-    ctx.fillRect(8, LANE_Y[lane] - 53, 168, 22);
+    ctx.fillRect(8, state.laneY[lane] - 38, 168, 22);
     text(
       ctx,
-      `${selected ? ">" : " "} 0${lane + 1} / ${state.phase === "core" ? "Furnace core" : LANE_NAMES[lane]}`,
+      `${selected ? ">" : " "} 0${lane + 1} / ${state.phase === "core" ? "Furnace core" : state.laneNames[lane]}`,
       15,
-      LANE_Y[lane] - 38,
+      state.laneY[lane] - 23,
       selected ? "#a9e67b" : MUTED,
       10,
     );
@@ -521,9 +535,11 @@ function drawMap(ctx, state, width) {
     Math.max(0, state.leftEdge + KILLZONE_OFFSET) * scale,
     29,
   );
-  for (let lane = 0; lane < 3; lane++) {
+  for (let lane = 0; lane < state.laneY.length; lane++) {
     const y = 502 + lane * 9;
-    ctx.strokeStyle = lane === state.selectedLane ? "#6a9158" : "#354d36";
+    ctx.strokeStyle = state.selectedLanes.includes(lane)
+      ? "#6a9158"
+      : "#354d36";
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(24, y);

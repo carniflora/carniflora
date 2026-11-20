@@ -1,14 +1,12 @@
 import { mountMultiplayer } from "./ui/multiplayer.js";
-import { state, loadProgress } from "./state.js";
-import { build } from "./build.js";
-import { MAP_COLS, MAP_ROWS, TILE } from "./constants.js";
-import { dom, resizeCanvas } from "./ui/dom.js";
+import { state, BOSS_LEVEL } from "./state.js";
 import { mountPlantGrid } from "./ui/plantGrid.js";
 import { show } from "./ui/hud.js";
 import { setActiveTab, mountTabs, showPlantDetails } from "./ui/tabs.js";
 import { mountBossControls } from "./ui/bossControls.js";
 import { startLoop } from "./ui/loop.js";
 import {
+  restoreCampaign,
   setPlayers,
   deploy,
   setBossLane,
@@ -19,8 +17,6 @@ import { loadSprites } from "./sprites.js";
 
 // Composition root
 // All mount calls must run before first render
-dom();
-resizeCanvas(MAP_COLS * TILE, MAP_ROWS * TILE);
 
 mountTabs();
 mountPlantGrid({ onSelect: showPlantDetails, onDeploy: deploy });
@@ -33,16 +29,16 @@ mountBossControls({
 });
 mountInput();
 
-state.level = loadProgress();
-build();
-state.phase = "menu";
+restoreCampaign();
 setPlayers(state.players === 2 ? 2 : 1);
 showPlantDetails(0);
 setActiveTab("battle");
 show(
   "Ready for Battle?",
-  "Deploy your carnivorous plants, destroy enemy towers, and conquer the castle before your swarm runs out.",
-  "Start Battle",
+  state.level === BOSS_LEVEL
+    ? "Break both chemical tanks to expose the Harvester."
+    : "Deploy your carnivorous plants, destroy enemy towers, and conquer the castle before your swarm runs out.",
+  state.level === BOSS_LEVEL ? "Start Boss Battle" : "Start Battle",
 );
 await loadSprites();
 startLoop();
