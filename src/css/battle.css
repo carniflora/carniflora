@@ -237,13 +237,23 @@ button:focus-visible {
 }
 .game-layout:has(#battleTab.active) {
   display: grid;
-  grid-template-columns: 250px minmax(0, 1fr) 250px;
-  grid-template-rows: auto auto auto;
+  grid-template-columns: 240px minmax(0, 1fr) 240px;
+  grid-template-rows: auto auto auto auto auto;
+
   align-items: stretch;
-  gap: 16px;
+  gap: 12px;
+
   position: relative;
+  width: 100%;
   max-width: 1700px;
   margin: 0 auto;
+  padding: 16px;
+  box-sizing: border-box;
+
+  background: #f5effc;
+  border: 1px solid #dcc6ee;
+  border-radius: 20px;
+  box-shadow: 0 12px 35px rgba(112, 70, 163, 0.08);
 }
 
 .battle-toolbar {
@@ -450,14 +460,20 @@ button:focus-visible {
 }
 
 .game-layout .network-toggle {
-  display: block;
-  margin: 8px auto 0;
-  padding: 6px 12px;
-  background: transparent;
-  border: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin: 0;
+  padding: 10px 12px;
+  background: #f2eafb;
+  border: 1px solid #dcc6ee;
+  border-radius: 8px;
   color: #7046a3;
   font-size: 12px;
   font-weight: 600;
+  white-space: nowrap;
   cursor: pointer;
 }
 
@@ -468,16 +484,17 @@ button:focus-visible {
 .game-layout .network-panel.is-open {
   display: flex;
   flex-direction: column;
-  position: absolute;
-  bottom: calc(100% + 12px);
-  right: 0;
-  width: min(320px, 100%);
-  padding: 16px;
-  background: #fffaff;
+  position: static;
+  grid-column: 1 / -1;
+  gap: 20px;
+  width: 100%;
+  padding: 24px;
+  box-sizing: border-box;
+  background: #faf6fc;
   color: #7046a3;
   border: 1px solid #dcc9ef;
   border-radius: 16px;
-  box-shadow: 0 8px 24px #6946a133;
+  box-shadow: none;
 }
 
 .game-layout .network-panel .ctl {
@@ -629,10 +646,6 @@ button:focus-visible {
   display: none;
 }
 
-#app:has(#battleTab.active) .game-controls {
-  display: flex;
-}
-
 #ov.hide {
   display: none;
 }
@@ -688,17 +701,20 @@ button:focus-visible {
 }
 
 #app:has(#battleTab.active) .plant-details .detail-color {
-  width: 70px;
-  height: 70px;
-  margin: 4px auto;
-  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  margin: 8px auto;
+  background: transparent !important;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
   overflow: hidden;
 }
 
 #app:has(#battleTab.active) .detail-color img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 #app:has(#battleTab.active) #detailName {
@@ -798,14 +814,6 @@ button:focus-visible {
 #battleTab .control-buttons .ctl:hover {
   background: #d8c0f1;
   border-color: #8c70c8;
-}
-
-#app:has(#battleTab.active) .game-controls {
-  background: transparent;
-  border: 0;
-  box-shadow: none;
-  margin: 0;
-  padding: 8px;
 }
 
 #app:has(#battleTab.active) .control-instructions {
@@ -917,10 +925,11 @@ button:focus-visible {
 }
 
 #battleTab .battle-plant-option {
-  height: 100%;
-  min-height: 65px;
+  position: relative;
+  min-height: 105px;
   padding: 10px;
-  box-sizing: border-box;
+  gap: 8px;
+  align-items: center;
 }
 
 #battleTab .battle-info-btn,
@@ -941,25 +950,38 @@ button:focus-visible {
 }
 
 #app:has(#battleTab.active) .game-controls {
+  grid-column: 1 / -1;
+  grid-row: 4;
+
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   gap: 12px;
-  margin: 16px auto 0;
-  padding: 12px;
+
+  width: 100%;
+  margin: 0;
+  padding: 10px 0;
+  box-sizing: border-box;
+
   background: transparent;
-  border: 0;
+  border: none;
   box-shadow: none;
 }
 
 #app:has(#battleTab.active) .control-buttons {
-  justify-content: center;
-  gap: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 8px;
 }
 
 #app:has(#battleTab.active) .control-buttons .ctl {
-  min-width: 130px;
-  padding: 12px 18px;
+  flex: 0 0 auto;
+  min-width: 0;
+  padding: 10px 14px;
   background: #e5d5f5;
   color: #7046a3;
   border: 1px solid #dcc9ef;
@@ -993,16 +1015,16 @@ button:focus-visible {
 }
 
 #battleTab .battle-plant-option {
-  height: 85px;
-  min-height: 85px;
+  position: relative;
+  min-height: 105px;
   padding: 10px;
-  box-sizing: border-box;
+  gap: 8px;
+  align-items: center;
 }
 
 #battleTab .battle-plant-option img {
-  width: 50px;
-  height: 50px;
-  flex-shrink: 0;
+  width: 54px;
+  height: 54px;
 }
 
 #battleTab .battle-deploy-btn {
@@ -1030,44 +1052,63 @@ button:focus-visible {
 #battleTab .battle-plant-grid {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: repeat(4, 90px);
+  grid-template-rows: repeat(4, minmax(110px, auto));
   gap: 10px;
   margin-top: 12px;
   align-items: stretch;
 }
 
 #battleTab .battle-plant-option {
-  display: flex;
+  position: relative;
+  display: grid;
+  grid-template-columns: 68px minmax(0, 1fr);
+  grid-template-rows: auto auto;
   align-items: center;
-  justify-content: flex-start;
-  height: 100%;
-  min-height: 90px;
+  gap: 4px 8px;
+  height: auto;
+  min-height: 110px;
   max-height: none;
-  padding: 12px;
-  gap: 10px;
+  padding: 10px;
   box-sizing: border-box;
 }
 
 #battleTab .battle-plant-option img {
-  width: 44px;
-  height: 44px;
-  flex-shrink: 0;
+  grid-column: 1;
+  grid-row: 1 / 3;
+  width: 68px;
+  height: 80px;
+  object-fit: contain;
+  border: none;
+  border-radius: 0;
 }
 
 #battleTab .battle-plant-text {
-  flex: 1;
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
+  text-align: left;
 }
 
 #battleTab .battle-plant-key {
   position: static;
+  grid-column: 2;
+  grid-row: 2;
+  justify-self: end;
   width: auto;
   height: auto;
-  padding: 4px 6px;
+  margin: 0;
+  transform: none;
+  padding: 5px 8px;
   border-radius: 6px;
   background: #8c70c8;
   color: #ffffff;
-  font-size: 9px;
+  font-size: 12px;
   white-space: nowrap;
+  font-weight: 600;
 }
 
 #battleTab .battle-deploy-btn {
@@ -1167,6 +1208,8 @@ button:focus-visible {
   font-size: 12px;
 }
 #app:has(#battleTab.active) #bm {
+  margin: 0;
+  order: 0;
   background: #8c70c8;
   color: #ffffff;
   border-color: #8c70c8;
@@ -1441,4 +1484,1577 @@ button:focus-visible {
     border-radius: inherit;
     inset: 0;
   }
+}
+#battleTab .battle-hud .stats {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  width: 100%;
+}
+
+#battleTab .battle-hud .stats > span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+
+  background: #fcf8ff;
+  border: 1px solid #dcc6ee;
+  border-radius: 999px;
+
+  color: #7046a3;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 12px rgba(112, 70, 163, 0.06);
+}
+
+#battleTab .battle-hud .stats b {
+  color: #7046a3;
+}
+
+#battleTab .battle-hud .stats > span i {
+  color: #8c70c8;
+}
+
+#app:has(#battleTab.active) > header {
+  display: none;
+}
+.game-layout .network-toggle:hover {
+  background: #e5d5f5;
+}
+#app:has(#battleTab.active) .side-nav {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 1.4fr);
+  align-items: stretch;
+  gap: 8px;
+  width: min(1000px, calc(100% - 32px));
+  position: relative;
+  grid-column: 1 / -1;
+  grid-row: 5;
+  left: auto;
+  bottom: auto;
+  transform: none;
+  margin: 8px auto 0;
+  height: auto;
+  box-sizing: border-box;
+}
+
+#app:has(#battleTab.active) .nav-links {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+#app:has(#battleTab.active) .network-toggle {
+  width: 100%;
+  margin: 0;
+  padding: 8px;
+  box-sizing: border-box;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+#app .network-panel.is-open {
+  display: flex;
+  flex-direction: column;
+  position: static;
+  grid-column: 1 / -1;
+  gap: 16px;
+  width: 100%;
+  padding: 16px;
+  box-sizing: border-box;
+  background: #f3edfa;
+  border: 1px solid #dcc9ef;
+  border-radius: 16px;
+  color: #7046a3;
+}
+
+#app .lobby-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+}
+
+#app .lobby-heading > i {
+  font-size: 28px;
+  color: #8c70c8;
+}
+
+#app .lobby-heading h2 {
+  font-family: inherit;
+  font-size: 22px;
+  font-weight: 600;
+  color: #7046a3;
+  margin: 0 0 4px;
+}
+
+#app .lobby-heading p {
+  color: #927bb2;
+  font-size: 13px;
+  margin: 0;
+}
+
+#app .lobby-heading .lobby-badge {
+  margin-left: auto;
+  padding: 5px 12px;
+  background: #d4ebe2;
+  color: #247957;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+#app .lobby-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  width: 100%;
+}
+
+#app .lobby-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  background: #faf6fc;
+  border: none;
+  border-radius: 14px;
+  text-align: center;
+}
+
+#app .lobby-icon {
+  font-size: 28px;
+  color: #8c70c8;
+}
+
+#app .lobby-card h3 {
+  color: #7046a3;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+#app .lobby-card p {
+  font-size: 13px;
+  color: #927bb2;
+  margin: 0;
+}
+
+#app .lobby-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+#app .lobby-card label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+#app .lobby-card input {
+  width: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+  background: #f3edfa;
+  border: 1px solid #dcc9ef;
+  border-radius: 10px;
+  color: #7046a3;
+  font-size: 14px;
+  text-align: center;
+}
+
+#app .lobby-card input::placeholder {
+  color: #927bb2;
+  text-transform: none;
+  opacity: 1;
+}
+
+#app .lobby-card #createSession {
+  width: 100%;
+  margin-top: auto;
+  padding: 12px;
+  background: #8c70c8;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+#app .lobby-card #joinSession {
+  width: 100%;
+  padding: 12px;
+  background: #e5d5f5;
+  color: #7046a3;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+#app .lobby-status {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  color: #7046a3;
+  font-size: 13px;
+}
+
+@media (max-width: 650px) {
+  #app .lobby-options {
+    grid-template-columns: 1fr;
+  }
+}
+
+#battleTab .battle-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+#battleTab .battle-quick-actions {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+#battleTab .battle-quick-actions .ctl,
+#battleTab .battle-shortcuts summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  padding: 0;
+  box-sizing: border-box;
+  background: #e9ddf6;
+  color: #7046a3;
+  border: 1px solid #dcc9ef;
+  border-radius: 9px;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+#battleTab .battle-quick-actions .ctl:hover,
+#battleTab .battle-shortcuts summary:hover {
+  background: #d8c0f1;
+}
+
+#battleTab .control-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+#battleTab .battle-shortcuts[open] {
+  width: auto;
+  position: relative;
+}
+
+#battleTab .shortcuts-panel {
+  position: absolute;
+  top: 0;
+  left: calc(100% + 20px);
+  z-index: 50;
+  width: 260px;
+  padding: 16px;
+  box-sizing: border-box;
+  background: #f3edfa;
+  border: 1px solid #dcc9ef;
+  border-radius: 16px;
+  color: #7046a3;
+  box-shadow: 0 6px 20px rgba(112, 70, 163, 0.08);
+}
+
+#battleTab .shortcuts-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+#battleTab .shortcuts-heading > i {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  background: #e5d5f5;
+  color: #7046a3;
+  border-radius: 9px;
+  font-size: 20px;
+}
+
+#battleTab .shortcuts-heading h3 {
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-weight: 600;
+  color: #7046a3;
+}
+
+#battleTab .shortcuts-heading p {
+  margin: 0;
+  font-size: 11px;
+  color: #8064a6;
+}
+
+#battleTab .shortcuts-category {
+  margin: 12px 0 8px;
+  color: #8064a6;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+#battleTab .shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  background: #faf6fc;
+  border-radius: 8px;
+  color: #7046a3;
+  font-size: 12px;
+}
+
+#battleTab .shortcut-row > i {
+  color: #8c70c8;
+  font-size: 16px;
+}
+
+#battleTab .shortcut-row > span {
+  flex: 1;
+}
+
+#battleTab .shortcut-row kbd {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  background: #e5d5f5;
+  color: #7046a3;
+  border: 1px solid #dcc9ef;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+#battleTab .shortcuts-divider {
+  height: 1px;
+  background: #dcc9ef;
+  margin: 14px 0;
+}
+
+#battleTab .shortcuts-panel .hint {
+  margin: 12px 0 0;
+  color: #8064a6;
+  font-size: 11px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+#battleTab.active ~ .plant-details .plant-profile-stats,
+#app:has(#battleTab.active) .plant-profile-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  padding: 8px 0;
+  border: none;
+}
+
+#app .profile-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+#app .profile-stat-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #7046a3;
+  font-size: 12px;
+}
+
+#app .profile-stat-heading span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#app .profile-stat-heading strong {
+  color: #7046a3;
+  font-size: 12px;
+  font-weight: 600;
+  background: transparent;
+  padding: 0;
+}
+
+#app .profile-stat-track {
+  width: 100%;
+  height: 7px;
+  background: #eee5f6;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+#app .profile-stat-fill {
+  width: 0%;
+  height: 100%;
+  border-radius: 20px;
+  transition: width 0.35s ease;
+}
+
+#app .health-fill {
+  background: #71b99a;
+}
+
+#app .damage-fill {
+  background: #d98ba9;
+}
+
+#app .range-fill {
+  background: #8c70c8;
+}
+
+#app .speed-fill {
+  background: #d8b36b;
+}
+
+#app .profile-deployment-cost {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 12px 8px;
+  background: #e5d5f5;
+  color: #7046a3;
+  border-radius: 9px;
+  font-size: 12px;
+}
+
+#app .profile-deployment-cost strong {
+  color: #7046a3;
+  font-weight: 600;
+}
+
+#battleTab .battle-plant-role {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: normal;
+  line-height: 1.4;
+}
+
+#battleTab .battle-plant-text strong {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+#battleTab .battle-plant-role i {
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+#battleTab .battle-plant-role.role-0 {
+  color: #568b69;
+}
+
+#battleTab .battle-plant-role.role-1 {
+  color: #98712e;
+}
+
+#battleTab .battle-plant-role.role-2 {
+  color: #5483a8;
+}
+
+#battleTab .battle-plant-role.role-3 {
+  color: #b45c87;
+}
+
+#battleTab .battle-plant-cost {
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+#plantDetailsPanel[data-plant="0"] {
+  --profile-accent: #477b55;
+  --profile-background: #dceee1;
+}
+
+#plantDetailsPanel[data-plant="1"] {
+  --profile-accent: #98712e;
+  --profile-background: #f5e8c8;
+}
+
+#plantDetailsPanel[data-plant="2"] {
+  --profile-accent: #5483a8;
+  --profile-background: #dceaf6;
+}
+
+#plantDetailsPanel[data-plant="3"] {
+  --profile-accent: #a84e7c;
+  --profile-background: #f3d9e7;
+}
+
+#app:has(#battleTab.active) #plantDetailsPanel .sidebar-label,
+#app:has(#battleTab.active) #plantDetailsPanel .battle-detail-role {
+  background: var(--profile-background, #f3d9e7);
+  color: var(--profile-accent, #7046a3);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+#app:has(#battleTab.active) #plantDetailsPanel .battle-ability-box {
+  background: var(--profile-background, #e5d5f5);
+  color: var(--profile-accent, #7046a3);
+  transition: background-color 0.3s ease;
+}
+
+#plantDetailsPanel .battle-ability-label,
+#plantDetailsPanel .detail-description {
+  color: var(--profile-accent, #7046a3);
+}
+
+#app #plantDetailsPanel .profile-deployment-cost {
+  background: var(--profile-background, #e5d5f5);
+  color: var(--profile-accent, #7046a3);
+  transition: background-color 0.3s ease;
+}
+
+#battleTab .battle-plant-option[data-plant-index="0"] {
+  --plant-accent: #477b55;
+  --plant-background: #dceee1;
+}
+
+#battleTab .battle-plant-option[data-plant-index="1"] {
+  --plant-accent: #98712e;
+  --plant-background: #f5e8c8;
+}
+
+#battleTab .battle-plant-option[data-plant-index="2"] {
+  --plant-accent: #5483a8;
+  --plant-background: #dceaf6;
+}
+
+#battleTab .battle-plant-option[data-plant-index="3"] {
+  --plant-accent: #a84e7c;
+  --plant-background: #f3d9e7;
+}
+#battleTab .battle-plant-option.selected {
+  background: var(--plant-background);
+  border: 2px solid var(--plant-accent);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+}
+
+#battleTab .battle-plant-option.selected .battle-selected-icon {
+  color: var(--plant-accent);
+}
+
+#battleTab .battle-plant-option.selected .battle-plant-key {
+  background: var(--plant-accent);
+  color: #ffffff;
+}
+
+#battleTab .battle-plant-option {
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+#battleTab #ov .mission-briefing {
+  width: min(90%, 480px);
+  padding: 28px;
+  box-sizing: border-box;
+  background: #faf6fc;
+  border: 1px solid #dcc9ef;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 16px 40px rgba(112, 70, 163, 0.15);
+}
+
+#battleTab #overlayLevel:not([hidden]) {
+  display: inline-flex;
+  padding: 6px 14px;
+  margin-bottom: 18px;
+  background: #e5d5f5;
+  color: #7046a3;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+#battleTab .mission-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 12px;
+  background: transparent;
+  color: #8c70c8;
+}
+
+#battleTab .mission-icon i {
+  font-size: 32px;
+  margin: 0;
+}
+
+#battleTab .mission-briefing #ot {
+  font-size: 30px;
+  color: #7046a3;
+  margin: 0 0 12px;
+}
+
+#battleTab .mission-briefing #om {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #8064a6;
+  margin: 0 0 18px;
+}
+
+#battleTab .mission-stats:not([hidden]) {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 20px 0;
+}
+
+#battleTab .mission-stats[hidden] {
+  display: none;
+}
+
+#battleTab .mission-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 8px;
+  background: #f0e7f8;
+  border-radius: 12px;
+}
+
+#battleTab .mission-stat i {
+  font-size: 22px;
+  color: #8c70c8;
+}
+
+#battleTab .mission-stat strong {
+  font-size: 22px;
+  color: #7046a3;
+}
+
+#battleTab .mission-stat span {
+  font-size: 12px;
+  color: #8064a6;
+}
+
+#battleTab .mission-briefing #ob {
+  width: 100%;
+  padding: 14px;
+  background: #8c70c8;
+  border: none;
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#battleTab .mission-briefing #ob:hover {
+  background: #7046a3;
+}
+#battleTab .mission-briefing #ob:focus,
+#battleTab .mission-briefing #ob:focus-visible {
+  outline: 2px solid #8c70c8;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px rgba(140, 112, 200, 0.15);
+}
+/* ==========================================
+   BOSS BATTLE — COMMAND CENTRE
+   ========================================== */
+
+#battleTab .boss-arsenal {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  background: #fffaff;
+  border: 1px solid #d8b8f3;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px #6946a11f;
+  min-width: 0;
+}
+
+.boss-arsenal-heading,
+.boss-attack-heading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #7046a3;
+}
+
+.boss-arsenal-heading h3,
+.boss-attack-heading h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.boss-arsenal-subtitle {
+  margin: 0;
+  text-align: center;
+  color: #987bad;
+  font-size: 11px;
+}
+
+/* Plant deployment cards */
+
+#battleTab .boss-deploy {
+  display: grid;
+  gap: 10px;
+}
+
+#battleTab .boss-deploy-button {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  align-items: center;
+  gap: 6px;
+  padding: 14px 10px;
+  min-height: 80px;
+  width: 100%;
+  background: var(--boss-card-bg);
+  color: var(--boss-card-text);
+  border: 1px solid var(--boss-card-border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+/* Flytrap */
+
+.boss-deploy-button:nth-child(1) {
+  --boss-card-bg: #dcecdf;
+  --boss-card-text: #47785c;
+  --boss-card-border: #a9d4b7;
+}
+
+/* Sundew */
+
+.boss-deploy-button:nth-child(2) {
+  --boss-card-bg: #f4e6c5;
+  --boss-card-text: #98712e;
+  --boss-card-border: #dfc38e;
+}
+
+/* Pitcher */
+
+.boss-deploy-button:nth-child(3) {
+  --boss-card-bg: #dfeaf5;
+  --boss-card-text: #5184a6;
+  --boss-card-border: #abc8df;
+}
+
+/* Rafflesia */
+
+.boss-deploy-button:nth-child(4) {
+  --boss-card-bg: #f0dbe6;
+  --boss-card-text: #b15c85;
+  --boss-card-border: #d9a5bf;
+}
+
+#battleTab .boss-deploy-button strong {
+  font-size: 13px;
+  color: var(--boss-card-text);
+}
+
+#battleTab .boss-deploy-button span {
+  font-size: 11px;
+  color: var(--boss-card-text);
+}
+
+#battleTab .boss-deploy-button kbd {
+  padding: 5px 7px;
+  border-radius: 6px;
+  background: #ffffffaa;
+  color: var(--boss-card-text);
+}
+
+#battleTab .boss-deploy-button:hover:not(:disabled) {
+  background: var(--boss-card-bg);
+  border-color: var(--boss-card-text);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px #7046a322;
+}
+
+.boss-keyboard-guide {
+  margin-top: auto;
+  padding: 10px;
+  text-align: center;
+  background: #eee4f7;
+  color: #7046a3;
+  border-radius: 8px;
+  font-size: 11px;
+}
+
+/* Attack direction panel */
+
+#battleTab .boss-attack-panel {
+  padding: 12px;
+  background: #fffaff;
+  border: 1px solid #d8b8f3;
+  border-radius: 14px;
+  min-width: 0;
+}
+
+.boss-attack-heading {
+  justify-content: flex-start;
+}
+
+#battleTab .boss-lanes {
+  gap: 8px;
+}
+
+#battleTab .boss-lane-button {
+  padding: 12px 8px;
+  background: #eee4f7;
+  border: 1px solid #d8b8f3;
+  border-radius: 10px;
+  color: #7046a3;
+  font-size: 12px;
+  font-weight: 600;
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+
+#battleTab .boss-lane-button[aria-pressed="true"] {
+  background: #9174cc;
+  border-color: #9174cc;
+  color: white;
+  box-shadow: 0 4px 12px #9174cc33;
+}
+
+#battleTab .boss-briefing {
+  font-size: 11px;
+  color: #806797;
+}
+
+#battleTab .boss-hazard {
+  min-height: 0;
+  color: #98712e;
+  font-size: 11px;
+}
+
+/* ==========================================
+   BOSS MISSION PROGRESSION
+   ========================================== */
+
+.boss-mission-progress[hidden],
+.boss-mission-objectives[hidden] {
+  display: none;
+}
+
+.boss-mission-progress:not([hidden]) {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 20px auto 0;
+  width: 100%;
+  max-width: 900px;
+}
+
+.boss-phase {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #fffaff;
+  border: 1px solid #dcc6ee;
+  border-radius: 12px;
+}
+
+.boss-phase-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  background: #eee4f7;
+  color: #9174cc;
+  border-radius: 10px;
+  font-size: 18px;
+}
+
+.boss-phase-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.boss-phase-content span {
+  color: #a184bc;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+
+.boss-phase-content strong {
+  color: #7046a3;
+  font-size: 13px;
+}
+
+.boss-phase-status {
+  color: #987bad;
+  font-size: 10px;
+}
+
+.boss-phase.is-active {
+  background: #e8dcf5;
+  border-color: #9174cc;
+}
+
+.boss-phase.is-active .boss-phase-icon {
+  background: #9174cc;
+  color: white;
+}
+
+.boss-phase.is-completed {
+  background: #dcecdf;
+  border-color: #a9d4b7;
+}
+
+.boss-phase.is-completed .boss-phase-icon {
+  background: #78b795;
+  color: white;
+}
+
+/* Boss Strategy Tip */
+
+.boss-strategy-tip {
+  margin-top: auto;
+  padding: 12px;
+  background: #f0e7f8;
+  border-radius: 10px;
+  color: #7046a3;
+}
+
+.boss-strategy-tip h4 {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0 0 8px;
+  font-size: 11px;
+}
+
+.boss-strategy-tip p {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.boss-arsenal .boss-keyboard-guide {
+  margin-top: 0;
+}
+
+/* Mission Objectives */
+
+.boss-mission-objectives {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #e2d0ef;
+}
+
+.boss-mission-objectives h4 {
+  margin: 0;
+  color: #7046a3;
+  font-size: 11px;
+}
+
+.boss-objective-count {
+  padding: 7px;
+  background: #f4e6c5;
+  color: #98712e;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 11px;
+}
+
+.boss-objective {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #806797;
+  font-size: 11px;
+}
+
+.boss-objective.is-completed {
+  color: #47785c;
+}
+/* ==========================================
+   BOSS ARSENAL — PLANT CARDS
+   ========================================== */
+
+#battleTab .boss-deploy-button {
+  position: relative;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 20px;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 8px;
+  min-height: 90px;
+}
+
+/* Plant sprite */
+
+.boss-plant-image {
+  width: 48px;
+  height: 58px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  transition: transform 0.2s ease;
+}
+
+.boss-deploy-button:hover:not(:disabled) .boss-plant-image {
+  transform: translateY(-3px);
+}
+
+/* Plant information */
+
+.boss-plant-information {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  text-align: left;
+}
+
+#battleTab .boss-plant-information strong {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+#battleTab .boss-plant-ability {
+  font-size: 10px;
+  line-height: 1.4;
+  opacity: 0.85;
+}
+
+#battleTab .boss-plant-cost {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* Keyboard shortcut */
+
+#battleTab .boss-deploy-button kbd {
+  grid-row: 1;
+  grid-column: 3;
+  align-self: start;
+  justify-self: end;
+  font-size: 10px;
+}
+
+/* Recommended plant badge */
+
+#battleTab .boss-recommended {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 5px;
+  background: #ffffff99;
+  color: #a34d79;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* ==========================================
+   BOSS ATTACK DIRECTION
+   ========================================== */
+
+#battleTab .boss-lane-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 100px;
+  padding: 12px 8px;
+  border-radius: 12px;
+}
+
+.boss-lane-icon {
+  font-size: 23px;
+  color: #9174cc;
+}
+
+.boss-lane-name {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.boss-lane-description {
+  font-size: 10px;
+  color: #987bad;
+}
+
+.boss-lane-number {
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: #ffffff99;
+  color: #7046a3;
+  font-size: 10px;
+}
+
+#battleTab .boss-lane-button[aria-pressed="true"] .boss-lane-icon,
+#battleTab .boss-lane-button[aria-pressed="true"] .boss-lane-description {
+  color: #ffffff;
+}
+
+#battleTab .boss-lane-button[aria-pressed="true"] .boss-lane-number {
+  background: #7046a3;
+  color: white;
+}
+
+#battleTab .boss-lane-button[aria-pressed="true"] .boss-lane-number {
+  font-weight: 600;
+}
+/* ==========================================
+   BOSS BATTLE — MINIMAL PLANT ARSENAL
+   ========================================== */
+
+#battleTab .boss-arsenal {
+  gap: 12px;
+  padding: 12px;
+}
+
+#battleTab .boss-deploy {
+  gap: 10px;
+}
+
+/* Plant card colours */
+
+.boss-plant-card[data-plant-index="0"] {
+  --plant-accent: #477b55;
+  --plant-background: #dceee1;
+}
+
+.boss-plant-card[data-plant-index="1"] {
+  --plant-accent: #98712e;
+  --plant-background: #f5e8c8;
+}
+
+.boss-plant-card[data-plant-index="2"] {
+  --plant-accent: #5483a8;
+  --plant-background: #dceaf6;
+}
+
+.boss-plant-card[data-plant-index="3"] {
+  --plant-accent: #a84e7c;
+  --plant-background: #f3d9e7;
+}
+
+/* Match normal Battle plant cards */
+
+#battleTab .boss-plant-card {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 8px;
+  background: #f3edfa;
+  border: 1px solid #d8b8f3;
+  border-radius: 12px;
+  min-width: 0;
+  transition: background 0.2s ease;
+}
+
+#battleTab .boss-plant-card:hover {
+  background: var(--plant-background);
+  border-color: var(--plant-accent);
+}
+
+/* Plant profile */
+
+#battleTab .boss-plant-profile {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+#battleTab .boss-plant-image {
+  width: 58px;
+  height: 66px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+#battleTab .boss-plant-information {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+#battleTab .boss-plant-information strong {
+  font-size: 14px;
+  color: #7046a3;
+}
+
+#battleTab .boss-plant-role {
+  color: var(--plant-accent);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+#battleTab .boss-plant-cost {
+  color: #987bad;
+  font-size: 10px;
+}
+
+/* Individual Deploy button */
+
+#battleTab .boss-plant-card .boss-deploy-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  min-height: 30px;
+  width: 100%;
+  padding: 7px;
+  background: var(--plant-background);
+  color: var(--plant-accent);
+  border: 1px solid transparent;
+  border-radius: 7px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+#battleTab .boss-plant-card .boss-deploy-button:hover:not(:disabled) {
+  background: var(--plant-accent);
+  color: white;
+  transform: none;
+}
+
+#battleTab .boss-plant-card .boss-deploy-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+/* Remove unnecessary mission panels */
+
+#battleTab #bossMissionProgress,
+#bossMissionObjectives {
+  display: none;
+}
+
+/* Compact attack lane buttons */
+
+#battleTab .boss-lane-button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 10px 6px;
+  border-radius: 8px;
+}
+
+#battleTab .boss-lane-icon {
+  font-size: 14px;
+}
+
+#battleTab .boss-lane-description,
+#battleTab .boss-lane-number {
+  display: none;
+}
+
+/* Simplify the attack direction panel */
+
+#battleTab .boss-attack-panel {
+  padding: 10px;
+}
+
+#battleTab .boss-briefing {
+  display: none;
+}
+/* ==========================================
+   BOSS ATTACK LANES — MILESTONE DESIGN
+   ========================================== */
+
+#battleTab .boss-lane-button[data-lane="0"] {
+  --lane-background: #d3e9d9;
+  --lane-accent: #477b55;
+}
+
+#battleTab .boss-lane-button[data-lane="1"] {
+  --lane-background: #ede3f6;
+  --lane-accent: #8061b5;
+}
+
+#battleTab .boss-lane-button[data-lane="2"] {
+  --lane-background: #fff0cc;
+  --lane-accent: #98712e;
+}
+
+#battleTab .boss-lane-button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+
+  min-height: 80px;
+  padding: 12px;
+
+  background: var(--lane-background);
+  color: var(--lane-accent);
+
+  border: 1px solid transparent;
+  border-radius: 12px;
+  text-align: left;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+#battleTab .boss-lane-icon {
+  font-size: 24px;
+  color: var(--lane-accent);
+  flex-shrink: 0;
+}
+
+#battleTab .boss-lane-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+#battleTab .boss-lane-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--lane-accent);
+}
+
+#battleTab .boss-lane-description {
+  display: block;
+  font-size: 11px;
+  color: var(--lane-accent);
+}
+
+#battleTab .boss-lane-number {
+  display: inline-flex;
+  padding: 3px 10px;
+
+  background: #00000008;
+  color: var(--lane-accent);
+
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 20px;
+}
+
+/* Selected lane */
+
+#battleTab .boss-lane-button[aria-pressed="true"] {
+  background: var(--lane-background);
+  border-color: var(--lane-accent);
+  color: var(--lane-accent);
+  box-shadow: none;
+}
+
+#battleTab .boss-lane-button[aria-pressed="true"] .boss-lane-icon,
+#battleTab .boss-lane-button[aria-pressed="true"] .boss-lane-description {
+  color: var(--lane-accent);
+}
+
+#battleTab .boss-lane-button[aria-pressed="true"] .boss-lane-number {
+  background: var(--lane-accent);
+  color: white;
+}
+
+#battleTab .boss-lane-button.is-completed {
+  --lane-background: #d3e9d9;
+  --lane-accent: #477b55;
+}
+
+#battleTab .boss-lane-button:hover:not(:disabled) {
+  border-color: var(--lane-accent);
+  box-shadow: 0 3px 10px #7046a315;
+}
+/* ==========================================
+   BOSS ATTACK PANEL — FINAL POLISH
+   ========================================== */
+
+#battleTab .boss-attack-panel {
+  padding: 12px;
+  background: #fffaff;
+  border: 1px solid #d8b8f3;
+  border-radius: 14px;
+}
+
+/* Panel heading */
+
+#battleTab .boss-attack-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.boss-attack-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #7046a3;
+}
+
+.boss-attack-title h3 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* Tank progress badge */
+
+.boss-attack-counter {
+  padding: 5px 10px;
+  background: #f5e8c8;
+  color: #98712e;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.boss-attack-counter.is-completed {
+  background: #d3e9d9;
+  color: #477b55;
+}
+
+/* Attack lane cards */
+
+#battleTab .boss-lanes {
+  gap: 10px;
+  align-items: stretch;
+}
+
+#battleTab .boss-lane-button {
+  min-height: 82px;
+  padding: 12px;
+  gap: 12px;
+  border-radius: 10px;
+}
+
+#battleTab .boss-lane-icon {
+  font-size: 26px;
+}
+
+#battleTab .boss-lane-content {
+  gap: 4px;
+}
+
+#battleTab .boss-lane-name {
+  font-size: 13px;
+}
+
+#battleTab .boss-lane-description {
+  font-size: 11px;
+}
+
+#battleTab .boss-lane-number {
+  padding: 3px 10px;
+  font-size: 10px;
+}
+
+/* Footer and keyboard instructions */
+
+.boss-attack-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid #e9ddf3;
+}
+
+.boss-lane-shortcut {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #987bad;
+  font-size: 10px;
+}
+
+#battleTab .boss-attack-footer .boss-hazard {
+  margin: 0;
+  min-height: 0;
+  color: #98712e;
+  font-size: 10px;
+}
+
+/* Hide Towers counter during boss mode */
+
+.game-layout:has(#battleTab.active #bossControls:not([hidden]))
+  #battleHud
+  .stats
+  > span:has(#tc) {
+  display: none;
+}
+#battleTab .boss-lane-number {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+#battleTab .boss-lane-number i {
+  font-size: 10px;
 }

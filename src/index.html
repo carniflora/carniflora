@@ -126,33 +126,74 @@
           </button>
 
           <section class="network-panel" aria-label="Online multiplayer">
-            <h2>Online multiplayer</h2>
-            <button class="ctl" id="createSession" type="button">
-              Create Session
-            </button>
-            <form id="joinForm">
-              <label for="sessionKey">Session key</label>
-              <input
-                id="sessionKey"
-                name="sessionKey"
-                maxlength="12"
-                autocomplete="off"
-                autocapitalize="characters"
-                spellcheck="false"
-              />
-              <button class="ctl" id="joinSession" type="submit">
-                Join Session
+            <div class="lobby-heading">
+              <i class="icon-users" aria-hidden="true"></i>
+
+              <div>
+                <h2>Multiplayer Lobby</h2>
+                <p>Grow together. Conquer together.</p>
+              </div>
+
+              <p
+                id="networkStatus"
+                class="lobby-badge"
+                role="status"
+                aria-live="polite"
+              >
+                Local play
+              </p>
+            </div>
+
+            <div class="lobby-options">
+              <div class="lobby-card">
+                <i class="icon-shield-plus lobby-icon" aria-hidden="true"></i>
+
+                <h3>Host a Battle</h3>
+                <p>Create a session and invite a friend.</p>
+
+                <button class="ctl" id="createSession" type="button">
+                  Create Session
+                </button>
+              </div>
+
+              <div class="lobby-card">
+                <i class="icon-users lobby-icon" aria-hidden="true"></i>
+
+                <h3>Join a Battle</h3>
+
+                <form id="joinForm">
+                  <label for="sessionKey">Session key</label>
+
+                  <input
+                    id="sessionKey"
+                    name="sessionKey"
+                    maxlength="12"
+                    autocomplete="off"
+                    autocapitalize="characters"
+                    spellcheck="false"
+                    placeholder="Enter session key"
+                  />
+
+                  <button class="ctl" id="joinSession" type="submit">
+                    Join Session
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <div class="lobby-status">
+              <p id="networkStatus" role="status" aria-live="polite">
+                Local play
+              </p>
+
+              <button class="ctl" id="copySession" type="button" hidden>
+                Copy Key
               </button>
-            </form>
-            <button class="ctl" id="copySession" type="button" hidden>
-              Copy Key
-            </button>
-            <button class="ctl" id="leaveSession" type="button" hidden>
-              Leave Session
-            </button>
-            <p id="networkStatus" role="status" aria-live="polite">
-              Local play
-            </p>
+
+              <button class="ctl" id="leaveSession" type="button" hidden>
+                Leave Session
+              </button>
+            </div>
           </section>
 
           <div class="nav-footer">
@@ -201,7 +242,6 @@
               </div>
             </section>
 
-            <!-- Temporarily preserve existing JavaScript dependency -->
             <div hidden>
               <div id="plantGrid" class="plant-grid"></div>
             </div>
@@ -221,61 +261,173 @@
                   </p>
                 </div>
               </div>
-
+              <div id="upgradeHud" class="upgrade-hud"></div>
               <div class="upgrade-map">
-                <svg
-                  class="upgrade-path"
-                  viewBox="-160 -100 2020 850"
-                  preserveAspectRatio="none"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M -100 520
+                <div class="upgrade-roadmap-footer">
+                  <div class="journey-milestones">
+                    <h4>Journey Milestones</h4>
+
+                    <div class="milestone-grid">
+                      <div
+                        class="milestone first-discovery"
+                        id="firstDiscoveryMilestone"
+                      >
+                        <i class="icon-sprout" aria-hidden="true"></i>
+
+                        <div class="milestone-details">
+                          <strong>First Discovery</strong>
+                          <p>Unlock your first plant</p>
+                          <span class="milestone-status">Locked</span>
+                        </div>
+                      </div>
+
+                      <div
+                        class="milestone plant-collector"
+                        id="plantCollectorMilestone"
+                      >
+                        <i class="icon-sparkles" aria-hidden="true"></i>
+
+                        <div class="milestone-details">
+                          <strong>Plant Collector</strong>
+                          <p>Discover all four plants</p>
+                          <span class="milestone-status">Locked</span>
+                        </div>
+                      </div>
+
+                      <div
+                        class="milestone castle-conqueror"
+                        id="castleConquerorMilestone"
+                      >
+                        <i class="icon-swords" aria-hidden="true"></i>
+
+                        <div class="milestone-details">
+                          <strong>Castle Conqueror</strong>
+                          <p>Defeat the final boss</p>
+                          <span class="milestone-status">Locked</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="upgrade-roadmap">
+                  <!-- Level navigation -->
+                  <div class="roadmap-levels" aria-label="Explore levels">
+                    <button
+                      type="button"
+                      data-stage="1"
+                      class="roadmap-level selected"
+                      aria-pressed="true"
+                    >
+                      Level 1
+                    </button>
+
+                    <button
+                      type="button"
+                      data-stage="2"
+                      class="roadmap-level"
+                      aria-pressed="false"
+                    >
+                      Level 2
+                    </button>
+
+                    <button
+                      type="button"
+                      data-stage="3"
+                      class="roadmap-level"
+                      aria-pressed="false"
+                    >
+                      Level 3
+                    </button>
+
+                    <button
+                      type="button"
+                      data-stage="4"
+                      class="roadmap-level"
+                      aria-pressed="false"
+                    >
+                      Level 4
+                    </button>
+
+                    <button
+                      type="button"
+                      data-stage="5"
+                      class="roadmap-level boss-level"
+                      aria-pressed="false"
+                    >
+                      <i class="icon-swords" aria-hidden="true"></i>
+                      Boss Level
+                    </button>
+                  </div>
+
+                  <svg
+                    class="upgrade-path"
+                    viewBox="-160 -100 2020 850"
+                    preserveAspectRatio="none"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M -100 520
                 C 100 520, 160 250, 400 290
                 S 750 470, 930 310
                 S 1150 190, 1300 260
                 S 1500 210, 1700 20"
-                    fill="none"
-                    stroke="#8d6bc9"
-                    stroke-width="86"
-                    stroke-linecap="round"
-                  />
+                      fill="none"
+                      stroke="#8d6bc9"
+                      stroke-width="86"
+                      stroke-linecap="round"
+                    />
 
-                  <path
-                    d="M -100 520
-                C 100 520, 160 250, 400 290
-                S 750 470, 930 310
-                S 1150 190, 1300 260
-                S 1500 210, 1700 20"
-                    fill="none"
-                    stroke="#d7c5f7"
-                    stroke-width="73"
-                    stroke-linecap="round"
-                  />
+                    <path
+                      d="M -100 520
+                    C 100 520, 160 250, 400 290
+                    S 750 470, 930 310
+                    S 1150 190, 1300 260
+                    S 1500 210, 1700 20"
+                      fill="none"
+                      stroke="#d7c5f7"
+                      stroke-width="73"
+                      stroke-linecap="round"
+                    />
 
-                  <path
-                    d="M -100 520
-                C 100 520, 160 250, 400 290
-                S 750 470, 930 310
-                S 1150 190, 1300 260
-                S 1500 210, 1700 20"
-                    fill="none"
-                    stroke="#9272d0"
-                    stroke-width="3"
-                    stroke-dasharray="15 22"
-                    stroke-linecap="round"
-                  />
-                </svg>
+                    <!-- Green progression path -->
+                    <path
+                      class="upgrade-path-progress"
+                      d="M -100 520
+                    C 100 520, 160 250, 400 290
+                    S 750 470, 930 310
+                    S 1150 190, 1300 260
+                    S 1500 210, 1700 20"
+                      fill="none"
+                      stroke="#76b895"
+                      stroke-width="73"
+                      stroke-linecap="round"
+                      pathLength="100"
+                    />
 
-                <svg
-                  class="upgrade-path upgrade-path-tablet"
-                  viewBox="0 0 600 760"
-                  preserveAspectRatio="none"
-                  aria-hidden="true"
-                >
-                  =
-                  <path
-                    d="
+                    <path
+                      d="M -100 520
+                    C 100 520, 160 250, 400 290
+                    S 750 470, 930 310
+                    S 1150 190, 1300 260
+                    S 1500 210, 1700 20"
+                      fill="none"
+                      stroke="#9272d0"
+                      stroke-width="3"
+                      stroke-dasharray="15 22"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+
+                  <svg
+                    class="upgrade-path upgrade-path-tablet"
+                    viewBox="0 0 600 760"
+                    preserveAspectRatio="none"
+                    aria-hidden="true"
+                  >
+                    =
+                    <path
+                      d="
                       M 380 690
                       C 250 690, 135 680, 120 620
                       C 105 565, 135 525, 205 515
@@ -285,15 +437,15 @@
                       C 85 340, 80 255, 170 225
                       C 250 198, 345 220, 425 205
                     "
-                    fill="none"
-                    stroke="#8866c6"
-                    stroke-width="44"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
+                      fill="none"
+                      stroke="#8866c6"
+                      stroke-width="44"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
 
-                  <path
-                    d="
+                    <path
+                      d="
                       M 380 690
                       C 250 690, 135 680, 120 620
                       C 105 565, 135 525, 205 515
@@ -303,15 +455,15 @@
                       C 85 340, 80 255, 170 225
                       C 250 198, 345 220, 425 205
                     "
-                    fill="none"
-                    stroke="#dfcafa"
-                    stroke-width="37"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
+                      fill="none"
+                      stroke="#dfcafa"
+                      stroke-width="37"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
 
-                  <path
-                    d="
+                    <path
+                      d="
                       M 380 690
                       C 250 690, 135 680, 120 620
                       C 105 565, 135 525, 205 515
@@ -321,22 +473,70 @@
                       C 85 340, 80 255, 170 225
                       C 250 198, 345 220, 425 205
                     "
-                    fill="none"
-                    stroke="#9774d0"
-                    stroke-width="2"
-                    stroke-dasharray="9 12"
-                    stroke-linecap="round"
-                  />
-                </svg>
+                      fill="none"
+                      stroke="#9774d0"
+                      stroke-width="2"
+                      stroke-dasharray="9 12"
+                      stroke-linecap="round"
+                    />
+                  </svg>
 
-                <div id="evolutionGrid" class="upgrade-stages"></div>
+                  <div id="evolutionGrid" class="upgrade-stages"></div>
+
+                  <div class="roadmap-legend">
+                    <span class="legend-discovered">
+                      <i class="icon-circle-check" aria-hidden="true"></i>
+                      Discovered
+                    </span>
+
+                    <span class="legend-next">
+                      <i class="icon-sparkles" aria-hidden="true"></i>
+                      Next discovery
+                    </span>
+
+                    <span class="legend-locked">
+                      <i class="icon-lock" aria-hidden="true"></i>
+                      Locked
+                    </span>
+
+                    <span class="legend-boss">
+                      <i class="icon-swords" aria-hidden="true"></i>
+                      Final Boss
+                    </span>
+                  </div>
+                </div>
+
+                <div class="upgrade-collection-progress">
+                  <div class="collection-progress-header">
+                    <span>
+                      <i class="icon-sprout" aria-hidden="true"></i>
+                      Plant Collection
+                    </span>
+
+                    <strong id="collectionCount">1 / 4</strong>
+                  </div>
+
+                  <progress
+                    id="collectionProgress"
+                    max="4"
+                    value="1"
+                    aria-label="Plant collection progress"
+                  ></progress>
+
+                  <span id="collectionPercentage">
+                    25% of plants discovered
+                  </span>
+                </div>
+
                 <div
                   id="upgradePlantSelector"
                   class="upgrade-collection"
                   aria-label="Choose a plant"
                 ></div>
                 <aside class="upgrade-info">
-                  <div class="upgrade-info-header">PLANT GROWTH</div>
+                  <div id="upgradeInfoHeader" class="upgrade-info-header">
+                    PLANT DISCOVERY
+                  </div>
 
                   <button
                     id="upgradePanelClose"
@@ -354,46 +554,41 @@
                       alt="Selected plant"
                     />
 
+                    <h3 id="upgradeName"></h3>
+
+                    <p id="upgradeTerritory" class="upgrade-territory"></p>
+
                     <span id="upgradeRole" class="upgrade-role"></span>
 
-                    <h3 id="upgradeName"></h3>
-                    <p id="upgradeDescription" class="upgrade-description"></p>
-                    <div class="upgrade-level-row">
-                      <span>PLANT LEVEL</span>
-                      <strong id="upgradeStage">01</strong>
-                    </div>
+                    <div class="upgrade-requirements">
+                      <h4>Unlock requirements</h4>
 
-                    <div class="upgrade-stat-row">
-                      <span>Attack Power</span>
-                      <strong id="upgradeDamage">--</strong>
-                    </div>
-
-                    <div class="upgrade-stat-row">
-                      <span>Range</span>
-                      <strong id="upgradeRange">--</strong>
-                    </div>
-
-                    <div class="upgrade-stat-row">
-                      <span>Attack Speed</span>
-                      <strong id="upgradeSpeed">--</strong>
+                      <div id="upgradeRequirements"></div>
                     </div>
 
                     <div class="upgrade-mission">
-                      <span>SPECIAL ABILITY / MISSION</span>
-
-                      <strong id="upgradeMission"></strong>
+                      <h4>Unique ability</h4>
 
                       <p id="upgradeMissionDescription"></p>
                     </div>
 
-                    <button
-                      id="upgradeGoBattle"
-                      class="upgrade-battle-button"
-                      type="button"
-                    >
-                      GO TO BATTLE
-                    </button>
+                    <div class="upgrade-strategy">
+                      <h4>
+                        <i class="icon-lightbulb" aria-hidden="true"></i>
+                        Strategy tip
+                      </h4>
+
+                      <p id="upgradeStrategy"></p>
+                    </div>
                   </div>
+
+                  <button
+                    id="upgradeGoBattle"
+                    class="upgrade-battle-button"
+                    type="button"
+                  >
+                    Go to Battle
+                  </button>
                 </aside>
 
                 <div
@@ -410,24 +605,156 @@
               </div>
             </div>
           </div>
-
-          <!-- BATTLE TAB -->
           <div id="battleTab" class="tab-content">
             <div class="battle-header">
+              <div class="battle-topbar">
+                <button class="ctl" id="bm" aria-pressed="false">
+                  <i class="icon-swords" aria-hidden="true"></i>
+                  <span>Boss Battle</span>
+                </button>
+
+                <div class="battle-quick-actions">
+                  <button class="ctl" id="pz" title="Pause / Resume (P)">
+                    <i id="pauseIcon" class="icon-pause" aria-hidden="true"></i>
+                    <span id="pauseLabel" class="control-label">Pause (P)</span>
+                  </button>
+
+                  <button class="ctl" id="rs" title="Restart Level">
+                    <i class="icon-rotate-ccw" aria-hidden="true"></i>
+                    <span class="control-label">Restart Level</span>
+                  </button>
+
+                  <button
+                    class="ctl"
+                    id="fullscreenBtn"
+                    type="button"
+                    title="Fullscreen"
+                  >
+                    <i class="icon-maximize" aria-hidden="true"></i>
+                    <span class="control-label">Fullscreen</span>
+                  </button>
+
+                  <details class="battle-shortcuts">
+                    <summary
+                      title="Keyboard Shortcuts"
+                      aria-label="Keyboard Shortcuts"
+                    >
+                      <i class="icon-keyboard" aria-hidden="true"></i>
+                    </summary>
+
+                    <div class="shortcuts-panel">
+                      <div class="shortcuts-heading">
+                        <i class="icon-keyboard" aria-hidden="true"></i>
+                        <div>
+                          <h3>Quick Controls</h3>
+                          <p>Master your battle</p>
+                        </div>
+                      </div>
+
+                      <p class="shortcuts-category">Plant Selection</p>
+
+                      <div class="shortcut-row">
+                        <i class="icon-sprout" aria-hidden="true"></i>
+                        <span>Flytrap</span>
+                        <kbd>1</kbd>
+                      </div>
+
+                      <div class="shortcut-row">
+                        <i class="icon-sprout" aria-hidden="true"></i>
+                        <span>Sundew</span>
+                        <kbd>2</kbd>
+                      </div>
+
+                      <div class="shortcut-row">
+                        <i class="icon-sprout" aria-hidden="true"></i>
+                        <span>Pitcher</span>
+                        <kbd>3</kbd>
+                      </div>
+
+                      <div class="shortcut-row">
+                        <i class="icon-sprout" aria-hidden="true"></i>
+                        <span>Rafflesia</span>
+                        <kbd>4</kbd>
+                      </div>
+
+                      <div class="shortcuts-divider"></div>
+
+                      <p class="shortcuts-category">Battle Controls</p>
+
+                      <div class="shortcut-row">
+                        <i class="icon-pause" aria-hidden="true"></i>
+                        <span>Pause / Resume</span>
+                        <kbd>P</kbd>
+                      </div>
+
+                      <p id="battleHint" class="hint">
+                        Select a plant using keys 1–4.
+                      </p>
+                    </div>
+                  </details>
+                </div>
+              </div>
+
               <div class="battle-heading">
-                <span class="battle-eyebrow">Your Battle Journey</span>
+                <span id="battleEyebrow" class="battle-eyebrow">
+                  Your Battle Journey
+                </span>
 
                 <h2 id="battleTitle">Battle Arena</h2>
 
-                <p>
+                <p id="battleSubtitle">
                   Deploy your plants, destroy enemy towers, and defeat the
                   castle.
                 </p>
               </div>
+
+              <div id="battleHud" class="battle-hud"></div>
+
+              <!-- Boss Mission Progress -->
+              <div
+                id="bossMissionProgress"
+                class="boss-mission-progress"
+                hidden
+              >
+                <div id="bossPhaseDefence" class="boss-phase">
+                  <div class="boss-phase-icon">
+                    <i class="icon-shield"></i>
+                  </div>
+
+                  <div class="boss-phase-content">
+                    <span>PHASE 01</span>
+                    <strong>Break Defences</strong>
+                    <small class="boss-phase-status">Pending</small>
+                  </div>
+                </div>
+
+                <div id="bossPhaseCore" class="boss-phase">
+                  <div class="boss-phase-icon">
+                    <i class="icon-target"></i>
+                  </div>
+
+                  <div class="boss-phase-content">
+                    <span>PHASE 02</span>
+                    <strong>Expose Core</strong>
+                    <small class="boss-phase-status">Pending</small>
+                  </div>
+                </div>
+
+                <div id="bossPhaseVictory" class="boss-phase">
+                  <div class="boss-phase-icon">
+                    <i class="icon-trophy"></i>
+                  </div>
+
+                  <div class="boss-phase-content">
+                    <span>PHASE 03</span>
+                    <strong>Defeat Boss</strong>
+                    <small class="boss-phase-status">Pending</small>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div class="battle-arena-layout">
-              <!-- Left side: Plant selection -->
               <div class="battle-toolbar">
                 <div class="battle-plant-selection">
                   <span class="battle-toolbar-label">
@@ -467,8 +794,6 @@
                 </button>
               </div>
 
-              <!-- Centre: Battle map -->
-
               <div class="stage">
                 <div id="battleStatus" class="battle-status" data-phase="menu">
                   <span class="battle-status-dot"></span>
@@ -497,57 +822,125 @@
                 ></canvas>
 
                 <div id="ov">
-                  <div class="box">
-                    <i
-                      id="battleOverlayIcon"
-                      class="icon-swords battle-overlay-icon"
-                      aria-hidden="true"
-                    ></i>
-
-                    <h2 id="ot"></h2>
-                    <p id="om"></p>
-
+                  <div class="box mission-briefing">
                     <span
                       id="overlayLevel"
                       class="battle-overlay-level"
                       hidden
                     ></span>
 
+                    <div class="mission-icon">
+                      <i
+                        id="battleOverlayIcon"
+                        class="icon-swords battle-overlay-icon"
+                        aria-hidden="true"
+                      ></i>
+                    </div>
+
+                    <h2 id="ot"></h2>
+                    <p id="om"></p>
+
+                    <div id="missionStats" class="mission-stats" hidden>
+                      <div class="mission-stat">
+                        <i class="icon-leaf" aria-hidden="true"></i>
+                        <strong id="missionSpores">--</strong>
+                        <span>Spores</span>
+                      </div>
+
+                      <div class="mission-stat">
+                        <i class="icon-castle" aria-hidden="true"></i>
+                        <strong id="missionEnemies">--</strong>
+                        <span>Enemies</span>
+                      </div>
+
+                      <div class="mission-stat">
+                        <i class="icon-shield" aria-hidden="true"></i>
+                        <strong id="missionTowers">--</strong>
+                        <span>Towers</span>
+                      </div>
+                    </div>
+
                     <button class="ctl" id="ob"></button>
                   </div>
                 </div>
               </div>
             </div>
-
             <div id="bossControls" class="boss-controls" hidden>
-              <p class="boss-briefing">
-                <strong>Harvester breach</strong>
-                <span id="bossObjective"
-                  >Break both armoured tanks to expose the furnace. Rafflesia
-                  blasts pierce armour.</span
-                >
-              </p>
-              <div
-                id="bossLanes"
-                class="boss-lanes"
-                role="group"
-                aria-label="Choose deployment lane"
-              ></div>
-              <p id="bossHazard" class="boss-hazard" role="status"></p>
-              <div
-                id="bossDeploy"
-                class="boss-deploy"
-                role="group"
-                aria-label="Deploy plants in the boss battle"
-              ></div>
+              <!-- Left: Plant Arsenal -->
+              <aside class="boss-arsenal">
+                <span class="battle-toolbar-label">
+                  <i class="icon-sprout" aria-hidden="true"></i>
+                  Plant Arsenal
+                </span>
+
+                <p class="boss-arsenal-subtitle">Assemble your army</p>
+
+                <div
+                  id="bossDeploy"
+                  class="boss-deploy"
+                  role="group"
+                  aria-label="Deploy plants in the boss battle"
+                ></div>
+
+                <div class="boss-strategy-tip">
+                  <h4>
+                    <i class="icon-lightbulb"></i>
+                    Strategy Tip
+                  </h4>
+
+                  <p>
+                    Combine Rafflesia and Sundew to weaken the boss defences.
+                  </p>
+                </div>
+              </aside>
+
+              <!-- Centre: Attack Controls -->
+              <section class="boss-attack-panel">
+                <div class="boss-attack-heading">
+                  <div class="boss-attack-title">
+                    <i class="icon-target" aria-hidden="true"></i>
+                    <h3>Attack Direction</h3>
+                  </div>
+
+                  <span id="bossAttackCounter" class="boss-attack-counter">
+                    0/2 tanks breached
+                  </span>
+                </div>
+
+                <p class="boss-briefing">
+                  <strong>Harvester breach</strong>
+                  <span id="bossObjective">
+                    Break both armoured tanks to expose the furnace. Rafflesia
+                    blasts pierce armour.
+                  </span>
+                </p>
+
+                <div
+                  id="bossLanes"
+                  class="boss-lanes"
+                  role="group"
+                  aria-label="Choose deployment lane"
+                ></div>
+
+                <div class="boss-attack-footer">
+                  <span class="boss-lane-shortcut">
+                    <i class="icon-keyboard" aria-hidden="true"></i>
+                    <i class="icon-arrow-up" aria-hidden="true"></i>
+                    <i class="icon-arrow-down" aria-hidden="true"></i>
+                    Switch lanes
+                  </span>
+
+                  <p id="bossHazard" class="boss-hazard" role="status"></p>
+                </div>
+              </section>
             </div>
           </div>
         </section>
 
         <aside class="plant-details" id="plantDetailsPanel">
           <p class="sidebar-label">
-            <i class="icon-info" aria-hidden="true"></i>
-            PLANT INFO
+            <i class="icon-sprout" aria-hidden="true"></i>
+            PLANT PROFILE
           </p>
           <div id="detailColor" class="detail-color"></div>
           <span id="detailRole" class="battle-detail-role"></span>
@@ -564,62 +957,67 @@
             </p>
           </div>
 
-          <div class="stat-list">
-            <div class="stat-row">
-              <span class="stat-label">
-                <i
-                  class="icon-heart stat-icon health-icon"
-                  aria-hidden="true"
-                ></i>
-                Health
-              </span>
+          <div class="stat-list plant-profile-stats">
+            <div class="profile-stat">
+              <div class="profile-stat-heading">
+                <span>
+                  <i class="icon-heart" aria-hidden="true"></i>
+                  Health
+                </span>
+                <strong id="detailHealth">--</strong>
+              </div>
 
-              <strong id="detailHealth">--</strong>
+              <div class="profile-stat-track">
+                <div id="healthBar" class="profile-stat-fill health-fill"></div>
+              </div>
             </div>
 
-            <div class="stat-row">
-              <span class="stat-label">
-                <i
-                  class="icon-swords stat-icon damage-icon"
-                  aria-hidden="true"
-                ></i>
-                Damage
-              </span>
+            <div class="profile-stat">
+              <div class="profile-stat-heading">
+                <span>
+                  <i class="icon-swords" aria-hidden="true"></i>
+                  Damage
+                </span>
+                <strong id="detailDamage">--</strong>
+              </div>
 
-              <strong id="detailDamage">--</strong>
+              <div class="profile-stat-track">
+                <div id="damageBar" class="profile-stat-fill damage-fill"></div>
+              </div>
             </div>
 
-            <div class="stat-row">
-              <span class="stat-label">
-                <i
-                  class="icon-crosshair stat-icon range-icon"
-                  aria-hidden="true"
-                ></i>
-                Range
-              </span>
+            <div class="profile-stat">
+              <div class="profile-stat-heading">
+                <span>
+                  <i class="icon-crosshair" aria-hidden="true"></i>
+                  Range
+                </span>
+                <strong id="detailRange">--</strong>
+              </div>
 
-              <strong id="detailRange">--</strong>
+              <div class="profile-stat-track">
+                <div id="rangeBar" class="profile-stat-fill range-fill"></div>
+              </div>
             </div>
 
-            <div class="stat-row">
-              <span class="stat-label">
-                <i class="icon-zap stat-icon speed-icon" aria-hidden="true"></i>
-                Speed
-              </span>
+            <div class="profile-stat">
+              <div class="profile-stat-heading">
+                <span>
+                  <i class="icon-zap" aria-hidden="true"></i>
+                  Speed
+                </span>
+                <strong id="detailSpeed">--</strong>
+              </div>
 
-              <strong id="detailSpeed">--</strong>
+              <div class="profile-stat-track">
+                <div id="speedBar" class="profile-stat-fill speed-fill"></div>
+              </div>
             </div>
 
-            <div class="stat-row">
-              <span class="stat-label">
-                <i
-                  class="icon-sprout stat-icon cost-icon"
-                  aria-hidden="true"
-                ></i>
-                Cost
-              </span>
-
-              <strong> <span id="detailCost">--</span> spores </strong>
+            <div class="profile-deployment-cost">
+              <i class="icon-leaf" aria-hidden="true"></i>
+              <span>Deployment Cost</span>
+              <strong id="detailCost">--</strong>
             </div>
           </div>
 
@@ -628,41 +1026,81 @@
           </button>
 
           <p id="plantMessage" class="plant-message" role="status"></p>
+
+          <div
+            id="bossMissionObjectives"
+            class="boss-mission-objectives"
+            hidden
+          >
+            <h4>
+              <i class="icon-target"></i>
+              Mission Objectives
+            </h4>
+
+            <div id="bossTankCount" class="boss-objective-count">
+              0/2 tanks breached
+            </div>
+
+            <div id="objectiveUpperTank" class="boss-objective">
+              <i class="icon-circle"></i>
+              <span>Destroy upper tank</span>
+            </div>
+
+            <div id="objectiveCannon" class="boss-objective">
+              <i class="icon-circle"></i>
+              <span>Disable centre cannon</span>
+            </div>
+
+            <div id="objectiveLowerTank" class="boss-objective">
+              <i class="icon-circle"></i>
+              <span>Destroy lower tank</span>
+            </div>
+
+            <div id="objectiveBoss" class="boss-objective">
+              <i class="icon-circle"></i>
+              <span>Defeat Apex Harvester</span>
+            </div>
+          </div>
         </aside>
       </main>
-
-      <div class="game-controls">
-        <div class="control-buttons">
-          <button class="ctl" id="pz">
-            <i id="pauseIcon" class="icon-pause" aria-hidden="true"></i>
-            <span id="pauseLabel">Pause (P)</span>
-          </button>
-
-          <button class="ctl" id="rs">
-            <i class="icon-rotate-ccw" aria-hidden="true"></i>
-            <span>Restart Level</span>
-          </button>
-
-          <button class="ctl" id="bm" aria-pressed="false">
-            <i class="icon-swords" aria-hidden="true"></i>
-            <span>Boss Battle</span>
-          </button>
-
-          <button class="ctl" id="fullscreenBtn" type="button">
-            <i class="icon-maximize" aria-hidden="true"></i>
-            <span>Fullscreen</span>
-          </button>
-        </div>
-
-        <div class="control-instructions">
-          <i class="icon-keyboard" aria-hidden="true"></i>
-
-          <span id="battleHint" class="hint">
-            <kbd>1–4</kbd> Plant shortcuts <kbd>P</kbd> Pause / Resume
-          </span>
-        </div>
-      </div>
     </div>
     <script type="module" src="./js/main.js"></script>
+
+    <!-- Plant Discovery Celebration -->
+    <dialog
+      id="discoveryCelebration"
+      class="discovery-celebration"
+      aria-labelledby="celebrationTitle"
+    >
+      <div class="celebration-content">
+        <span class="celebration-badge">
+          <i class="icon-sparkles" aria-hidden="true"></i>
+          NEW PLANT DISCOVERED
+        </span>
+
+        <div class="celebration-art">
+          <i class="icon-sparkles celebration-sparkle" aria-hidden="true"></i>
+
+          <img id="celebrationPlant" alt="Newly discovered plant" />
+
+          <i class="icon-sparkles celebration-sparkle" aria-hidden="true"></i>
+        </div>
+
+        <h2 id="celebrationTitle"></h2>
+
+        <p id="celebrationTerritory"></p>
+
+        <p class="celebration-message">
+          A new ally has joined your plant army.
+        </p>
+
+        <div class="celebration-progress">
+          <i class="icon-circle-check" aria-hidden="true"></i>
+          <span id="celebrationCollection"></span>
+        </div>
+
+        <button id="continueJourney" type="button">Continue Journey</button>
+      </div>
+    </dialog>
   </body>
 </html>

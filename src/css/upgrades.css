@@ -168,13 +168,21 @@ body:has(:is(#upgradesTab, #battleTab).active) {
   left: 27%;
   top: 48%;
 }
-#upgradesTab .upgrade-stage-3 {
-  left: 64%;
-  top: 34%;
+#upgradesTab .upgrade-roadmap .upgrade-stage-3 {
+  left: 47%;
+  top: 54%;
 }
-#upgradesTab .upgrade-stage-4 {
-  left: 94%;
-  top: 17%;
+
+/* Rafflesia */
+#upgradesTab.active .upgrade-roadmap .upgrade-stage-4 {
+  left: 70%;
+  top: 42%;
+}
+
+/* Boss Castle */
+#upgradesTab.active .upgrade-roadmap .upgrade-stage-5 {
+  left: 93%;
+  top: 19%;
 }
 
 #upgradesTab .stage-plant-image {
@@ -216,25 +224,25 @@ body:has(:is(#upgradesTab, #battleTab).active) {
   white-space: nowrap;
 }
 
+/* Plant discovery status */
+
 #upgradesTab .upgrade-stage-state {
-  order: -2;
-  padding: 4px 8px;
-  border-radius: 12px;
-  background: #f3b6dc;
-  color: #874c91;
-  font-size: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+
+  order: 1;
+
+  padding: 5px 12px;
+  border-radius: 20px;
+
+  background: var(--plant-light);
+  color: var(--plant-color);
+
+  font-size: 11px;
   font-weight: 800;
   white-space: nowrap;
-}
-
-#upgradesTab .upgrade-stage.unlocked .upgrade-stage-state {
-  background: #dcf7e9;
-  color: #19845e;
-}
-
-#upgradesTab .upgrade-stage.selected .upgrade-stage-number {
-  border-color: #e9b95b;
-  background: #ffe3a1;
 }
 
 #upgradesTab .upgrade-stage-4 .stage-plant-image {
@@ -242,7 +250,7 @@ body:has(:is(#upgradesTab, #battleTab).active) {
   height: 125px;
   border: 4px solid #f2d79a;
   border-radius: 48% 48% 12px 12px;
-  outline: 3px solid #a987dc;
+
   outline-offset: 2px;
   background: #fff4df;
 }
@@ -614,5 +622,1072 @@ body:has(:is(#upgradesTab, #battleTab).active) {
   .game-layout:has(#upgradesTab.active) .side-nav .nav-btn span {
     min-width: 0;
     white-space: normal;
+  }
+}
+/* ==========================================
+   UPGRADES PAGE CONTAINER
+   ========================================== */
+
+@media (min-width: 1251px) {
+  #upgradesTab .upgrade-world {
+    width: 100%;
+    max-width: 1700px;
+    margin: 16px auto;
+    padding: 24px;
+
+    box-sizing: border-box;
+
+    background: #f5effc;
+    border: 1px solid #dcc6ee;
+    border-radius: 20px;
+
+    box-shadow: 0 12px 35px rgba(112, 70, 163, 0.08);
+  }
+}
+
+/* ==========================================
+   UPGRADES HUD
+   ========================================== */
+
+#app:has(#upgradesTab.active) > header {
+  display: none;
+}
+
+#upgradesTab .upgrade-hud {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 16px auto 24px;
+}
+
+#upgradesTab .upgrade-hud .stats {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+/* Upgrade HUD colour theme */
+
+#upgradesTab .upgrade-hud .stats > span {
+  background: #fcf8ff;
+  border: 1px solid #dcc6ee;
+  color: #7046a3;
+
+  border-radius: 999px;
+  box-shadow: 0 4px 12px rgba(112, 70, 163, 0.06);
+}
+
+/* HUD numbers */
+#upgradesTab .upgrade-hud .stats b {
+  color: #7046a3;
+}
+
+/* HUD icons */
+#upgradesTab .upgrade-hud .stats > span i {
+  color: #8c70c8;
+}
+
+/* ==========================================
+   PROGRESSION ROADMAP CONTAINER
+   ========================================== */
+
+.upgrade-roadmap {
+  display: contents;
+}
+
+@media (min-width: 1251px) {
+  #upgradesTab .upgrade-map .upgrade-roadmap {
+    display: block;
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: calc(100% - var(--info-width) - var(--info-gap));
+    height: 100%;
+
+    box-sizing: border-box;
+
+    background: #eee5f8;
+    border: 1px solid #dcc6ee;
+    border-radius: 16px;
+
+    box-shadow: 0 4px 12px rgba(112, 70, 163, 0.06);
+  }
+
+  #upgradesTab .upgrade-roadmap .upgrade-path,
+  #upgradesTab .upgrade-roadmap .upgrade-stages {
+    top: 25px;
+    left: 5%;
+    width: 90%;
+    height: calc(100% - 25px);
+  }
+}
+/* Roadmap plant characters */
+
+#upgradesTab .upgrade-stage img {
+  object-fit: contain;
+  image-rendering: pixelated;
+  padding: 4px;
+}
+#upgradesTab .upgrade-roadmap .roadmap-legend {
+  position: absolute;
+  bottom: 16px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 3;
+}
+/* ==========================================
+   FIVE ROADMAP CHECKPOINTS
+   ========================================== */
+
+@media (min-width: 1251px) {
+  #upgradesTab .upgrade-roadmap .upgrade-stage-1 {
+    left: 7%;
+    top: 72%;
+  }
+
+  #upgradesTab .upgrade-roadmap .upgrade-stage-2 {
+    left: 26%;
+    top: 48%;
+  }
+
+  #upgradesTab .upgrade-roadmap .upgrade-stage-3 {
+    left: 47%;
+    top: 59%;
+  }
+
+  #upgradesTab .upgrade-roadmap .upgrade-stage-4 {
+    left: 69%;
+    top: 33%;
+  }
+
+  #upgradesTab .upgrade-roadmap .upgrade-stage-5 {
+    left: 92%;
+    top: 17%;
+  }
+}
+#upgradesTab .boss-stage-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 110px;
+  height: 110px;
+
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+#upgradesTab .boss-stage-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+#upgradesTab .upgrade-stage-1 {
+  --plant-color: #42774f;
+  --plant-light: #d7ebdc;
+}
+
+#upgradesTab .upgrade-stage-2 {
+  --plant-color: #98712e;
+  --plant-light: #f4e6c6;
+}
+
+#upgradesTab .upgrade-stage-3 {
+  --plant-color: #5184a6;
+  --plant-light: #d8e8f5;
+}
+
+#upgradesTab .upgrade-stage-4 {
+  --plant-color: #b15c85;
+  --plant-light: #f3d7e5;
+}
+
+#upgradesTab .upgrade-stage-5 {
+  --plant-color: #a17b37;
+  --plant-light: #fff0cf;
+}
+
+#upgradesTab .upgrade-stage:not(.boss-stage) img {
+  width: 95px;
+  height: 95px;
+
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+
+  padding: 0;
+  object-fit: contain;
+  image-rendering: pixelated;
+
+  filter: drop-shadow(0 4px 3px rgba(0, 0, 0, 0.1));
+}
+
+#upgradesTab .upgrade-stage-name {
+  background: var(--plant-color);
+  color: #ffffff;
+
+  padding: 5px 14px;
+  border-radius: 20px;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+#upgradesTab .upgrade-stage-number {
+  background: var(--plant-light);
+  color: var(--plant-color);
+
+  border: 1.5px solid var(--plant-color);
+
+  width: 28px;
+  height: 28px;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+#upgradesTab .upgrade-roadmap .upgrade-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+#upgradesTab .upgrade-roadmap .upgrade-stage-state,
+#upgradesTab .upgrade-roadmap .upgrade-stage-name,
+#upgradesTab .upgrade-roadmap .upgrade-stage-number {
+  position: static;
+  transform: none;
+  margin: 0;
+}
+
+#upgradesTab .upgrade-stage-state {
+  order: 1;
+}
+
+#upgradesTab .stage-plant-image,
+#upgradesTab .boss-stage-image {
+  order: 2;
+}
+
+#upgradesTab .upgrade-stage-name {
+  order: 3;
+  white-space: nowrap;
+}
+
+#upgradesTab .upgrade-stage-number {
+  order: 4;
+}
+
+#upgradesTab .upgrade-stage-state i {
+  font-size: 12px;
+  color: inherit;
+}
+/* ==========================================
+   PLANT COLLECTION PROGRESS
+   ========================================== */
+
+#upgradesTab .upgrade-collection-progress {
+  display: none;
+}
+
+@media (min-width: 1251px) {
+  #upgradesTab .upgrade-map {
+    height: 660px;
+  }
+
+  #upgradesTab .upgrade-collection-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: calc(100% - var(--info-width) - var(--info-gap));
+
+    padding: 14px 18px;
+    box-sizing: border-box;
+
+    background: #fcf8ff;
+    border: 1px solid #dcc6ee;
+    border-radius: 14px;
+  }
+
+  #upgradesTab .upgrade-map .upgrade-roadmap {
+    top: 110px;
+    height: calc(100% - 110px);
+  }
+}
+
+#upgradesTab .collection-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  color: #7046a3;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+#collectionProgress {
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  border: none;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #e5d8f1;
+}
+
+#collectionProgress::-webkit-progress-bar {
+  background: #e5d8f1;
+}
+
+#collectionProgress::-webkit-progress-value {
+  background: #79b894;
+  border-radius: 20px;
+}
+
+#collectionProgress::-moz-progress-bar {
+  background: #79b894;
+  border-radius: 20px;
+}
+
+#collectionPercentage {
+  font-size: 12px;
+  color: #9278b3;
+}
+
+/* ==========================================
+   PLANT DISCOVERY CARD
+   ========================================== */
+
+#upgradesTab .upgrade-info[data-plant="1"] {
+  --plant-color: #42774f;
+  --plant-light: #d7ebdc;
+}
+
+#upgradesTab .upgrade-info[data-plant="2"] {
+  --plant-color: #98712e;
+  --plant-light: #f4e6c6;
+}
+
+#upgradesTab .upgrade-info[data-plant="3"] {
+  --plant-color: #5184a6;
+  --plant-light: #d8e8f5;
+}
+
+#upgradesTab .upgrade-info[data-plant="4"] {
+  --plant-color: #b15c85;
+  --plant-light: #f3d7e5;
+}
+
+#upgradesTab .upgrade-info-header,
+#upgradesTab .upgrade-role {
+  background: var(--plant-light);
+  color: var(--plant-color);
+}
+
+#upgradesTab .upgrade-info-content {
+  gap: 12px;
+}
+
+#upgradesTab .upgrade-preview {
+  width: 110px;
+  height: 110px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+#upgradesTab .upgrade-territory {
+  margin: 0;
+  color: var(--plant-color);
+  font-size: 13px;
+  text-align: center;
+}
+
+#upgradesTab .upgrade-requirements,
+#upgradesTab .upgrade-mission,
+#upgradesTab .upgrade-strategy {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+#upgradesTab .upgrade-requirements,
+#upgradesTab .upgrade-strategy {
+  background: #eee2f8;
+  color: #7046a3;
+}
+
+#upgradesTab .upgrade-mission {
+  background: var(--plant-light);
+  color: var(--plant-color);
+}
+
+#upgradesTab .upgrade-info h4 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+#upgradesTab .upgrade-requirement-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+  font-size: 12px;
+}
+
+#upgradesTab .upgrade-requirement-row.completed i {
+  color: #42774f;
+}
+
+#upgradesTab .upgrade-mission p,
+#upgradesTab .upgrade-strategy p {
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 0;
+  color: inherit;
+}
+
+#upgradesTab .upgrade-battle-button {
+  background: #8e70cc;
+  border: 1px solid #8e70cc;
+  color: #ffffff;
+}
+
+#upgradesTab .upgrade-battle-button:hover:not(:disabled) {
+  background: #795bb8;
+}
+
+#upgradesTab .upgrade-battle-button:disabled {
+  background: #e8ddef;
+  border-color: #e8ddef;
+  color: #9276b0;
+  cursor: not-allowed;
+}
+
+/* ==========================================
+   ALIGN DISCOVERY CARD WITH ROADMAP
+   ========================================== */
+
+@media (min-width: 1251px) {
+  #upgradesTab.active .upgrade-map {
+    height: 660px;
+  }
+
+  #upgradesTab.active .upgrade-info {
+    top: 110px;
+    height: calc(100% - 200px);
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+  }
+
+  #upgradesTab .upgrade-info-content {
+    flex: 1;
+  }
+
+  #upgradesTab .upgrade-battle-button {
+    margin-top: auto;
+  }
+}
+/* ==========================================
+   ROADMAP FOOTER
+   ========================================== */
+
+#upgradesTab .upgrade-roadmap-footer {
+  display: none;
+}
+
+@media (min-width: 1251px) {
+  #upgradesTab.active .upgrade-map {
+    height: 830px;
+  }
+
+  #upgradesTab .upgrade-map .upgrade-roadmap {
+    height: calc(100% - 280px);
+  }
+
+  #upgradesTab .upgrade-roadmap-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    position: absolute;
+    left: 0;
+    bottom: 0;
+
+    width: calc(100% - var(--info-width) - var(--info-gap));
+    height: 160px;
+  }
+}
+
+#upgradesTab .upgrade-explore {
+  background: #fcf8ff;
+  border: 1px solid #dcc6ee;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+#upgradesTab .upgrade-explore h4 {
+  color: #7046a3;
+  margin: 0 0 10px;
+  font-size: 14px;
+}
+
+#upgradesTab .checkpoint-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+#upgradesTab .checkpoint-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  min-width: 135px;
+  min-height: 55px;
+
+  background: #f5effc;
+  border: 1px solid #dcc6ee;
+  border-radius: 10px;
+
+  padding: 10px 16px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#upgradesTab .checkpoint-link img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+#upgradesTab .checkpoint-link[data-plant="1"] {
+  color: #42774f;
+}
+
+#upgradesTab .checkpoint-link[data-plant="2"] {
+  color: #98712e;
+}
+
+#upgradesTab .checkpoint-link[data-plant="3"] {
+  color: #5184a6;
+}
+
+#upgradesTab .checkpoint-link[data-plant="4"] {
+  color: #b15c85;
+}
+
+#upgradesTab .checkpoint-link[data-plant="5"] {
+  color: #a17b37;
+}
+
+#upgradesTab .checkpoint-link:hover {
+  border-color: currentColor;
+  background: #eee2f8;
+}
+
+#upgradesTab .next-discovery > i {
+  font-size: 22px;
+}
+
+#upgradesTab .next-discovery h4 {
+  margin: 0 0 5px;
+  font-size: 14px;
+}
+
+#upgradesTab .next-discovery p {
+  margin: 0;
+  font-size: 12px;
+}
+
+#upgradesTab .roadmap-legend {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+
+  position: absolute;
+  bottom: 16px;
+  left: 0;
+  width: 100%;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+#upgradesTab .roadmap-legend span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+#upgradesTab .legend-discovered {
+  color: #42774f;
+}
+
+#upgradesTab .legend-next {
+  color: #98712e;
+}
+
+#upgradesTab .legend-locked {
+  color: #9470cc;
+}
+
+#upgradesTab .legend-boss {
+  color: #a17b37;
+}
+@media (min-width: 1251px) {
+  #upgradesTab.active .upgrade-map .upgrade-info {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: auto;
+    height: calc(100% - 170px);
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+  }
+
+  #upgradesTab .upgrade-info-content {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    gap: 8px;
+    padding: 10px 8px;
+  }
+
+  #upgradesTab .upgrade-info .upgrade-battle-button {
+    flex-shrink: 0;
+    width: calc(100% - 16px);
+    margin: 8px;
+    min-height: 34px;
+  }
+}
+@media (min-width: 1251px) {
+  #upgradesTab .upgrade-preview {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+  }
+}
+/* Dynamic progression path */
+
+#upgradesTab .upgrade-path-progress {
+  stroke: #76b895;
+  stroke-dasharray: 0 100;
+  opacity: 0;
+
+  transition:
+    stroke-dasharray 0.8s ease,
+    opacity 0.3s ease;
+}
+#upgradesTab .roadmap-levels {
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  z-index: 5;
+}
+
+#upgradesTab .roadmap-level {
+  padding: 9px 16px;
+  border: 1px solid #dcc6ee;
+  border-radius: 20px;
+  background: #f8f2fd;
+  color: #7645a4;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+#upgradesTab .roadmap-level:hover {
+  background: #e5d5f6;
+}
+
+#upgradesTab .roadmap-level.selected {
+  background: #9270cb;
+  color: white;
+  border-color: #9270cb;
+}
+
+#upgradesTab .boss-level {
+  background: #fff0cf;
+  color: #a17b37;
+  border-color: #ead49c;
+}
+
+#upgradesTab .boss-level.selected {
+  background: #a17b37;
+  color: white;
+  border-color: #a17b37;
+}
+#upgradesTab .roadmap-levels {
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  z-index: 5;
+}
+
+#upgradesTab .roadmap-level {
+  padding: 9px 16px;
+  border: 1px solid #dcc6ee;
+  border-radius: 20px;
+  background: #f8f2fd;
+  color: #7645a4;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+#upgradesTab .roadmap-level:hover {
+  background: #e5d5f6;
+}
+
+#upgradesTab .roadmap-level.selected {
+  background: #9270cb;
+  color: white;
+  border-color: #9270cb;
+}
+
+#upgradesTab .boss-level {
+  background: #fff0cf;
+  color: #a17b37;
+  border-color: #ead49c;
+}
+
+#upgradesTab .boss-level.selected {
+  background: #a17b37;
+  color: white;
+  border-color: #a17b37;
+}
+/* Plant selection colors */
+
+#upgradesTab .upgrade-stage-1 {
+  --selection-glow: #73bb83;
+}
+
+#upgradesTab .upgrade-stage-2 {
+  --selection-glow: #e7bb50;
+}
+
+#upgradesTab .upgrade-stage-3 {
+  --selection-glow: #78bce5;
+}
+
+#upgradesTab .upgrade-stage-4 {
+  --selection-glow: #e98ab7;
+}
+
+#upgradesTab .upgrade-stage-5 {
+  --selection-glow: #d5ae54;
+}
+
+#upgradesTab .stage-plant-image,
+#upgradesTab .boss-stage-image img {
+  transition:
+    filter 0.3s ease,
+    transform 0.3s ease;
+}
+
+#upgradesTab .upgrade-stage.selected .stage-plant-image,
+#upgradesTab .upgrade-stage.selected .boss-stage-image img {
+  filter: drop-shadow(0 0 12px var(--selection-glow));
+  transform: scale(1.12);
+}
+
+#upgradesTab .upgrade-stage:hover .stage-plant-image,
+#upgradesTab .upgrade-stage:hover .boss-stage-image img {
+  filter: drop-shadow(0 0 8px var(--selection-glow));
+}
+
+#upgradesTab .upgrade-info[data-plant="5"] {
+  --plant-color: #a17b37;
+  --plant-soft: #fff0cf;
+}
+
+#upgradesTab .upgrade-info[data-plant="5"] .upgrade-info-header,
+#upgradesTab .upgrade-info[data-plant="5"] .upgrade-role,
+#upgradesTab .upgrade-info[data-plant="5"] .upgrade-mission {
+  background: #fff0cf;
+  color: #a17b37;
+}
+
+/* ==========================================
+   JOURNEY MILESTONES
+   ========================================== */
+
+#upgradesTab .journey-milestones {
+  padding: 8px 12px;
+  background: #fcf8ff;
+  border: 1px solid #dcc6ee;
+  border-radius: 14px;
+}
+
+#upgradesTab .journey-milestones h4 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: #7645a4;
+}
+
+#upgradesTab .milestone-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+#upgradesTab .milestone {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 12px;
+  background: var(--milestone-bg);
+  color: var(--milestone-color);
+}
+
+#upgradesTab .first-discovery {
+  --milestone-bg: #d7ebdc;
+  --milestone-color: #42774f;
+}
+
+#upgradesTab .plant-collector {
+  --milestone-bg: #eee5f8;
+  --milestone-color: #9874b6;
+}
+
+#upgradesTab .castle-conqueror {
+  --milestone-bg: #fff0cf;
+  --milestone-color: #a17b37;
+}
+#upgradesTab .milestone > i {
+  font-size: 26px;
+  flex-shrink: 0;
+}
+
+#upgradesTab .milestone-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+#upgradesTab .milestone-details strong {
+  font-size: 13px;
+}
+
+#upgradesTab .milestone-details p {
+  margin: 0;
+  font-size: 11px;
+}
+
+#upgradesTab .milestone-status {
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: #0000000d;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+#upgradesTab .milestone.achieved .milestone-status {
+  background: #bce7cb;
+  color: #267347;
+}
+
+#upgradesTab .milestone.achieved {
+  box-shadow: inset 0 0 0 1px #86bd98;
+}
+/* ==========================================
+   PLANT DISCOVERY CELEBRATION
+   ========================================== */
+
+.discovery-celebration {
+  --celebration-color: #98712e;
+
+  width: min(460px, calc(100% - 32px));
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  border: 1px solid #dcc6ee;
+  border-radius: 22px;
+  background: #f5effb;
+  box-shadow: 0 20px 60px #7046a340;
+}
+
+.discovery-celebration[open] {
+  animation: celebration-enter 0.4s ease;
+}
+
+.discovery-celebration::backdrop {
+  background: #24143d66;
+  backdrop-filter: blur(4px);
+}
+
+.celebration-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 30px;
+  text-align: center;
+}
+
+.celebration-badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: #d7ebdc;
+  color: #42774f;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.celebration-art {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+#celebrationPlant {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0 12px var(--celebration-color));
+  animation: celebration-float 2s ease-in-out infinite;
+}
+
+.celebration-sparkle {
+  color: var(--celebration-color);
+  font-size: 28px;
+  animation: celebration-sparkle 1.5s ease-in-out infinite;
+}
+
+#celebrationTitle {
+  margin: 0;
+  color: var(--celebration-color);
+  font-size: 28px;
+}
+
+#celebrationTerritory {
+  margin: 0;
+  color: var(--celebration-color);
+  font-size: 16px;
+}
+
+.celebration-message {
+  margin: 0;
+  color: #7645a4;
+  font-size: 14px;
+}
+
+.celebration-progress {
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: #d7ebdc;
+  color: #42774f;
+}
+
+#continueJourney {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  background: #9270cb;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#continueJourney:hover {
+  background: #805dbb;
+}
+@keyframes celebration-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes celebration-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes celebration-sparkle {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(0.9);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .discovery-celebration[open],
+  #celebrationPlant,
+  .celebration-sparkle {
+    animation: none;
   }
 }

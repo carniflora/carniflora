@@ -2,7 +2,7 @@ import { battleService } from "../battleService.js";
 import { Action } from "../network/protocol.js";
 import { dom } from "./dom.js";
 import { state, saveProgress } from "../state.js";
-import { plantProgression } from "./assets.js";
+import { plantProgression, plantDiscovery } from "./assets.js";
 
 import {
   session,
@@ -248,15 +248,6 @@ const upgradeCloseButton = document.getElementById("upgradePanelClose");
 
 const compactUpgradeQuery = window.matchMedia("(max-width: 1250px)");
 
-// Display unlock messages.
-function showEvolutionMessage(message) {
-  const element = document.getElementById("evolutionMessage");
-
-  if (element) {
-    element.textContent = message;
-  }
-}
-
 // Keep hidden panels inaccessible to keyboard navigation.
 function syncUpgradePanelAccessibility() {
   if (!upgradePanel) return;
@@ -287,14 +278,83 @@ function closeUpgradePanel() {
   syncUpgradePanelAccessibility();
 }
 
-// Update the information for the selected plant.
+function showBossDetails() {
+  const setText = (id, value) => {
+    const element = document.getElementById(id);
+
+    if (element) {
+      element.textContent = value;
+    }
+  };
+
+  upgradePanel.dataset.plant = "5";
+
+  setText("upgradeInfoHeader", "FINAL CHALLENGE");
+  setText("upgradeName", "Boss Castle");
+  setText("upgradeTerritory", "The Final Siege");
+  setText("upgradeRole", "Final Boss");
+
+  const preview = document.getElementById("upgradePreview");
+
+  preview.src = "./assets/plants/castle-icon.png";
+  preview.alt = "Boss Castle";
+
+  setText(
+    "upgradeRequirements",
+    "Prepare your plant army for the final challenge.",
+  );
+
+  setText("upgradeMissionDescription", "Destroy the enemy castle.");
+
+  setText(
+    "upgradeStrategy",
+    "Combine your plants' unique abilities to defeat the final boss.",
+  );
+
+  const battleButton = document.getElementById("upgradeGoBattle");
+
+  battleButton.textContent = "Go to Battle";
+  battleButton.disabled = false;
+
+  // Highlight the castle checkpoint.
+  document
+    .querySelectorAll("#evolutionGrid .upgrade-stage")
+    .forEach((stage) => {
+      const selected = stage.classList.contains("boss-stage");
+
+      stage.classList.toggle("selected", selected);
+      stage.setAttribute("aria-pressed", String(selected));
+    });
+
+  // Highlight the Boss Level button.
+  document.querySelectorAll(".roadmap-level").forEach((button) => {
+    const selected = button.dataset.stage === "5";
+
+    button.classList.toggle("selected", selected);
+    button.setAttribute("aria-pressed", String(selected));
+  });
+}
+
+// Update the selected plant discovery card.
 function showUpgradeDetails(index) {
   const plant = plantProgression[index];
-  const gamePlant = activePlants()[index];
+  const discovery = plantDiscovery[index];
 
-  if (!plant) return;
+  if (!plant || !discovery) return;
 
   selectedUpgradeIndex = index;
+
+  // Synchronize the level navigation.
+  document.querySelectorAll(".roadmap-level").forEach((button) => {
+    const selected = Number(button.dataset.stage) === index + 1;
+
+    button.classList.toggle("selected", selected);
+    button.setAttribute("aria-pressed", String(selected));
+  });
+
+  const currentLevel = Number(state.level) || 1;
+  const unlocked = currentLevel >= plant.level;
+  const isNext = plant.level === currentLevel + 1;
 
   const setText = (id, value) => {
     const element = document.getElementById(id);
@@ -304,6 +364,22 @@ function showUpgradeDetails(index) {
     }
   };
 
+  // Update plant colour theme.
+  if (upgradePanel) {
+    upgradePanel.dataset.plant = String(plant.level);
+  }
+
+  // Update discovery heading.
+  setText(
+    "upgradeInfoHeader",
+    unlocked
+      ? "PLANT DISCOVERED"
+      : isNext
+        ? "NEXT DISCOVERY"
+        : "FUTURE DISCOVERY",
+  );
+
+  // Update plant illustration.
   const preview = document.getElementById("upgradePreview");
 
   if (preview) {
@@ -311,23 +387,45 @@ function showUpgradeDetails(index) {
     preview.alt = `${plant.name} illustration`;
   }
 
-  setText("upgradeRole", plant.role);
+  // Update plant information.
   setText("upgradeName", plant.name);
-  setText("upgradeDescription", plant.description);
-  setText("upgradeStage", String(plant.level).padStart(2, "0"));
+  setText("upgradeTerritory", discovery.territory);
+  setText("upgradeRole", unlocked ? "Discovered" : "Locked");
+  setText("upgradeMissionDescription", discovery.ability);
+  setText("upgradeStrategy", discovery.tip);
 
-  // Display available gameplay statistics.
-  setText("upgradeDamage", gamePlant?.dmg);
-  setText("upgradeRange", gamePlant?.rng);
-  setText("upgradeSpeed", gamePlant?.spd);
+  // Display unlock requirements.
+  const requirements = document.getElementById("upgradeRequirements");
 
-  setText("upgradeMission", gamePlant?.n ?? plant.name);
-  setText(
-    "upgradeMissionDescription",
-    gamePlant?.desc ?? gamePlant?.d ?? plant.description,
-  );
+  if (requirements) {
+    requirements.innerHTML = `
+      <div class="upgrade-requirement-row completed">
+        <i class="icon-circle-check" aria-hidden="true"></i>
+        Discover Flytrap
+      </div>
+    `;
 
-  // Highlight the selected checkpoint.
+    if (plant.level > 1) {
+      requirements.innerHTML += `
+        <div class="upgrade-requirement-row ${unlocked ? "completed" : ""}">
+          <i class="${
+            unlocked ? "icon-circle-check" : "icon-lock"
+          }" aria-hidden="true"></i>
+          Complete Level ${plant.level - 1}
+        </div>
+      `;
+    }
+  }
+
+  // Update battle button.
+  const battleButton = document.getElementById("upgradeGoBattle");
+
+  if (battleButton) {
+    battleButton.disabled = !unlocked;
+    battleButton.textContent = unlocked ? "Go to Battle" : "Plant Locked";
+  }
+
+  // Highlight selected checkpoint.
   document
     .querySelectorAll("#evolutionGrid .upgrade-stage")
     .forEach((stage) => {
@@ -338,6 +436,83 @@ function showUpgradeDetails(index) {
     });
 }
 
+document
+  .querySelector(".roadmap-levels")
+  ?.addEventListener("click", (event) => {
+    const button = event.target.closest(".roadmap-level");
+
+    if (!button) return;
+
+    const level = Number(button.dataset.stage);
+
+    const checkpoint = document.querySelector(
+      `#evolutionGrid .upgrade-stage-${level}`,
+    );
+
+    checkpoint?.click();
+  });
+
+function updateMilestone(id, achieved) {
+  const milestone = document.getElementById(id);
+
+  if (!milestone) return;
+
+  milestone.classList.toggle("achieved", achieved);
+
+  const status = milestone.querySelector(".milestone-status");
+
+  if (status) {
+    status.textContent = achieved ? "Achieved" : "Locked";
+  }
+}
+
+// Track the previous plant collection count.
+let previousUnlockedCount = null;
+
+// Celebration theme for each plant.
+const celebrationThemes = {
+  2: {
+    color: "#98712e",
+    territory: "Golden Marsh",
+  },
+  3: {
+    color: "#5184a6",
+    territory: "Crystal Wetlands",
+  },
+  4: {
+    color: "#b15c85",
+    territory: "Crimson Fortress",
+  },
+};
+
+function showDiscoveryCelebration(plant, totalUnlocked) {
+  const dialog = document.getElementById("discoveryCelebration");
+
+  const theme = celebrationThemes[plant.level];
+
+  if (!dialog || !theme) return;
+
+  dialog.style.setProperty("--celebration-color", theme.color);
+
+  document.getElementById("celebrationPlant").src = plant.image;
+
+  document.getElementById("celebrationTitle").textContent =
+    `${plant.name} Unlocked!`;
+
+  document.getElementById("celebrationTerritory").textContent = theme.territory;
+
+  document.getElementById("celebrationCollection").textContent =
+    `Plant Collection: ${totalUnlocked} / ${plantProgression.length}`;
+
+  if (!dialog.open) {
+    dialog.showModal();
+  }
+}
+
+document.getElementById("continueJourney")?.addEventListener("click", () => {
+  document.getElementById("discoveryCelebration")?.close();
+});
+
 // Render the four checkpoints on the winding road.
 export function renderEvolutionCards() {
   const grid = document.getElementById("evolutionGrid");
@@ -346,12 +521,68 @@ export function renderEvolutionCards() {
   if (!grid) return;
 
   const currentLevel = Number(state.level) || 1;
+  //if wanted to test level 2, to see the road is filled with green, uncomment this
+  //const currentLevel = 2; // Testing Level 2
 
   const totalUnlocked = plantProgression.filter(
     (plant) => currentLevel >= plant.level,
   ).length;
 
-  // Preserve the team's collection counter.
+  // Celebrate a newly discovered plant.
+  if (previousUnlockedCount !== null && totalUnlocked > previousUnlockedCount) {
+    const newPlant = plantProgression[totalUnlocked - 1];
+
+    if (newPlant) {
+      showDiscoveryCelebration(newPlant, totalUnlocked);
+    }
+  }
+
+  previousUnlockedCount = totalUnlocked;
+
+  // Update journey achievements.
+  updateMilestone("firstDiscoveryMilestone", totalUnlocked >= 1);
+
+  updateMilestone(
+    "plantCollectorMilestone",
+    totalUnlocked === plantProgression.length,
+  );
+
+  // Update the green progression path.
+  const progressPath = document.querySelector(
+    "#upgradesTab .upgrade-path-progress",
+  );
+
+  const progressByPlant = [0, 5, 25, 48, 72];
+
+  if (progressPath) {
+    const progress = progressByPlant[totalUnlocked] ?? 0;
+
+    progressPath.style.strokeDasharray = `${progress} 100`;
+    progressPath.style.opacity = progress > 0 ? "1" : "0";
+  }
+
+  // Update plant collection progress.
+  const collectionCount = document.getElementById("collectionCount");
+  const collectionProgress = document.getElementById("collectionProgress");
+  const collectionPercentage = document.getElementById("collectionPercentage");
+
+  const totalPlants = plantProgression.length;
+
+  const percentage = Math.round((totalUnlocked / totalPlants) * 100);
+
+  if (collectionCount) {
+    collectionCount.textContent = `${totalUnlocked} / ${totalPlants}`;
+  }
+
+  if (collectionProgress) {
+    collectionProgress.max = totalPlants;
+    collectionProgress.value = totalUnlocked;
+  }
+
+  if (collectionPercentage) {
+    collectionPercentage.textContent = `${percentage}% of plants discovered`;
+  }
+
   if (unlockedCount) {
     unlockedCount.textContent = `${totalUnlocked} of ${plantProgression.length} unlocked`;
   }
@@ -386,12 +617,30 @@ export function renderEvolutionCards() {
     // LOCKED / UNLOCKED
     const status = document.createElement("span");
     status.className = "upgrade-stage-state";
-    status.textContent = unlocked ? "UNLOCKED" : "LOCKED";
+
+    const isNext = plant.level === currentLevel + 1;
+
+    if (unlocked) {
+      status.innerHTML = `
+        <i class="icon-circle-check" aria-hidden="true"></i>
+        DISCOVERED
+      `;
+    } else if (isNext) {
+      status.innerHTML = `
+        <i class="icon-sparkles" aria-hidden="true"></i>
+        NEXT
+      `;
+    } else {
+      status.innerHTML = `
+        <i class="icon-lock" aria-hidden="true"></i>
+        LOCKED
+      `;
+    }
 
     // Plant name
     const name = document.createElement("span");
     name.className = "upgrade-stage-name";
-    name.textContent = plant.level === 4 ? "Boss Castle" : plant.name;
+    name.textContent = plant.name;
 
     // Plant illustration
     const image = document.createElement("img");
@@ -404,21 +653,67 @@ export function renderEvolutionCards() {
     number.className = "upgrade-stage-number";
     number.textContent = String(plant.level);
 
-    checkpoint.append(status, name, image, number);
+    checkpoint.append(status, image, name, number);
 
     checkpoint.addEventListener("click", () => {
       showUpgradeDetails(index);
       openUpgradePanel();
-
-      showEvolutionMessage(
-        unlocked
-          ? `${plant.name} is unlocked.`
-          : `${plant.name} unlocks at Level ${plant.level}.`,
-      );
     });
-
     grid.appendChild(checkpoint);
   });
+
+  // Create the final boss checkpoint.
+  const bossCheckpoint = document.createElement("button");
+
+  bossCheckpoint.type = "button";
+  bossCheckpoint.className = "upgrade-stage upgrade-stage-5 boss-stage";
+
+  bossCheckpoint.setAttribute("aria-label", "Final Boss Castle");
+
+  bossCheckpoint.innerHTML = `
+     <span class="upgrade-stage-state">
+      <i class="icon-swords" aria-hidden="true"></i>
+      FINAL BOSS
+    </span>
+
+      <div class="boss-stage-image">
+        <img src="./assets/plants/castle-icon.png" alt="Boss Castle" />
+      </div>
+
+      <span class="upgrade-stage-name">
+        Boss Castle
+      </span>
+
+      <span class="upgrade-stage-number">
+        <i class="icon-swords" aria-hidden="true"></i>
+      </span>
+    `;
+
+  bossCheckpoint.addEventListener("click", () => {
+    showBossDetails();
+    openUpgradePanel();
+  });
+
+  grid.appendChild(bossCheckpoint);
+
+  // Update the next discovery banner.
+  const nextPlant = plantProgression.find(
+    (plant) => plant.level > currentLevel,
+  );
+
+  const discoveryTitle = document.getElementById("nextDiscoveryTitle");
+
+  const discoveryText = document.getElementById("nextDiscoveryText");
+
+  if (discoveryTitle && discoveryText) {
+    discoveryTitle.textContent = nextPlant
+      ? "Your next discovery"
+      : "Collection complete!";
+
+    discoveryText.textContent = nextPlant
+      ? `Complete Level ${nextPlant.level - 1} to discover ${nextPlant.name}.`
+      : "All four plants discovered. Prepare for the final boss!";
+  }
 
   showUpgradeDetails(selectedUpgradeIndex);
   syncUpgradePanelAccessibility();
@@ -459,3 +754,9 @@ document.getElementById("upgradeGoBattle")?.addEventListener("click", () => {
 
 // Set the initial accessibility state.
 syncUpgradePanelAccessibility();
+
+// Temporary level testing.
+window.testLevel = (level) => {
+  state.level = level;
+  renderEvolutionCards();
+};

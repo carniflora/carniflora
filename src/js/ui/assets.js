@@ -1,8 +1,8 @@
 export const plantImages = [
-  "./assets/plants/flytrap.png",
-  "./assets/plants/sundew.png",
-  "./assets/plants/pitcher.png",
-  "./assets/plants/rafflesia.png",
+  "./assets/plants/flytrap-icon.png",
+  "./assets/plants/sundew-icon.png",
+  "./assets/plants/pitcher-icon.png",
+  "./assets/plants/rafflesia-icon.png",
 ];
 
 //==========================================
@@ -16,7 +16,7 @@ export const plantProgression = [
     role: "Frontline",
     description:
       "A tough plant that attacks enemies up close and can withstand damage.",
-    image: "./assets/plants/flytrap.png",
+    image: "./assets/plants/flytrap-icon.png",
     cost: 0,
   },
 
@@ -26,7 +26,7 @@ export const plantProgression = [
     role: "Support",
     description:
       "A specialized plant that helps control enemies during battle.",
-    image: "./assets/plants/sundew.png",
+    image: "./assets/plants/sundew-icon.png",
     cost: 200,
   },
 
@@ -36,7 +36,7 @@ export const plantProgression = [
     role: "Defender",
     description:
       "A resilient plant that strengthens your strategy as levels progress.",
-    image: "./assets/plants/pitcher.png",
+    image: "./assets/plants/pitcher-icon.png",
     cost: 300,
   },
   {
@@ -45,8 +45,31 @@ export const plantProgression = [
     role: "Boss",
     description:
       "A powerful plant with abilities designed for tougher battles.",
-    image: "./assets/plants/rafflesia.png",
+    image: "./assets/plants/rafflesia-icon.png",
     cost: 400,
+  },
+];
+
+export const plantDiscovery = [
+  {
+    territory: "Green Awakening",
+    ability: "Powerful close-range attacks.",
+    tip: "Deploy first to protect your supporting plants.",
+  },
+  {
+    territory: "Golden Marsh",
+    ability: "Slows enemy towers.",
+    tip: "Deploy alongside Flytrap to help your army advance.",
+  },
+  {
+    territory: "Crystal Wetlands",
+    ability: "Protects and heals nearby friendly plants.",
+    tip: "Keep your frontline plants alive for longer.",
+  },
+  {
+    territory: "Crimson Fortress",
+    ability: "Deals powerful splash damage.",
+    tip: "Deploy against groups of nearby enemies.",
   },
 ];
 
@@ -57,7 +80,6 @@ export const plantRoles = [
   "Splash Damage", // Rafflesia
 ];
 
-// Lucide icons for each combat role
 export const plantRoleIcons = [
   "icon-shield", // Flytrap
   "icon-crosshair", // Sundew
