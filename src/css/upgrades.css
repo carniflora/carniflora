@@ -1316,8 +1316,8 @@ body:has(:is(#upgradesTab, #battleTab).active) {
   opacity: 0;
 
   transition:
-    stroke-dasharray 0.8s ease,
-    opacity 0.3s ease;
+    stroke-dasharray 0.8s ease-in-out,
+    opacity 0.4s ease;
 }
 #upgradesTab .roadmap-levels {
   position: absolute;
@@ -1648,6 +1648,79 @@ body:has(:is(#upgradesTab, #battleTab).active) {
 #continueJourney:hover {
   background: #805dbb;
 }
+
+/* ==========================================
+   PLANT JOURNEY ANIMATIONS
+   ========================================== */
+
+/* Gentle floating movement */
+
+@keyframes upgrade-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Golden discovery glow */
+
+@keyframes upgrade-discovery-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 3px #e2b96c);
+  }
+
+  50% {
+    filter: drop-shadow(0 0 12px #e2b96c);
+  }
+}
+
+/* Discovered plants */
+
+#upgradesTab .upgrade-stage[data-status="discovered"] .stage-plant-image {
+  animation: upgrade-float 3s ease-in-out infinite;
+}
+
+/* Next plant to discover */
+
+#upgradesTab .upgrade-stage[data-status="next"] .stage-plant-image {
+  animation:
+    upgrade-float 3s ease-in-out infinite,
+    upgrade-discovery-glow 2.5s ease-in-out infinite;
+}
+
+/* Locked plants remain stationary */
+
+#upgradesTab .upgrade-stage[data-status="locked"] .stage-plant-image {
+  animation: none;
+}
+
+/* Final Boss animation */
+
+#upgradesTab .boss-stage img {
+  animation:
+    upgrade-float 4s ease-in-out infinite,
+    upgrade-discovery-glow 4s ease-in-out infinite;
+}
+
+/* Interactive plant and castle hover */
+
+#upgradesTab .stage-plant-image,
+#upgradesTab .boss-stage img {
+  transition: transform 0.2s ease;
+}
+
+#upgradesTab .upgrade-stage:hover .stage-plant-image,
+#upgradesTab .upgrade-stage:focus-visible .stage-plant-image,
+#upgradesTab .boss-stage:hover img,
+#upgradesTab .boss-stage:focus-visible img {
+  animation: none;
+  transform: scale(1.15);
+}
 @keyframes celebration-enter {
   from {
     opacity: 0;
@@ -1689,5 +1762,38 @@ body:has(:is(#upgradesTab, #battleTab).active) {
   #celebrationPlant,
   .celebration-sparkle {
     animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #upgradesTab .upgrade-stage .stage-plant-image,
+  #upgradesTab .boss-stage img {
+    animation: none;
+    transition: none;
+  }
+
+  #upgradesTab .upgrade-path-progress {
+    transition: none;
+  }
+}
+
+#upgradesTab .upgrade-stage.unlocked img {
+  animation: upgrade-float 3s ease-in-out infinite;
+}
+
+#upgradesTab .upgrade-stage[data-status="next"] img {
+  animation:
+    upgrade-float 3s ease-in-out infinite,
+    upgrade-discovery-glow 2.5s ease-in-out infinite;
+}
+
+@keyframes upgrade-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
   }
 }

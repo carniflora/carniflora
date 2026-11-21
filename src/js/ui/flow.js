@@ -620,6 +620,13 @@ export function renderEvolutionCards() {
 
     const isNext = plant.level === currentLevel + 1;
 
+    // Set plant animation status.
+    checkpoint.dataset.status = unlocked
+      ? "discovered"
+      : isNext
+        ? "next"
+        : "locked";
+
     if (unlocked) {
       status.innerHTML = `
         <i class="icon-circle-check" aria-hidden="true"></i>
