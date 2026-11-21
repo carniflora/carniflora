@@ -1740,3 +1740,17 @@
     margin: 0;
   }
 }
+@media (min-width: 1251px) {
+  .game-layout:has(#battleTab.active #bossControls:not([hidden])) {
+    padding-bottom: 16px;
+  }
+}
+/* Remove excess space below Boss Battle navigation */
+@media (min-width: 1251px) {
+  #app .game-layout:has(#battleTab.active #bossControls:not([hidden])) {
+    height: auto;
+    min-height: 0;
+    padding-bottom: 16px;
+    align-content: start;
+  }
+}

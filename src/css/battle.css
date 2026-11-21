@@ -784,7 +784,7 @@ button:focus-visible {
 }
 
 #app:has(#battleTab.active) {
-  padding-bottom: 120px;
+  padding-bottom: 16px;
 }
 
 #battleTab .battle-heading #battleTitle {
@@ -1537,7 +1537,7 @@ button:focus-visible {
   left: auto;
   bottom: auto;
   transform: none;
-  margin: 8px auto 0;
+  margin: 4px auto 0;
   height: auto;
   box-sizing: border-box;
   align-self: start;
@@ -3048,12 +3048,18 @@ button:focus-visible {
 
 /* Hide Towers counter during boss mode */
 
-.game-layout:has(#battleTab.active #bossControls:not([hidden]))
-  #battleHud
-  .stats
-  > span:has(#tc) {
-  display: none;
+.game-layout:has(#battleTab.active #bossControls:not([hidden])) {
+  width: 100%;
+  max-width: 1700px;
+  min-height: 0;
+  height: auto;
+  margin: 0 auto;
+  padding: 16px;
+  gap: 12px;
+  align-content: start;
+  box-sizing: border-box;
 }
+
 #battleTab .boss-lane-number {
   display: inline-flex;
   align-items: center;
