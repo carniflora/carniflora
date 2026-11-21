@@ -478,8 +478,8 @@
 }
 
 .garden-plant-card img {
-  width: 54px;
-  height: 64px;
+  width: 68px;
+  height: 78px;
   object-fit: contain;
   image-rendering: pixelated;
 }
@@ -490,6 +490,14 @@
 
 .garden-plant-card span {
   font-size: 11px;
+}
+
+.garden-plant-card:hover img {
+  transform: scale(1.1);
+}
+
+.garden-plant-card img {
+  transition: transform 0.2s ease;
 }
 
 .garden-plant-card:hover {
@@ -666,6 +674,117 @@
   .garden-character img,
   .garden-spore,
   .garden-castle img {
+    animation: none;
+  }
+}
+/* Animated garden butterflies */
+
+.garden-butterfly {
+  position: absolute;
+  width: 22px;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.85;
+}
+
+.garden-butterfly svg {
+  width: 100%;
+  animation: butterfly-flutter 0.6s ease-in-out infinite;
+}
+
+.butterfly-one {
+  left: 20%;
+  top: 24%;
+  animation: butterfly-flight 9s ease-in-out infinite;
+}
+
+.butterfly-two {
+  left: 58%;
+  top: 18%;
+  animation: butterfly-flight 12s ease-in-out infinite reverse;
+}
+
+@keyframes butterfly-flutter {
+  0%,
+  100% {
+    transform: scaleX(1);
+  }
+
+  50% {
+    transform: scaleX(0.4);
+  }
+}
+
+@keyframes butterfly-flight {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  25% {
+    transform: translate(30px, -15px);
+  }
+
+  50% {
+    transform: translate(65px, 8px);
+  }
+
+  75% {
+    transform: translate(25px, 20px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .garden-butterfly,
+  .garden-butterfly svg {
+    animation: none;
+  }
+}
+
+/* ==========================================
+   ANIMATED GARDEN CLOUDS
+   ========================================== */
+
+.garden-cloud {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.65;
+}
+
+.garden-cloud svg {
+  display: block;
+  width: 100%;
+  fill: #ffffff;
+}
+
+.cloud-one {
+  width: 12%;
+  left: 8%;
+  top: 8%;
+  animation: cloud-drift 18s ease-in-out infinite;
+}
+
+.cloud-two {
+  width: 9%;
+  left: 47%;
+  top: 12%;
+  opacity: 0.45;
+  animation: cloud-drift 25s ease-in-out infinite reverse;
+}
+
+@keyframes cloud-drift {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(35px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .garden-cloud {
     animation: none;
   }
 }
