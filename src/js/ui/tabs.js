@@ -2,12 +2,14 @@ import { dom } from "./dom.js";
 import { session, activePlants } from "./session.js";
 import { plantImages, plantRoles } from "./assets.js";
 import { showPlantMessage } from "./hud.js";
+import { mountHome, updateHome } from "./home.js";
 
 let navButtons = null;
 let tabs = null;
 
 export function mountTabs() {
   const { $ } = dom();
+  mountHome();
 
   $("networkToggle").addEventListener("click", () => {
     const panel = document.querySelector(".network-panel");
@@ -26,6 +28,10 @@ export function mountTabs() {
 
   $("playGameBtn").addEventListener("click", () => {
     setActiveTab("battle");
+  });
+
+  $("exploreGardenBtn").addEventListener("click", () => {
+    setActiveTab("upgrades");
   });
 
   navButtons.forEach((button) => {
@@ -71,6 +77,9 @@ export function setActiveTab(tabName) {
   } else {
     header.appendChild(stats);
   }
+  if (tabName === "plants") {
+    updateHome();
+  }
 }
 
 // =====================================================
@@ -82,6 +91,9 @@ export function showPlantDetails(index) {
 
   // Get selected plant.
   const plant = activePlants()[index];
+
+  // Display the selected plant's name.
+  $("detailName").textContent = plant.n;
 
   // Remember selected plant.
   session.selectedPlantIndex = index;
