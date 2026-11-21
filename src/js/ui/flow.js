@@ -311,6 +311,9 @@ function showBossDetails() {
     "Combine your plants' unique abilities to defeat the final boss.",
   );
 
+  // Animate the Boss Castle profile.
+  animateUpgradeProfile();
+
   const battleButton = document.getElementById("upgradeGoBattle");
 
   battleButton.textContent = "Go to Battle";
@@ -333,6 +336,20 @@ function showBossDetails() {
     button.classList.toggle("selected", selected);
     button.setAttribute("aria-pressed", String(selected));
   });
+}
+
+// Animate the selected upgrade profile.
+function animateUpgradeProfile() {
+  const content = document.querySelector("#upgradesTab .upgrade-info-content");
+
+  if (!content) return;
+
+  content.classList.remove("profile-enter");
+
+  // Restart the animation.
+  void content.offsetWidth;
+
+  content.classList.add("profile-enter");
 }
 
 // Update the selected plant discovery card.
@@ -393,7 +410,7 @@ function showUpgradeDetails(index) {
   setText("upgradeRole", unlocked ? "Discovered" : "Locked");
   setText("upgradeMissionDescription", discovery.ability);
   setText("upgradeStrategy", discovery.tip);
-
+  animateUpgradeProfile();
   // Display unlock requirements.
   const requirements = document.getElementById("upgradeRequirements");
 

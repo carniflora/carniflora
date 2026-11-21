@@ -125,18 +125,3 @@ upgradeTabletQuery.addEventListener("change", () => {
 });
 
 syncUpgradePanelAccessibility();
-
-const fullscreenBtn = document.getElementById("fullscreenBtn");
-const battleStage = document.querySelector("#battleTab .stage");
-
-fullscreenBtn.addEventListener("click", async () => {
-  try {
-    if (document.fullscreenElement) {
-      await document.exitFullscreen();
-    } else {
-      await battleStage.requestFullscreen();
-    }
-  } catch (error) {
-    console.error("Fullscreen failed:", error);
-  }
-});

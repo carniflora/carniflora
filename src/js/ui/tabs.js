@@ -92,6 +92,9 @@ export function showPlantDetails(index) {
   // Get selected plant.
   const plant = activePlants()[index];
 
+  // Display the selected plant's name.
+  $("detailName").textContent = plant.n;
+
   // Remember selected plant.
   session.selectedPlantIndex = index;
 

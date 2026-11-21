@@ -175,6 +175,14 @@ export function hud() {
     }
   }
 
+  // Update plant discovery indicators.
+  document.querySelectorAll(".battle-plant-option").forEach((card) => {
+    const index = Number(card.dataset.plantIndex);
+    const locked = state.level < index + 1;
+
+    card.classList.toggle("is-locked", locked);
+  });
+
   // ===================================================
   // Update deployement buttons
   // ===================================================
