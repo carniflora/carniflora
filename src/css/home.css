@@ -1,0 +1,671 @@
+/* ==========================================
+   LIVING GARDEN — HOME PAGE
+   ========================================== */
+
+.living-garden {
+  width: 100%;
+  max-width: 1100px;
+  margin: 16px auto;
+  padding: 24px;
+  box-sizing: border-box;
+  background: #f8f3fc;
+  border: 1px solid #dcc6ee;
+  border-radius: 24px;
+  box-shadow: 0 12px 35px rgba(112, 70, 163, 0.08);
+}
+
+.garden-heading {
+  text-align: center;
+  margin-bottom: 22px;
+}
+
+.garden-eyebrow {
+  color: #9471b7;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.garden-heading h2 {
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 400;
+  color: #7046a3;
+  margin: 8px 0;
+}
+
+.garden-heading p {
+  color: #927bb2;
+  font-size: 14px;
+  margin: 0;
+}
+
+/* Animated garden landscape */
+
+.garden-scene {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1000 / 360;
+  overflow: hidden;
+  border: 1px solid #d8bdf0;
+  border-radius: 18px;
+  background: #e9dcf5;
+}
+
+.garden-landscape {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Interactive plants */
+
+.garden-character {
+  position: absolute;
+  width: 10%;
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transform: translate(-50%, -100%);
+  transition: filter 0.2s ease;
+}
+
+.garden-character img {
+  display: block;
+  width: 100%;
+  image-rendering: pixelated;
+  animation: garden-float 3s ease-in-out infinite;
+}
+
+.garden-character:hover img {
+  animation: none;
+  transform: scale(1.18);
+}
+
+.garden-character:hover,
+.garden-character.selected {
+  filter: drop-shadow(0 0 10px #e8ffcb);
+}
+
+.garden-flytrap {
+  left: 18%;
+  top: 80%;
+}
+
+.garden-sundew {
+  left: 36%;
+  top: 79%;
+}
+
+.garden-pitcher {
+  left: 53%;
+  top: 67%;
+}
+
+.garden-rafflesia {
+  left: 70%;
+  top: 58%;
+}
+
+.garden-sundew img {
+  animation-delay: 0.4s;
+}
+
+.garden-pitcher img {
+  animation-delay: 0.8s;
+}
+
+.garden-rafflesia img {
+  animation-delay: 1.2s;
+}
+
+@keyframes garden-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Enemy fortress */
+
+.garden-castle {
+  position: absolute;
+  left: 86%;
+  top: 55%;
+  width: 13%;
+  transform: translate(-50%, -100%);
+  text-align: center;
+}
+
+.garden-castle img {
+  width: 100%;
+  image-rendering: pixelated;
+  animation:
+    garden-float 3s ease-in-out infinite,
+    castle-glow 4s ease-in-out infinite;
+}
+.garden-castle {
+  cursor: pointer;
+}
+
+.garden-castle img {
+  transition: transform 0.2s ease;
+}
+
+.garden-castle:hover img {
+  animation: castle-glow 4s ease-in-out infinite;
+  transform: scale(1.18);
+}
+
+.garden-castle:hover {
+  filter: drop-shadow(0 0 12px #e2b96c);
+  z-index: 5;
+}
+
+/* Final Boss badge */
+
+.garden-boss-status {
+  position: absolute;
+  bottom: 108%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: #fff0ce;
+  color: #98712e;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Boss Castle name */
+
+.garden-boss-name {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 5px 12px;
+  border-radius: 20px;
+  background: #a17d36;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Circular battle icon */
+
+.garden-boss-icon {
+  position: absolute;
+  top: calc(100% + 32px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  background: #fff0ce;
+  color: #98712e;
+  border: 1px solid #a17d36;
+  border-radius: 50%;
+  font-size: 12px;
+}
+
+/* Homepage adventure buttons */
+
+.garden-actions {
+  padding: 10px;
+  background: #f0e7f9;
+  border-radius: 16px;
+}
+
+.garden-actions .garden-explore {
+  background: #e7dcf4;
+  color: #7046a3;
+  border: 1px solid transparent;
+}
+
+.garden-actions .garden-achievements {
+  background: #f5e8c6;
+  color: #98732f;
+  border: 1px solid transparent;
+}
+
+.garden-utilities {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.garden-utilities button {
+  padding: 7px 10px;
+  background: #eee4f8;
+  color: #7046a3;
+  border: 1px solid #dcc6ee;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+/* Achievements dialog */
+
+.garden-achievements-dialog {
+  width: min(480px, calc(100% - 32px));
+  padding: 24px;
+  box-sizing: border-box;
+  background: #fcf8ff;
+  border: 1px solid #dcc6ee;
+  border-radius: 20px;
+  color: #7046a3;
+  box-shadow: 0 20px 60px #7046a333;
+}
+
+.garden-achievements-dialog::backdrop {
+  background: rgba(35, 21, 48, 0.45);
+  backdrop-filter: blur(4px);
+}
+
+.garden-dialog-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.garden-dialog-header > i {
+  font-size: 38px;
+  color: #b18b40;
+}
+
+.garden-dialog-header h3 {
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: 26px;
+  margin: 10px 0;
+}
+
+.garden-dialog-header p {
+  font-size: 13px;
+  color: #9471b7;
+}
+
+#gardenMilestones {
+  display: grid;
+  gap: 10px;
+}
+
+#gardenMilestones .milestone {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 12px;
+  background: #eee4f8;
+}
+
+#gardenMilestones .milestone.achieved {
+  background: #d9eadf;
+  color: #407b53;
+}
+
+#gardenMilestones .milestone p {
+  margin: 5px 0;
+  font-size: 12px;
+}
+
+#gardenMilestones .milestone-status {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+#closeGardenAchievements {
+  width: 100%;
+  margin-top: 20px;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: #8c70c8;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+.garden-utilities {
+  display: none;
+}
+
+@keyframes castle-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 3px #e2b96c);
+  }
+
+  50% {
+    filter: drop-shadow(0 0 14px #e2b96c);
+  }
+}
+
+/* Floating spores */
+
+.garden-spore {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: #fff9d6;
+  border-radius: 50%;
+  box-shadow: 0 0 12px #fff9d6;
+  pointer-events: none;
+  animation: spore-drift 5s ease-in-out infinite;
+}
+
+.garden-spore:nth-of-type(1) {
+  left: 15%;
+  top: 30%;
+}
+
+.garden-spore:nth-of-type(2) {
+  left: 35%;
+  top: 20%;
+  animation-delay: 1s;
+}
+
+.garden-spore:nth-of-type(3) {
+  left: 60%;
+  top: 40%;
+  animation-delay: 2s;
+}
+
+.garden-spore:nth-of-type(4) {
+  left: 80%;
+  top: 25%;
+  animation-delay: 3s;
+}
+
+@keyframes spore-drift {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: translate(0, 0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translate(20px, -24px);
+  }
+}
+
+/* Main homepage actions */
+
+.garden-actions {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.garden-actions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.garden-actions button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px #7046a31a;
+}
+
+.garden-actions .welcome-guide {
+  background: #eee4f8;
+  border: 1px solid #cdb5e9;
+}
+
+/* Meet your plant army */
+
+.garden-collection {
+  padding: 16px;
+  background: #fffaff;
+  border: 1px solid #dcc6ee;
+  border-radius: 16px;
+}
+
+.garden-collection h3 {
+  font-family: "DM Serif Display", Georgia, serif;
+  color: #7046a3;
+  font-size: 23px;
+  font-weight: 400;
+  margin: 0;
+  text-align: center;
+}
+
+.garden-collection > p {
+  color: #927bb2;
+  font-size: 12px;
+  text-align: center;
+  margin: 6px 0 14px;
+}
+
+.garden-plant-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.garden-plant-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 8px;
+  border-radius: 12px;
+  background: var(--garden-color);
+  border: 1px solid transparent;
+  color: var(--garden-accent);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.garden-plant-card img {
+  width: 54px;
+  height: 64px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.garden-plant-card strong {
+  font-size: 14px;
+}
+
+.garden-plant-card span {
+  font-size: 11px;
+}
+
+.garden-plant-card:hover {
+  transform: translateY(-4px);
+}
+
+.garden-plant-card.selected {
+  border-color: var(--garden-accent);
+  box-shadow: inset 0 0 0 1px var(--garden-accent);
+}
+
+/* Plant colour themes */
+
+.garden-plant-card[data-home-plant="0"],
+.garden-plant-details[data-plant="0"] {
+  --garden-color: #d9eadf;
+  --garden-accent: #407b53;
+}
+
+.garden-plant-card[data-home-plant="1"],
+.garden-plant-details[data-plant="1"] {
+  --garden-color: #f5e8c6;
+  --garden-accent: #9b7531;
+}
+
+.garden-plant-card[data-home-plant="2"],
+.garden-plant-details[data-plant="2"] {
+  --garden-color: #dceaf4;
+  --garden-accent: #4c809e;
+}
+
+.garden-plant-card[data-home-plant="3"],
+.garden-plant-details[data-plant="3"] {
+  --garden-color: #f2dce8;
+  --garden-accent: #ab537f;
+}
+
+/* Selected plant description */
+
+.garden-plant-details {
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--garden-color, #d9eadf);
+  color: var(--garden-accent, #407b53);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.garden-plant-details strong {
+  font-size: 14px;
+}
+
+.garden-plant-details p {
+  margin: 5px 0 0;
+  font-size: 12px;
+}
+
+.garden-footer {
+  text-align: center;
+  color: #9471b7;
+  font-size: 11px;
+  letter-spacing: 2px;
+  margin-top: 18px;
+}
+
+.garden-territory-label {
+  position: absolute;
+  bottom: 105%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: var(--territory-bg);
+  color: var(--territory-color);
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.garden-flytrap {
+  --territory-bg: #d9eadf;
+  --territory-color: #407b53;
+}
+
+.garden-sundew {
+  --territory-bg: #f5e8c6;
+  --territory-color: #9b7531;
+}
+
+.garden-pitcher {
+  --territory-bg: #dceaf4;
+  --territory-color: #4c809e;
+}
+
+.garden-rafflesia {
+  --territory-bg: #f2dce8;
+  --territory-color: #ab537f;
+}
+
+/* Garden progression labels */
+
+.garden-status {
+  position: absolute;
+  bottom: 108%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: var(--territory-bg);
+  color: var(--territory-color);
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.garden-plant-name {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 5px 12px;
+  border-radius: 20px;
+  background: var(--territory-color);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.garden-level {
+  position: absolute;
+  top: calc(100% + 32px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--territory-color);
+  border-radius: 50%;
+  background: var(--territory-bg);
+  color: var(--territory-color);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Tablet and mobile */
+
+@media (max-width: 650px) {
+  .living-garden {
+    padding: 12px;
+    margin: 8px auto;
+  }
+
+  .garden-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .garden-actions .welcome-play {
+    grid-column: 1 / -1;
+  }
+
+  .garden-plant-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .garden-scene {
+    aspect-ratio: 2 / 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .garden-character img,
+  .garden-spore,
+  .garden-castle img {
+    animation: none;
+  }
+}
