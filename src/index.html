@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="./css/responsive.css" />
     <link rel="stylesheet" href="./css/multiplayer.css" />
     <link rel="stylesheet" href="./css/welcome.css" />
+    <link rel="stylesheet" href="./css/home.css" />
 
     <link
       rel="stylesheet"
@@ -204,42 +205,254 @@
 
         <section class="main-panel">
           <div id="plantsTab" class="tab-content active">
-            <section class="welcome-screen">
-              <div class="welcome-image">
-                <img
-                  src="./assets/plants/welcome.png"
-                  alt="Carnivorous plants in an enchanted forest"
-                />
-              </div>
-
-              <div class="welcome-content">
-                <span class="welcome-eyebrow"> ENTER THE WORLD OF </span>
+            <section class="living-garden">
+              <div class="garden-heading">
+                <span class="garden-eyebrow">THE GARDEN IS WAITING</span>
 
                 <h2>Carniflora: Breach</h2>
 
-                <p>Grow your army. Breach the defenses. Reclaim the garden.</p>
+                <p>Small plants. Extraordinary powers. One final fortress.</p>
+              </div>
 
-                <div class="welcome-actions">
-                  <button id="playGameBtn" class="welcome-play" type="button">
+              <div class="garden-scene">
+                <svg
+                  class="garden-landscape"
+                  viewBox="0 0 1000 360"
+                  preserveAspectRatio="none"
+                  aria-hidden="true"
+                >
+                  <rect width="1000" height="360" fill="#e9dcf5" />
+
+                  <circle cx="810" cy="85" r="48" fill="#fff0c4" />
+
+                  <path
+                    d="M0 180 Q150 40 300 180 T600 155 T1000 120 V360 H0Z"
+                    fill="#d1e1d0"
+                  />
+
+                  <path
+                    d="M0 240 Q160 130 340 230 T700 195 T1000 190 V360 H0Z"
+                    fill="#accdb1"
+                  />
+
+                  <path
+                    d="M0 310 Q200 210 400 290 T750 240 T1000 220 V360 H0Z"
+                    fill="#85b598"
+                  />
+
+                  <path
+                    d="M70 380 C130 225 370 335 480 240 S700 230 865 155"
+                    fill="none"
+                    stroke="#9271c5"
+                    stroke-width="42"
+                    stroke-linecap="round"
+                  />
+
+                  <path
+                    d="M70 380 C130 225 370 335 480 240 S700 230 865 155"
+                    fill="none"
+                    stroke="#dcc9f2"
+                    stroke-width="34"
+                    stroke-linecap="round"
+                  />
+
+                  <path
+                    d="M70 380 C130 225 370 335 480 240 S700 230 865 155"
+                    fill="none"
+                    stroke="#a480d1"
+                    stroke-width="2"
+                    stroke-dasharray="10 10"
+                  />
+                </svg>
+
+                <!-- Animated garden clouds -->
+                <span class="garden-cloud cloud-one" aria-hidden="true">
+                  <svg viewBox="0 0 120 60">
+                    <ellipse cx="60" cy="42" rx="55" ry="15" />
+                    <ellipse cx="38" cy="28" rx="23" ry="20" />
+                    <ellipse cx="74" cy="23" rx="28" ry="23" />
+                  </svg>
+                </span>
+
+                <span class="garden-cloud cloud-two" aria-hidden="true">
+                  <svg viewBox="0 0 120 60">
+                    <ellipse cx="60" cy="42" rx="55" ry="15" />
+                    <ellipse cx="38" cy="28" rx="23" ry="20" />
+                    <ellipse cx="74" cy="23" rx="28" ry="23" />
+                  </svg>
+                </span>
+
+                <span class="garden-spore"></span>
+                <span class="garden-spore"></span>
+                <span class="garden-spore"></span>
+                <span class="garden-spore"></span>
+
+                <span class="garden-butterfly butterfly-one" aria-hidden="true">
+                  <svg viewBox="0 0 40 30">
+                    <ellipse cx="11" cy="12" rx="10" ry="8" fill="#c29cde" />
+                    <ellipse cx="29" cy="12" rx="10" ry="8" fill="#c29cde" />
+                    <ellipse cx="13" cy="22" rx="7" ry="6" fill="#e8c4ef" />
+                    <ellipse cx="27" cy="22" rx="7" ry="6" fill="#e8c4ef" />
+                    <rect
+                      x="19"
+                      y="7"
+                      width="2"
+                      height="19"
+                      rx="1"
+                      fill="#7046a3"
+                    />
+                  </svg>
+                </span>
+
+                <span class="garden-butterfly butterfly-two" aria-hidden="true">
+                  <svg viewBox="0 0 40 30">
+                    <ellipse cx="11" cy="12" rx="10" ry="8" fill="#e8c477" />
+                    <ellipse cx="29" cy="12" rx="10" ry="8" fill="#e8c477" />
+                    <ellipse cx="13" cy="22" rx="7" ry="6" fill="#fff0ce" />
+                    <ellipse cx="27" cy="22" rx="7" ry="6" fill="#fff0ce" />
+                    <rect
+                      x="19"
+                      y="7"
+                      width="2"
+                      height="19"
+                      rx="1"
+                      fill="#98712e"
+                    />
+                  </svg>
+                </span>
+
+                <button
+                  class="garden-character garden-flytrap"
+                  data-home-plant="0"
+                  type="button"
+                  aria-label="Meet Flytrap"
+                >
+                  <img src="./assets/plants/flytrap-icon.png" alt="" />
+                </button>
+
+                <button
+                  class="garden-character garden-sundew"
+                  data-home-plant="1"
+                  type="button"
+                  aria-label="Meet Sundew"
+                >
+                  <img src="./assets/plants/sundew-icon.png" alt="" />
+                </button>
+
+                <button
+                  class="garden-character garden-pitcher"
+                  data-home-plant="2"
+                  type="button"
+                  aria-label="Meet Pitcher"
+                >
+                  <img src="./assets/plants/pitcher-icon.png" alt="" />
+                </button>
+
+                <button
+                  class="garden-character garden-rafflesia"
+                  data-home-plant="3"
+                  type="button"
+                  aria-label="Meet Rafflesia"
+                >
+                  <img src="./assets/plants/rafflesia-icon.png" alt="" />
+                </button>
+
+                <div class="garden-castle">
+                  <span class="garden-boss-status">
                     <i class="icon-swords" aria-hidden="true"></i>
-                    Play Game
-                  </button>
+                    FINAL BOSS
+                  </span>
 
-                  <button
-                    id="homeMultiplayerBtn"
-                    class="welcome-multiplayer"
-                    type="button"
-                  >
-                    <i class="icon-users" aria-hidden="true"></i>
-                    Multiplayer
-                  </button>
+                  <img
+                    src="./assets/plants/castle-icon.png"
+                    alt="Boss Castle"
+                  />
 
-                  <button id="howToPlayBtn" class="welcome-guide" type="button">
-                    <i class="icon-book-open" aria-hidden="true"></i>
-                    How to Play
-                  </button>
+                  <span class="garden-boss-name">Boss Castle</span>
+
+                  <span class="garden-boss-icon">
+                    <i class="icon-swords" aria-hidden="true"></i>
+                  </span>
                 </div>
               </div>
+
+              <div class="garden-actions">
+                <button id="playGameBtn" class="welcome-play" type="button">
+                  <i class="icon-swords" aria-hidden="true"></i>
+                  <span id="gardenPlayLabel">Begin Your Journey</span>
+                </button>
+
+                <button
+                  id="exploreGardenBtn"
+                  class="garden-explore"
+                  type="button"
+                >
+                  <i class="icon-map" aria-hidden="true"></i>
+                  Explore Garden
+                </button>
+
+                <button
+                  id="gardenAchievementsBtn"
+                  class="garden-achievements"
+                  type="button"
+                >
+                  <i class="icon-trophy" aria-hidden="true"></i>
+                  Achievements
+                </button>
+              </div>
+
+              <div class="garden-utilities">
+                <button id="homeMultiplayerBtn" type="button">
+                  <i class="icon-users" aria-hidden="true"></i>
+                  Multiplayer
+                </button>
+
+                <button
+                  id="howToPlayBtn"
+                  type="button"
+                  title="How to Play"
+                  aria-label="How to Play"
+                >
+                  <i class="icon-book-open" aria-hidden="true"></i>
+                </button>
+              </div>
+
+              <dialog
+                id="gardenAchievementsDialog"
+                class="garden-achievements-dialog"
+              >
+                <div class="garden-dialog-header">
+                  <i class="icon-trophy" aria-hidden="true"></i>
+                  <h3>Journey Achievements</h3>
+                  <p>Every great adventure begins with a small discovery.</p>
+                </div>
+
+                <div id="gardenMilestones"></div>
+
+                <button id="closeGardenAchievements" type="button">
+                  Continue Journey
+                </button>
+              </dialog>
+
+              <div class="garden-collection">
+                <h3>Meet Your Plant Army</h3>
+                <p>Choose a plant to discover its special ability.</p>
+
+                <div id="gardenPlantCards" class="garden-plant-grid"></div>
+
+                <div
+                  id="gardenPlantDetails"
+                  class="garden-plant-details"
+                  aria-live="polite"
+                >
+                  <strong id="gardenPlantName"
+                    >Flytrap — Strong Attacker</strong
+                  >
+                  <p id="gardenPlantAbility">Powerful close-range attacks.</p>
+                </div>
+              </div>
+
+              <div class="garden-footer">Discover · Evolve · Conquer</div>
             </section>
 
             <div hidden>
@@ -622,16 +835,6 @@
                   <button class="ctl" id="rs" title="Restart Level">
                     <i class="icon-rotate-ccw" aria-hidden="true"></i>
                     <span class="control-label">Restart Level</span>
-                  </button>
-
-                  <button
-                    class="ctl"
-                    id="fullscreenBtn"
-                    type="button"
-                    title="Fullscreen"
-                  >
-                    <i class="icon-maximize" aria-hidden="true"></i>
-                    <span class="control-label">Fullscreen</span>
                   </button>
 
                   <details class="battle-shortcuts">

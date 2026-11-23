@@ -108,7 +108,10 @@ export function mountPlantGrid({ onSelect, onDeploy }) {
         </span>
       </div>
 
-      <span class="battle-plant-key">Level ${index + 1}</span>
+      <span class="battle-plant-key">
+      <i class="icon-lock battle-lock-icon" aria-hidden="true"></i>
+      Level ${index + 1}
+    </span>
 
       <i class="icon-circle-check battle-selected-icon"
         aria-hidden="true"></i>
