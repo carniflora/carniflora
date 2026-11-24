@@ -26,6 +26,7 @@ import { LEVEL_PATHS } from "../path.js";
 import { MAP_COLS, MAP_ROWS, TILE } from "../constants.js";
 import { setActiveTab, showPlantDetails } from "./tabs.js";
 import { hud, showPlantMessage, show } from "./hud.js";
+import { isPlantUnlocked } from "./plantGrid.js";
 
 export function setActivePlayer(p) {
   session.pickedBy[session.activePlayer] = session.selectedPlantIndex;
@@ -41,6 +42,14 @@ export function deploy(i) {
     battleService.submit({ type: Action.DEPLOY, plant: i });
     return;
   }
+  if (!isPlantUnlocked(i)) {
+    showPlantMessage(
+      "This plant is locked. Win more levels to discover it.",
+      "warning",
+    );
+    return;
+  }
+
   const k = activePlants()[i];
 
   // Player cannot deploy until the game starts.

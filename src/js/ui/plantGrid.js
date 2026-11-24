@@ -1,7 +1,13 @@
 import { dom } from "./dom.js";
 import { PLANTS } from "../plants.js";
 import { session } from "./session.js";
-import { plantImages, plantRoles, plantRoleIcons } from "./assets.js";
+import {
+  plantImages,
+  plantRoles,
+  plantRoleIcons,
+  plantProgression,
+} from "./assets.js";
+import { state } from "../state.js";
 
 export function mountPlantGrid({ onSelect, onDeploy }) {
   const { $ } = dom();
@@ -134,4 +140,20 @@ export function mountPlantGrid({ onSelect, onDeploy }) {
 
   $("selectPlantBtn").addEventListener("click", deploySelectedPlant);
   $("battleDeployBtn").addEventListener("click", deploySelectedPlant);
+}
+
+export function isPlantUnlocked(index) {
+  if (session.mode === "boss") return true; // all plants unlocked for the boss
+  const plant = plantProgression[index];
+  return !!plant && (Number(state.level) || 1) >= plant.level;
+}
+
+export function refreshPlantLocks() {
+  document
+    .querySelectorAll(".plant-option, .battle-plant-option")
+    .forEach((card) => {
+      const locked = !isPlantUnlocked(Number(card.dataset.plantIndex));
+      card.classList.toggle("is-locked", locked);
+      card.setAttribute("aria-disabled", String(locked));
+    });
 }

@@ -3103,6 +3103,11 @@ button:focus-visible {
   font-size: 10px;
 }
 
+#battleTab .battle-plant-option.is-locked {
+  opacity: 0.6;
+  filter: grayscale(0.8);
+}
+
 #battleTab .battle-plant-option.is-locked .battle-lock-icon {
   display: inline-block;
 }
