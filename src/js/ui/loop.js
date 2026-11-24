@@ -5,9 +5,9 @@ import { state } from "../state.js";
 import { update } from "../combat.js";
 import { updateBossLevel } from "../bossLevel.js";
 import { drawBossLevel } from "../bossRenderer.js";
-import { LEVEL_PATHS } from "../path.js";
 import { draw } from "./render.js";
 import { hud, show } from "./hud.js";
+import { LAST_REGULAR_LEVEL } from "../constants.js";
 
 let lastPhase = null;
 
@@ -39,7 +39,7 @@ function loop(timer) {
       show(
         "Harvester breached",
         `The garden is reclaimed in ${Math.ceil(session.bossState.elapsed)} seconds. ${session.bossState.stats.deployed} plants deployed; ${session.bossState.stats.lost} lost (${session.bossState.stats.mistLost} to mist).`,
-        "Retry Boss",
+        "Return Home",
       );
     else if (session.mode === "boss" && phase === "lost")
       show(
@@ -47,11 +47,17 @@ function loop(timer) {
         `The battlefield was overrun with ${Math.ceil(session.bossState.boss.hp)} boss HP remaining. Deploy early and combine plant abilities to push farther.`,
         "Retry Boss",
       );
+    else if (phase === "won" && state.level >= LAST_REGULAR_LEVEL)
+      show(
+        "Final Level Complete!",
+        `You cleared Level ${state.level}. The Apex Harvester is waiting at the end of the road.`,
+        "Face the Boss",
+      );
     else if (phase === "won")
       show(
         "Victory!",
         `Congratulations! You successfully completed Level ${state.level}.`,
-        state.level < LEVEL_PATHS.length ? "Next Level" : "Replay Level",
+        "Next Level",
       );
     else if (phase === "lost")
       show(
