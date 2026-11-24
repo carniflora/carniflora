@@ -18,6 +18,7 @@ import {
 } from "./flow.js";
 import { showPlantDetails } from "./tabs.js";
 import { showPlantMessage } from "./hud.js";
+import { isPlantUnlocked } from "./plantGrid.js";
 
 export function mountInput() {
   const { $, canvas } = dom();
@@ -67,6 +68,13 @@ export function mountInput() {
 
     const [c, r] = cellFromEvent(e);
     const plant = PLANTS[session.selectedPlantIndex];
+    if (!isPlantUnlocked(session.selectedPlantIndex)) {
+      showPlantMessage(
+        `${plant.n} is locked. Win more levels to discover it.`,
+        "warning",
+      );
+      return;
+    }
     if (battleService.online()) {
       battleService.place(
         c,
