@@ -126,6 +126,8 @@ export const ENEMY_KINDS = {
     radius: 16,
     style: "shot",
     unlock: 1,
+    spd: 0.3,
+    patrol: 1,
   },
   piston: {
     hpMult: 0.6,
@@ -135,6 +137,8 @@ export const ENEMY_KINDS = {
     radius: 13,
     style: "shot",
     unlock: 2,
+    spd: 0.9,
+    patrol: 3,
   },
   rivet: {
     hpMult: 0.8,
@@ -144,6 +148,8 @@ export const ENEMY_KINDS = {
     radius: 14,
     style: "shot",
     unlock: 2,
+    spd: 0.5,
+    patrol: 2,
   },
   boiler: {
     hpMult: 2,
@@ -153,6 +159,8 @@ export const ENEMY_KINDS = {
     radius: 20,
     style: "splash",
     unlock: 3,
+    spd: 0.25,
+    patrol: 1.5,
   },
 };
 

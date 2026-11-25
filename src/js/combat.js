@@ -21,6 +21,30 @@ function nearest(list, x, y, rng) {
   return closestTarget;
 }
 
+export function moveEnemy(enemy, state, dt) {
+  const def = ENEMY_KINDS[enemy.kind];
+  if (!def?.spd || enemy.pathIndex === undefined) return;
+  const path = state.map.paths[enemy.pathIndex];
+  if (!path) return;
+
+  if (nearest(state.plants, enemy.x, enemy.y, enemy.rng)) return; // fighting
+
+  const lo = Math.max(0, enemy.home - def.patrol);
+  const hi = Math.min(path.pathLength, enemy.home + def.patrol);
+  let next =
+    enemy.position + enemy.dir * def.spd * (enemy.slow > 0 ? 0.5 : 1) * dt;
+
+  if (next >= hi) {
+    next = hi;
+    enemy.dir = -1;
+  } else if (next <= lo) {
+    next = lo;
+    enemy.dir = 1;
+  }
+  enemy.position = next;
+  [enemy.x, enemy.y] = pxPosOf(path, next);
+}
+
 // update over time
 export function update(deltaTime, state = localState, effects = localEffects) {
   state.spores = Math.min(maxSpores(state), state.spores + 6 * deltaTime); // spores regenerate 6 per time up to max
@@ -126,6 +150,7 @@ export function update(deltaTime, state = localState, effects = localEffects) {
   for (const enemy of alive) {
     enemy.slow = Math.max(0, enemy.slow - deltaTime);
     enemy.cooldown -= deltaTime * (enemy.slow > 0 ? 0.55 : 1);
+    moveEnemy(enemy, state, deltaTime);
     if (enemy.cooldown <= 0) {
       const p = nearest(state.plants, enemy.x, enemy.y, enemy.rng);
       if (p) {
