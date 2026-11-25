@@ -213,12 +213,8 @@ describe("drawEnemy", () => {
     const ctx = fakeCtx();
     const e = { x: 0, y: 0 };
     drawEnemy(ctx, e, 0);
-    const first = e.variant;
     drawEnemy(ctx, e, 500);
-    expect(Number.isInteger(first)).toBe(true);
-    expect(first).toBeGreaterThanOrEqual(0);
-    expect(first).toBeLessThan(4);
-    expect(e.variant).toBe(first);
+    expect(ctx.calls[0][0].src).toContain("-cog-");
     expect(ctx.calls[0][0]).toBe(ctx.calls[1][0]); // same image every frame
   });
 
@@ -226,7 +222,7 @@ describe("drawEnemy", () => {
     const { drawEnemy } = await loadedSprites();
     const ctx = fakeCtx();
     ["rivet", "cog", "piston", "boiler"].forEach((name, i) => {
-      drawEnemy(ctx, { x: 0, y: 0, variant: i, animOffset: 0 }, 0);
+      drawEnemy(ctx, { x: 0, y: 0, kind: name, animOffset: 0 }, 0);
       expect(ctx.calls[i][0].src).toContain(`-${name}-`);
     });
   });

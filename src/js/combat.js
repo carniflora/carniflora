@@ -1,5 +1,5 @@
 import { state as localState, maxSpores } from "./state.js";
-import { PLANTS } from "./plants.js";
+import { ENEMY_KINDS, PLANTS } from "./plants.js";
 import { effects as localEffects } from "./effects.js";
 import { pxPosOf } from "./levels.js";
 import { PLANT_BLOCK } from "./constants.js";
@@ -19,6 +19,30 @@ function nearest(list, x, y, rng) {
     }
   }
   return closestTarget;
+}
+
+export function moveEnemy(enemy, state, dt) {
+  const def = ENEMY_KINDS[enemy.kind];
+  if (!def?.spd || enemy.pathIndex === undefined) return;
+  const path = state.map.paths[enemy.pathIndex];
+  if (!path) return;
+
+  if (nearest(state.plants, enemy.x, enemy.y, enemy.rng)) return; // fighting
+
+  const lo = Math.max(0, enemy.home - def.patrol);
+  const hi = Math.min(path.pathLength, enemy.home + def.patrol);
+  let next =
+    enemy.position + enemy.dir * def.spd * (enemy.slow > 0 ? 0.5 : 1) * dt;
+
+  if (next >= hi) {
+    next = hi;
+    enemy.dir = -1;
+  } else if (next <= lo) {
+    next = lo;
+    enemy.dir = 1;
+  }
+  enemy.position = next;
+  [enemy.x, enemy.y] = pxPosOf(path, next);
 }
 
 // update over time
@@ -126,12 +150,32 @@ export function update(deltaTime, state = localState, effects = localEffects) {
   for (const enemy of alive) {
     enemy.slow = Math.max(0, enemy.slow - deltaTime);
     enemy.cooldown -= deltaTime * (enemy.slow > 0 ? 0.55 : 1);
+    moveEnemy(enemy, state, deltaTime);
     if (enemy.cooldown <= 0) {
       const p = nearest(state.plants, enemy.x, enemy.y, enemy.rng);
       if (p) {
         enemy.cooldown = enemy.base;
         // Effective incoming damage for this plant (debuffs like Weakened — 4.5)
-        p.hp -= enemy.dmg * effects.eff("damageTakenMult", 1);
+        const taken = effects.eff("damageTakenMult", 1);
+        p.hp -= enemy.dmg * taken;
+
+        if (ENEMY_KINDS[enemy.kind]?.style === "splash") {
+          for (const other of state.plants) {
+            if (other !== p && Math.hypot(other.x - p.x, other.y - p.y) < 60) {
+              other.hp -= enemy.dmg * 0.5 * taken;
+            }
+          }
+          state.fx.push({
+            x1: p.x,
+            y1: p.y,
+            x2: p.x,
+            y2: p.y,
+            timer: 0.3,
+            colour: "#ffd9a0",
+            ring: 60,
+          });
+        }
+
         state.fx.push({
           x1: enemy.x,
           y1: enemy.y,

@@ -2,6 +2,7 @@ import { state as localState, maxSpores } from "./state.js";
 import { TILE, FINAL_MINION, DIST_BETWEEN_MINIONS } from "./constants.js";
 import { pxPosOf, loadLevel } from "./levels.js";
 import { effects as localEffects } from "./effects.js";
+import { ENEMY_KINDS, availableEnemyKinds } from "./plants.js";
 
 export function build(
   state = localState,
@@ -38,11 +39,13 @@ export function build(
   };
   state.enemies.push(state.keep); // add to the list of enemies
 
+  const pool = availableEnemyKinds(state.level);
+
   // randomly spawn enemy minions along the path (starting at halfway along the path)
   const count = Math.min(4 + state.level, 7); // number of minions per path
   const placedPoints = [];
 
-  for (const path of state.map.paths) {
+  for (const [pathIndex, path] of state.map.paths.entries()) {
     const firstMinion = path.pathLength * 0.33; // ensure that first minion is half way on the path
     const lastMinion = Math.max(firstMinion, path.pathLength - FINAL_MINION); // ensure that last minion is the specified distance from the tower
     let placed = 0;
@@ -60,18 +63,30 @@ export function build(
       placedPoints.push([x, y]);
       placed++;
 
+      // Only consume a random number when there is a real choice, so a
+      // cog-only level places enemies exactly as before
+
+      const kind =
+        pool.length > 1 ? pool[Math.floor(random() * pool.length)] : pool[0];
+      const def = ENEMY_KINDS[kind];
+      const hp = 90 * (1 + 0.35 * state.level) * def.hpMult;
+
       state.enemies.push({
+        kind,
+        pathIndex,
+        home: position,
+        dir: placed % 2 ? 1 : -1, // alt directions without using random
         x,
         y,
         position,
-        hp: 90 * (1 + 0.35 * state.level),
-        max: 90 * (1 + 0.35 * state.level),
-        rng: 115,
+        hp,
+        max: hp,
+        rng: def.rng,
         dmg: 8 * (1 + 0.2 * state.level),
         cooldown: 0,
-        base: 1.1,
+        base: def.base,
         slow: 0,
-        radius: 16,
+        radius: def.radius,
       });
     }
   }
