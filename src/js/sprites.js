@@ -81,8 +81,8 @@ export function drawEnemy(ctx, e, now, size = 48) {
   let img;
   if (e.keep) img = enemyImages.keep;
   else if (enemyImages.minion) {
-    e.variant ??= Math.floor(Math.random() * enemyImages.minion.length);
-    img = enemyImages.minion[e.variant];
+    const index = ENEMY_SHEETS.minion.indexOf(e.kind ?? "cog");
+    img = enemyImages.minion[index >= 0 ? index : 1];
   }
   if (!img) return false;
   ctx.imageSmoothingEnabled = false;

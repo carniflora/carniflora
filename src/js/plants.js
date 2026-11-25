@@ -112,3 +112,52 @@ export const BOSS_KINDS = [
     d: "Armour-piercing splash blasts",
   },
 ];
+
+/**
+ * Different enemies for normal levels
+ */
+
+export const ENEMY_KINDS = {
+  cog: {
+    hpMult: 1,
+    dmgMult: 1,
+    rng: 115,
+    base: 1.1,
+    radius: 16,
+    style: "shot",
+    unlock: 1,
+  },
+  piston: {
+    hpMult: 0.6,
+    dmgMult: 0.7,
+    rng: 90,
+    base: 0.55,
+    radius: 13,
+    style: "shot",
+    unlock: 2,
+  },
+  rivet: {
+    hpMult: 0.8,
+    dmgMult: 0.9,
+    rng: 190,
+    base: 1.6,
+    radius: 14,
+    style: "shot",
+    unlock: 2,
+  },
+  boiler: {
+    hpMult: 2,
+    dmgMult: 1.3,
+    rng: 100,
+    base: 2.4,
+    radius: 20,
+    style: "splash",
+    unlock: 3,
+  },
+};
+
+export function availableEnemyKinds(level) {
+  return Object.entries(ENEMY_KINDS)
+    .filter(([, k]) => k.unlock <= level)
+    .map(([name]) => name);
+}

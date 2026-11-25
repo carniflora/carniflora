@@ -1,5 +1,5 @@
 import { state as localState, maxSpores } from "./state.js";
-import { PLANTS } from "./plants.js";
+import { ENEMY_KINDS, PLANTS } from "./plants.js";
 import { effects as localEffects } from "./effects.js";
 import { pxPosOf } from "./levels.js";
 import { PLANT_BLOCK } from "./constants.js";
@@ -131,7 +131,26 @@ export function update(deltaTime, state = localState, effects = localEffects) {
       if (p) {
         enemy.cooldown = enemy.base;
         // Effective incoming damage for this plant (debuffs like Weakened — 4.5)
-        p.hp -= enemy.dmg * effects.eff("damageTakenMult", 1);
+        const taken = effects.eff("damageTakenMult", 1);
+        p.hp -= enemy.dmg * taken;
+
+        if (ENEMY_KINDS[enemy.kind]?.style === "splash") {
+          for (const other of state.plants) {
+            if (other !== p && Math.hypot(other.x - p.x, other.y - p.y) < 60) {
+              other.hp -= enemy.dmg * 0.5 * taken;
+            }
+          }
+          state.fx.push({
+            x1: p.x,
+            y1: p.y,
+            x2: p.x,
+            y2: p.y,
+            timer: 0.3,
+            colour: "#ffd9a0",
+            ring: 60,
+          });
+        }
+
         state.fx.push({
           x1: enemy.x,
           y1: enemy.y,
