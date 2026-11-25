@@ -16,12 +16,19 @@ import {
 } from "./sprites.js";
 import { BOSS_KINDS } from "./plants.js";
 
+import { drawTerrain, strokeTrail } from "./terrainRenderer.js";
+
+const PANEL = "#fffaff";
+const PURPLE = "#7046a3";
+const SUBTLE = "#63566e";
+const WARNING = "#865d1e";
+const DANGER = "#a2375c";
 const INK = "#e5efdc";
 const MUTED = "#8da58e";
 const PINK = "#f06891";
 
 function text(ctx, value, x, y, color = INK, size = 11, align = "left") {
-  ctx.font = `${size >= 13 ? "bold " : ""}${size}px monospace`;
+  ctx.font = `${size >= 13 ? "bold " : ""}${size}px system-ui, sans-serif`;
   ctx.fillStyle = color;
   ctx.textAlign = align;
   ctx.fillText(value, x, y);
@@ -70,25 +77,11 @@ function pathPoints(state, lane) {
 function drawPath(ctx, points) {
   ctx.beginPath();
   points.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
-  ctx.strokeStyle = "#283c29";
-  ctx.lineWidth = 35;
-  ctx.stroke();
-  ctx.strokeStyle = "#49503a";
-  ctx.lineWidth = 25;
-  ctx.stroke();
-  ctx.setLineDash([3, 18]);
-  ctx.strokeStyle = "rgba(225,208,155,0.28)";
-  ctx.lineWidth = 2;
-  ctx.stroke();
-  ctx.setLineDash([]);
+  strokeTrail(ctx);
 }
 
 function drawGround(ctx, state, width) {
-  const bg = ctx.createLinearGradient(0, 0, 0, 540);
-  bg.addColorStop(0, "#11251b");
-  bg.addColorStop(1, "#0a1a13");
-  ctx.fillStyle = bg;
-  ctx.fillRect(0, 0, width, 540);
+  drawTerrain(ctx, width, 540);
   ctx.fillStyle = "rgba(143,212,90,0.06)";
   const spacing = state.laneY[1] - state.laneY[0];
   for (const lane of state.selectedLanes) {
@@ -409,9 +402,9 @@ function drawWorld(ctx, state) {
 
 function drawHUD(ctx, state, width) {
   const b = state.boss;
-  ctx.fillStyle = "rgba(7,18,12,0.96)";
+  ctx.fillStyle = PANEL;
   ctx.fillRect(0, 0, width, 108);
-  text(ctx, "FINAL ASSAULT", 20, 25, "#a9e67b", 13);
+  text(ctx, "Final assault", 20, 25, PURPLE, 16);
   text(
     ctx,
     state.phase === "approach"
@@ -421,7 +414,7 @@ function drawHUD(ctx, state, width) {
         : "03 / OVERRUN THE CORE",
     20,
     46,
-    MUTED,
+    SUBTLE,
     10,
   );
   text(
@@ -429,10 +422,10 @@ function drawHUD(ctx, state, width) {
     `TANKS ${state.tanks.filter((t) => t.hp > 0).length}/2  |  CANNON ${state.towers.some((t) => t.type === "cannon" && t.hp > 0) ? "ONLINE" : "SILENCED"}`,
     20,
     67,
-    "#d7c79b",
+    SUBTLE,
     10,
   );
-  text(ctx, "APEX HARVESTER", width / 2, 25, INK, 14, "center");
+  text(ctx, "Apex Harvester", width / 2, 25, PURPLE, 18, "center");
   bar(
     ctx,
     width / 2,
@@ -450,7 +443,7 @@ function drawHUD(ctx, state, width) {
       : `CORE EXPOSED / ${Math.ceil(b.hp)} HP / ARMOUR ${b.armour}`,
     width / 2,
     65,
-    b.shielded ? "#9ac8b8" : "#ff9bb6",
+    b.shielded ? "#376c60" : DANGER,
     10,
     "center",
   );
@@ -460,18 +453,18 @@ function drawHUD(ctx, state, width) {
     `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`,
     width - 20,
     40,
-    seconds <= 25 ? PINK : "#e8c97d",
+    seconds <= 25 ? DANGER : WARNING,
     24,
     "right",
   );
-  text(ctx, "UNTIL OVERRUN", width - 20, 62, MUTED, 10, "right");
+  text(ctx, "UNTIL OVERRUN", width - 20, 62, SUBTLE, 10, "right");
   if (state.spray)
     text(
       ctx,
       `LANE ${state.spray.lane + 1} / ${state.spray.stage === "warning" ? `HERBICIDE IN ${state.spray.timer.toFixed(1)}s` : "HERBICIDE FIRING"}`,
       width / 2,
       92,
-      state.spray.stage === "warning" ? "#e8c97d" : PINK,
+      state.spray.stage === "warning" ? WARNING : DANGER,
       12,
       "center",
     );
@@ -485,7 +478,7 @@ function drawHUD(ctx, state, width) {
           : "Rafflesia pierces armour. Sundew slows boss fire.",
       width / 2,
       92,
-      state.noticeTime > 0 ? "#c2d7af" : MUTED,
+      SUBTLE,
       11,
       "center",
     );

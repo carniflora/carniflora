@@ -227,6 +227,7 @@ export function spawnBossPlant(state, kindIndex, lane, player = 0) {
   const [x, y] = atBossPath(s, lane, state.laneY);
   state.plants.push({
     k: kindIndex,
+    owner: player,
     lane,
     s,
     x,
