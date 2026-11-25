@@ -10,3 +10,6 @@ export const TILE = 64;
 
 // for towers.js
 export const TOWER_LIFETIME = 30;
+
+// for level progression
+export const LAST_REGULAR_LEVEL = 3;

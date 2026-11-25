@@ -23,9 +23,10 @@ import {
 } from "../bossLevel.js";
 
 import { LEVEL_PATHS } from "../path.js";
-import { MAP_COLS, MAP_ROWS, TILE } from "../constants.js";
+import { MAP_COLS, MAP_ROWS, TILE, LAST_REGULAR_LEVEL } from "../constants.js";
 import { setActiveTab, showPlantDetails } from "./tabs.js";
 import { hud, showPlantMessage, show } from "./hud.js";
+import { isPlantUnlocked } from "./plantGrid.js";
 
 export function setActivePlayer(p) {
   session.pickedBy[session.activePlayer] = session.selectedPlantIndex;
@@ -41,6 +42,14 @@ export function deploy(i) {
     battleService.submit({ type: Action.DEPLOY, plant: i });
     return;
   }
+  if (!isPlantUnlocked(i)) {
+    showPlantMessage(
+      "This plant is locked. Win more levels to discover it.",
+      "warning",
+    );
+    return;
+  }
+
   const k = activePlants()[i];
 
   // Player cannot deploy until the game starts.
@@ -51,6 +60,7 @@ export function deploy(i) {
 
   // the plant needs a tower to come out of
   if (
+    session.mode !== "boss" &&
     !state.myTowers.some(
       (t) => t.plant === i && t.owner === session.activePlayer,
     )
@@ -111,6 +121,54 @@ export function startLevel() {
   hud();
 }
 
+function syncModeButton() {
+  const { $ } = dom();
+  $("bm").textContent =
+    session.mode === "boss" ? "Normal Battle" : "Boss Battle";
+  $("bm").setAttribute("aria-pressed", String(session.mode === "boss"));
+}
+
+function enterBossMode() {
+  session.mode = "boss";
+  startLevel(); // creates session.bossState and resizes the canvas
+  syncModeButton();
+  setActiveTab("battle");
+  hud();
+}
+
+function returnToHome() {
+  const { $, canvas } = dom();
+
+  // leave boss mode and reset progress.
+  session.mode = "td";
+  state.level = 1;
+  saveProgress(1);
+
+  // Rebuild level 1 without starting it.
+  build();
+  canvas.width = MAP_COLS * TILE;
+  canvas.height = MAP_ROWS * TILE;
+  state.phase = "menu";
+  resetPhase();
+
+  // Restore the normal-battle UI.
+  $("bossControls").hidden = true;
+  $("battleTitle").textContent = "Battle Arena";
+  $("battleHint").textContent =
+    "Click a plant (or press 1–4), click a tile beside the path to place its tower, then deploy.";
+  syncModeButton();
+
+  show(
+    "Ready for Battle?",
+    "Deploy your carnivorous plants, destroy enemy towers, and conquer the castle before your swarm runs out.",
+    "Start Battle",
+  );
+
+  renderEvolutionCards();
+  setActiveTab("battle");
+  hud();
+}
+
 export function toggleMode() {
   if (battleService.online()) {
     return;
@@ -119,27 +177,7 @@ export function toggleMode() {
 
   session.mode = session.mode === "td" ? "boss" : "td";
   startLevel();
-
-  //replce those two line of code
-  //session.mode = session.mode === "td" ? "boss" : "td";
-  //startLevel();
-  // replce it with this below bolck of code
-  //session.mode = session.mode === "td" ? "boss" : "td";
-  //startLevel();
-
-  //if (session.mode === "boss") {
-  // setActivePhase("pause");
-
-  //show(
-  //  "Boss Battle",
-  // "Prepare for the challenge. Deploy your plants and defeat the Harvester.",
-  //  "Start Battle",
-  //);
-  //}
-
-  $("bm").textContent =
-    session.mode === "boss" ? "Normal Battle" : "Boss Battle";
-  $("bm").setAttribute("aria-pressed", String(session.mode === "boss"));
+  syncModeButton();
   setActiveTab("battle");
   if (session.selectedPlantIndex !== null)
     showPlantDetails(session.selectedPlantIndex);
@@ -208,8 +246,10 @@ export function primaryAction() {
     return;
   }
   if (session.mode === "boss") {
-    if (session.bossState.state === "pause") pause();
-    else startLevel();
+    const s = session.bossState.state;
+    if (s === "pause") pause();
+    else if (s === "won") returnToHome();
+    else startLevel(); // lost: retry boss
     return;
   }
 
@@ -227,6 +267,10 @@ export function primaryAction() {
 
   // Next level.
   if (state.phase === "won") {
+    if (state.level >= LAST_REGULAR_LEVEL) {
+      enterBossMode();
+      return;
+    }
     state.level = Math.min(state.level + 1, LEVEL_PATHS.length);
     saveProgress(state.level);
   }
