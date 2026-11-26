@@ -411,7 +411,7 @@ function updateBoss(state, dt) {
     boss.active = true;
     boss.enraged = true;
     state.phase = "core";
-    state.advanceSpeed = 11.25;
+    state.advanceSpeed *= 1.25;
     state.shake = 9;
     state.notice = "CORE EXPOSED — all lanes converge. Mist speed +25%.";
     state.noticeTime = 5;

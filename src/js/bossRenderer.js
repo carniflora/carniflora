@@ -10,6 +10,11 @@ import {
   getDistAtX,
 } from "./bossLevel.js";
 
+import {
+  drawPlant as drawPlantSprite,
+  drawEnemy,
+  drawTank,
+} from "./sprites.js";
 import { BOSS_KINDS } from "./plants.js";
 
 const INK = "#e5efdc";
@@ -121,90 +126,102 @@ function drawHarvester(ctx, state) {
     ctx.lineTo(1920, b.y);
     ctx.lineTo(b.x, b.y);
     ctx.stroke();
-    ctx.fillStyle =
-      tank.flash > 0 ? "#f7eec9" : tank.hp > 0 && alive ? "#5d4d27" : "#2e382b";
-    ctx.fillRect(tank.x - 37, tank.y - 26, 145, 52);
-    ctx.strokeStyle = tank.hp > 0 && alive ? "#c6a752" : "#53604a";
-    ctx.lineWidth = 2;
-    ctx.strokeRect(tank.x - 37, tank.y - 26, 145, 52);
+    const intact = tank.hp > 0 && alive;
+    const drewTank = drawTank(ctx, tank, state.elapsed * 1000 * 0.4, !intact);
+    if (!drewTank) {
+      // fallback box while sprites load
+      ctx.fillStyle =
+        tank.flash > 0 ? "#f7eec9" : intact ? "#5d4d27" : "#2e382b";
+      ctx.fillRect(tank.x - 37, tank.y - 26, 145, 52);
+      ctx.strokeStyle = intact ? "#c6a752" : "#53604a";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(tank.x - 37, tank.y - 26, 145, 52);
+    } else if (tank.flash > 0) {
+      ctx.fillStyle = "rgba(247,238,201,0.5)"; // hit flash
+      ctx.fillRect(tank.x - 37, tank.y - 26, 145, 52);
+    }
+    const side = tank.lane === 0 ? "UPPER" : "LOWER";
     text(
       ctx,
-      `${tank.lane === 0 ? "UPPER" : "LOWER"} / ARMOUR ${tank.armour}`,
-      tank.x + 34,
-      tank.y - 8,
-      "#e8c97d",
+      intact ? `${side} / ARMOUR ${tank.armour}` : `${side} TANK`,
+      tank.x + 35,
+      tank.y - 4,
+      intact ? "#e8c97d" : "#7d8a74",
       10,
       "center",
     );
     text(
       ctx,
-      tank.hp > 0 && alive ? `${Math.ceil(tank.hp)} / ${tank.max}` : "BREACHED",
-      tank.x + 34,
-      tank.y + 12,
-      INK,
+      intact ? `${Math.ceil(tank.hp)} / ${tank.max}` : "BREACHED",
+      tank.x + 35,
+      tank.y + 11,
+      intact ? INK : "#c2d7af",
       11,
       "center",
     );
     bar(ctx, tank.x + 34, tank.y + 32, 135, tank.hp, tank.max, "#e8b04a");
   }
-  if (alive) {
-    ctx.shadowBlur = 18;
-    ctx.shadowColor = b.shielded ? "#77b8b0" : PINK;
+  if (alive && !b.shielded) {
+    ctx.shadowBlur = 14;
+    ctx.shadowColor = PINK; // glow only once the core is exposed
   }
-  circle(
+  b.animOffset ??= 0;
+  ctx.globalAlpha = alive ? 1 : 0.45;
+  const drewBoss = drawEnemy(
     ctx,
-    b.x,
-    b.y,
-    37,
-    b.flash > 0 ? "#ffffff" : b.shielded ? "#163e3d" : "#7b2540",
-    b.shielded ? "#77b8b0" : PINK,
+    { kind: "harvester", x: b.x, y: b.y, animOffset: b.animOffset },
+    state.elapsed * 1000 * 0.4,
+    130,
   );
+  ctx.globalAlpha = 1;
   ctx.shadowBlur = 0;
+  if (!drewBoss) {
+    circle(
+      ctx,
+      b.x,
+      b.y,
+      37,
+      b.flash > 0 ? "#ffffff" : b.shielded ? "#163e3d" : "#7b2540",
+      b.shielded ? "#77b8b0" : PINK,
+    );
+  } else if (b.flash > 0) {
+    circle(ctx, b.x, b.y, 55, "rgba(255,255,255,0.35)");
+  }
   if (b.shielded && alive) {
+    ctx.globalAlpha = 0.6;
     ctx.setLineDash([6, 5]);
     circle(
       ctx,
       b.x,
       b.y,
-      49 + Math.sin(state.elapsed * 3) * 2,
+      72 + Math.sin(state.elapsed * 3) * 2,
       null,
       "#82c0b1",
     );
     ctx.setLineDash([]);
-    text(ctx, "SHIELDED", b.x, b.y + 4, "#b9e0d5", 11, "center");
-  } else circle(ctx, b.x, b.y, 17, alive ? "#ffbb83" : "#3d4e36");
-  text(
-    ctx,
-    alive ? "FURNACE CORE" : "RECLAIMED",
-    b.x,
-    354,
-    alive ? PINK : "#a9e67b",
-    10,
-    "center",
-  );
+    ctx.globalAlpha = 1;
+  }
+  if (!alive) text(ctx, "RECLAIMED", b.x, b.y + 90, "#a9e67b", 10, "center");
 }
 
-function drawDefense(ctx, t) {
-  if (t.hp <= 0) {
-    ctx.fillStyle = "#34402e";
-    ctx.fillRect(t.x - 12, t.y + 6, 24, 10);
-    return;
-  }
-  if (t.type === "cannon") {
-    ctx.fillStyle = t.slow > 0 ? "#608890" : "#9a9e8d";
-    ctx.fillRect(t.x - 18, t.y - 19, 36, 38);
-    ctx.fillStyle = "#657465";
-    ctx.fillRect(t.x - 37, t.y - 6, 34, 12);
-    text(ctx, "CANNON", t.x - 10, t.y - 31, "#d5d6bd", 10, "center");
-  } else {
-    circle(ctx, t.x, t.y, t.r, t.slow > 0 ? "#608890" : "#7e8b7b", "#b9c5af");
-    ctx.fillStyle = "#465849";
-    ctx.fillRect(t.x - 23, t.y - 4, 22, 8);
+function drawDefense(ctx, t, state) {
+  const size = t.type === "cannon" ? 60 : 44;
+  const drew = drawEnemy(ctx, t, state.elapsed * 1000 * 0.4, size);
+  if (!drew) {
+    // fallback shapes while sprites load
+    if (t.type === "cannon") {
+      ctx.fillStyle = t.slow > 0 ? "#608890" : "#9a9e8d";
+      ctx.fillRect(t.x - 18, t.y - 19, 36, 38);
+    } else {
+      circle(ctx, t.x, t.y, t.r, t.slow > 0 ? "#608890" : "#7e8b7b", "#b9c5af");
+    }
+  } else if (t.slow > 0) {
+    circle(ctx, t.x, t.y, t.r + 4, "rgba(103,149,155,0.35)");
   }
   bar(
     ctx,
     t.x,
-    t.y + t.r + 7,
+    t.y + size / 2 + 2,
     t.type === "cannon" ? 44 : 30,
     t.hp,
     t.max,
@@ -215,57 +232,32 @@ function drawDefense(ctx, t) {
 function drawPlant(ctx, plant, elapsed) {
   const kind = BOSS_KINDS[plant.k];
   const y = plant.y + Math.sin(elapsed * 7 + plant.s * 0.04) * 1.5;
+
+  // shadow
   ctx.fillStyle = "rgba(0,0,0,0.3)";
   ctx.beginPath();
   ctx.ellipse(plant.x, plant.y + 11, kind.r + 4, 4, 0, 0, TAU);
   ctx.fill();
-  ctx.strokeStyle = "#536f39";
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.moveTo(plant.x, y + 5);
-  ctx.lineTo(plant.x - 5, y + 12);
-  ctx.stroke();
+
+  // pitcher heal aura
   if (plant.k === 2) {
-    ctx.fillStyle = kind.col;
-    ctx.fillRect(plant.x - 10, y - 12, 20, 23);
-    circle(ctx, plant.x, y - 11, 10, "#f2cf73");
-    circle(ctx, plant.x, y - 11, 5, "#564623");
     circle(ctx, plant.x, plant.y, 77, null, "rgba(232,176,74,0.08)");
-  } else if (plant.k === 3) {
-    for (let i = 0; i < 5; i++) {
-      const angle = (i * TAU) / 5 + elapsed * 0.15;
-      circle(
-        ctx,
-        plant.x + Math.cos(angle) * 7,
-        y + Math.sin(angle) * 7,
-        6,
-        kind.col,
-      );
-    }
-    circle(ctx, plant.x, y, 5, "#422e50");
-  } else {
-    circle(ctx, plant.x, y, kind.r, kind.col);
-    if (plant.k === 0) {
-      ctx.strokeStyle = "#29432a";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(plant.x - 5, y - 2);
-      ctx.lineTo(plant.x + 5, y + 2);
-      ctx.stroke();
-    } else {
-      for (let i = 0; i < 6; i++) {
-        const a = (i * TAU) / 6;
-        circle(
-          ctx,
-          plant.x + Math.cos(a) * 10,
-          y + Math.sin(a) * 10,
-          2,
-          "#f6a7b8",
-        );
-      }
-    }
   }
-  bar(ctx, plant.x, y - kind.r - 11, 22, plant.hp, kind.hp, "#a9e67b");
+
+  // sprite (keep a stable animation offset on the real plant)
+  plant.animOffset ??= Math.floor(Math.random() * 16);
+  const drewSprite = drawPlantSprite(
+    ctx,
+    { ...plant, y },
+    elapsed * 1000 * 0.4,
+    44,
+  );
+
+  // fallback shapes while sprites are still loading
+  if (!drewSprite) {
+    circle(ctx, plant.x, y, kind.r, kind.col);
+  }
+  bar(ctx, plant.x, y - 34, 22, plant.hp, kind.hp, "#a9e67b");
 }
 
 function drawWorld(ctx, state) {
@@ -303,17 +295,16 @@ function drawWorld(ctx, state) {
     );
   }
   drawHarvester(ctx, state);
-  state.towers.forEach((t) => drawDefense(ctx, t));
+  state.towers.forEach((t) => drawDefense(ctx, t, state));
   for (const m of state.minions) {
-    ctx.fillStyle = m.slow > 0 ? "#67959b" : "#96a5a0";
-    ctx.fillRect(m.x - 10, m.y - 10, 20, 20);
-    ctx.strokeStyle = "#e5dbb7";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(m.x - 9, m.y);
-    ctx.lineTo(m.x - 20, m.y - 5);
-    ctx.stroke();
-    bar(ctx, m.x, m.y - 18, 22, m.hp, m.max, PINK);
+    const drew = drawEnemy(ctx, m, state.elapsed * 1000 * 0.4, 40);
+    if (!drew) {
+      ctx.fillStyle = m.slow > 0 ? "#67959b" : "#96a5a0";
+      ctx.fillRect(m.x - 10, m.y - 10, 20, 20);
+    } else if (m.slow > 0) {
+      circle(ctx, m.x, m.y, 18, "rgba(103,149,155,0.35)");
+    }
+    bar(ctx, m.x, m.y - 28, 22, m.hp, m.max, PINK);
   }
   state.plants.forEach((p) => drawPlant(ctx, p, state.elapsed));
   for (let lane = 0; lane < 3; lane++) {
