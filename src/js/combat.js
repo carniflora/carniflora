@@ -155,14 +155,17 @@ export function update(deltaTime, state = localState, effects = localEffects) {
       const p = nearest(state.plants, enemy.x, enemy.y, enemy.rng);
       if (p) {
         enemy.cooldown = enemy.base;
-        // Effective incoming damage for this plant (debuffs like Weakened — 4.5)
+        // Effective incoming damage multipliers (debuffs + health buffs — 4.5).
+        // hpMult (Fortified, Root Shield) divides incoming damage so plants
+        // survive longer without their max HP changing when a buff expires.
         const taken = effects.eff("damageTakenMult", 1);
-        p.hp -= enemy.dmg * taken;
+        const tough = effects.eff("hpMult", 1);
+        p.hp -= (enemy.dmg * taken) / tough;
 
         if (ENEMY_KINDS[enemy.kind]?.style === "splash") {
           for (const other of state.plants) {
             if (other !== p && Math.hypot(other.x - p.x, other.y - p.y) < 60) {
-              other.hp -= enemy.dmg * 0.5 * taken;
+              other.hp -= (enemy.dmg * 0.5 * taken) / tough;
             }
           }
           state.fx.push({

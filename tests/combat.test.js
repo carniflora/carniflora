@@ -107,6 +107,45 @@ describe("enemy kinds", () => {
   });
 });
 
+describe("US 4.5 — Fortified and Root Shield reduce incoming damage", () => {
+  test("a Fortified plant takes half damage from a direct hit", () => {
+    const p = addPlant(5);
+    addEnemy(p, { dmg: 20, base: 1, rng: 100 });
+    effects.fire("fortified"); // hpMult 2.0
+    update(0.01, state, effects);
+    expect(p.hp).toBeCloseTo(990, 5); // 1000 - 20/2
+  });
+
+  test("a Root Shield plant takes damage / 1.5 from a direct hit", () => {
+    const p = addPlant(5);
+    addEnemy(p, { dmg: 30, base: 1, rng: 100 });
+    effects.fire("root_shield"); // hpMult 1.5
+    update(0.01, state, effects);
+    expect(p.hp).toBeCloseTo(980, 5); // 1000 - 30/1.5
+  });
+
+  test("Fortified also halves splash damage to neighbours", () => {
+    const target = addPlant(5);
+    const neighbour = addPlant(5); // same spot, inside splash range
+    addEnemy(target, { kind: "boiler", dmg: 20, base: 1, rng: 20 });
+    effects.fire("fortified");
+    update(0.01, state, effects);
+    // Direct hit (10) + splash (5) split across the two co-located plants;
+    // Fortified halves both, so total damage is 15 not 30.
+    const dmgs = [1000 - target.hp, 1000 - neighbour.hp].sort((a, b) => a - b);
+    expect(dmgs[0]).toBeCloseTo(5, 5); // (20 * 0.5) / 2
+    expect(dmgs[1]).toBeCloseTo(10, 5); // 20 / 2
+  });
+
+  test("a plant with no health buff takes full damage", () => {
+    const p = addPlant(5);
+    addEnemy(p, { dmg: 20, base: 1, rng: 100 });
+    effects.fire("empowered"); // damageMult only, no hpMult
+    update(0.01, state, effects);
+    expect(p.hp).toBeCloseTo(980, 5); // full 20
+  });
+});
+
 describe("win and lose", () => {
   test("destroying the keep wins", () => {
     state.keep.hp = 0;
