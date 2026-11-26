@@ -10,6 +10,7 @@ import { hud, show } from "./hud.js";
 import { LAST_REGULAR_LEVEL } from "../constants.js";
 
 let lastPhase = null;
+const RESTART_LABEL = "Restart Level";
 
 // store timestamp of previous frame
 let last = performance.now();
@@ -60,7 +61,7 @@ function loop(timer) {
       show(
         "The mist caught up",
         `The battlefield was overrun with ${Math.ceil(session.bossState.boss.hp)} boss HP remaining. Deploy early and combine plant abilities to push farther.`,
-        "Retry Boss",
+        RESTART_LABEL,
       );
     else if (
       phase === "won" &&
@@ -82,7 +83,7 @@ function loop(timer) {
       show(
         "Battle Defeated",
         "Your swarm has run out of plants and spores. Regroup and try again.",
-        "Retry Battle",
+        RESTART_LABEL,
       );
     lastPhase = phase;
   }

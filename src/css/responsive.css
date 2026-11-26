@@ -763,6 +763,10 @@
 }
 
 @media (max-width: 650px) {
+  #battleTab .battle-topbar {
+    flex-direction: column;
+  }
+
   .game-layout {
     display: flex;
     flex-direction: column;

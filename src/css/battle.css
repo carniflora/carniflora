@@ -1730,6 +1730,7 @@ button:focus-visible {
 
 #battleTab .battle-topbar {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: flex-start;
   gap: 12px;
@@ -1758,6 +1759,14 @@ button:focus-visible {
   border-radius: 9px;
   font-size: 17px;
   cursor: pointer;
+}
+
+#battleTab #rs {
+  width: auto;
+  padding: 0 10px;
+  gap: 6px;
+  font-size: 13px;
+  white-space: nowrap;
 }
 
 #battleTab .battle-quick-actions .ctl:hover,
