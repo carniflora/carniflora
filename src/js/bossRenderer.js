@@ -217,7 +217,7 @@ function drawPlant(ctx, plant, elapsed) {
   const kind = BOSS_KINDS[plant.k];
   const y = plant.y + Math.sin(elapsed * 7 + plant.s * 0.04) * 1.5;
 
-  // shadow 
+  // shadow
   ctx.fillStyle = "rgba(0,0,0,0.3)";
   ctx.beginPath();
   ctx.ellipse(plant.x, plant.y + 11, kind.r + 4, 4, 0, 0, TAU);
@@ -226,17 +226,17 @@ function drawPlant(ctx, plant, elapsed) {
   // pitcher heal aura
   if (plant.k === 2) {
     circle(ctx, plant.x, plant.y, 77, null, "rgba(232,176,74,0.08)");
-  } 
-  
+  }
+
   // sprite (keep a stable animation offset on the real plant)
   plant.animOffset ??= Math.floor(Math.random() * 16);
   const drewSprite = drawPlantSprite(
     ctx,
-    { ...plant, y }, 
-    performance.now(),
-    44.
+    { ...plant, y },
+    elapsed * 1000 * 0.4,
+    44,
   );
-  
+
   // fallback shapes while sprites are still loading
   if (!drewSprite) {
     circle(ctx, plant.x, y, kind.r, kind.col);

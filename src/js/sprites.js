@@ -58,8 +58,9 @@ function frameFor(obj, now) {
 export function drawPlant(ctx, p, now, size = 48) {
   const index = p.plant ?? p.k;
   const name = PLANTS[index].sheet;
-  const img = images[name]?.[p.owner === 0 ? 1 : 2];
+  const img = images[name]?.[(p.owner ?? 0) === 0 ? 1 : 2];
   if (!img) return false;
+  console.log(img.src, p.owner, p.plant, p.k);
 
   p.animOffset ??= Math.floor(Math.random() * FRAMES);
   const frame = (Math.floor((now / 1000) * FPS) + p.animOffset) % FRAMES;
