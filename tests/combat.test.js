@@ -109,11 +109,13 @@ describe("enemy kinds", () => {
 });
 
 describe("US 4.5 — Fortified and Root Shield reduce incoming damage", () => {
+  // Flytrap (index 0) has no HP side effects, so the buff's plantType is
+  // pinned to it via forceType to keep these tests deterministic.
   test("a Fortified plant takes half damage from a direct hit", () => {
     const p = addPlant(5);
     addEnemy(p, { dmg: 20, base: 1, rng: 100 });
-    effects.fire("fortified"); // hpMult 2.0
-    p.plant = effects.active[0].plantType;
+    effects.fire("fortified", 0); // hpMult 2.0, targets Flytrap
+    p.plant = 0;
     update(0.01, state, effects);
     expect(p.hp).toBeCloseTo(990, 5); // 1000 - 20/2
   });
@@ -121,8 +123,8 @@ describe("US 4.5 — Fortified and Root Shield reduce incoming damage", () => {
   test("a Root Shield plant takes damage / 1.5 from a direct hit", () => {
     const p = addPlant(5);
     addEnemy(p, { dmg: 30, base: 1, rng: 100 });
-    effects.fire("root_shield"); // hpMult 1.5
-    p.plant = effects.active[0].plantType;
+    effects.fire("root_shield", 0); // hpMult 1.5, targets Flytrap
+    p.plant = 0;
     update(0.01, state, effects);
     expect(p.hp).toBeCloseTo(980, 5); // 1000 - 30/1.5
   });
@@ -131,10 +133,9 @@ describe("US 4.5 — Fortified and Root Shield reduce incoming damage", () => {
     const target = addPlant(5);
     const neighbour = addPlant(5); // same spot, inside splash range
     addEnemy(target, { kind: "boiler", dmg: 20, base: 1, rng: 20 });
-    effects.fire("fortified");
-    const t = effects.active[0].plantType;
-    target.plant = t;
-    neighbour.plant = t;
+    effects.fire("fortified", 0);
+    target.plant = 0;
+    neighbour.plant = 0;
     update(0.01, state, effects);
     // Direct hit (10) + splash (5) split across the two co-located plants;
     // Fortified halves both, so total damage is 15 not 30.
@@ -146,8 +147,8 @@ describe("US 4.5 — Fortified and Root Shield reduce incoming damage", () => {
   test("a plant with no health buff takes full damage", () => {
     const p = addPlant(5);
     addEnemy(p, { dmg: 20, base: 1, rng: 100 });
-    effects.fire("empowered"); // damageMult only, no hpMult
-    p.plant = effects.active[0].plantType;
+    effects.fire("empowered", 0); // damageMult only, no hpMult
+    p.plant = 0;
     update(0.01, state, effects);
     expect(p.hp).toBeCloseTo(980, 5); // full 20
   });

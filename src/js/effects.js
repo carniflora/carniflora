@@ -1,5 +1,6 @@
 import { state as localState } from "./state.js";
 import { PLANTS } from "./plants.js";
+import { pxPosOf } from "./levels.js";
 
 // Event catalog (5 buffs, 5 debuffs)
 export const EVENTS = [
@@ -110,24 +111,28 @@ export class RNG {
 }
 
 // Effects engine (DOM-free, testable with vitest)
+export const SEED_TTL = 15; // seconds before an unclaimed seed wilts
+const SEED_RADIUS = 32; // px — a plant within this distance claims a seed
+
 export function createEffects(state) {
   return {
-    active: [], // [{ event, remaining, mod }]
+    active: [], // [{ event, remaining, mod, plantType }]
     history: [], // traceability log
     rng: null,
     timer: 0,
-    interval: 18, // seconds between auto-spawns
+    interval: 18, // seconds between seed spawns
 
     reset(seed = Date.now() | 0) {
       this.active = [];
       this.history = [];
       this.timer = 0;
       this.rng = new RNG(seed);
+      if (state) state.seeds = [];
     },
 
     // call inside game.js update()
     update(dt) {
-      // expire + tick
+      // expire + tick active effects
       for (let i = this.active.length - 1; i >= 0; i--) {
         const a = this.active[i];
         a.remaining -= dt;
@@ -140,12 +145,51 @@ export function createEffects(state) {
           this.active.splice(i, 1);
         }
       }
-      // auto-fire
+
+      // seeds (US 4.1): a plant touching a seed destroys it and gains an
+      // effect. Wilted seeds are removed. New seeds spawn on the interval.
+      if (state.seeds) {
+        for (let i = state.seeds.length - 1; i >= 0; i--) {
+          const s = state.seeds[i];
+          s.ttl -= dt;
+          if (s.ttl <= 0) {
+            state.seeds.splice(i, 1);
+            continue;
+          }
+          const claimer = state.plants.find(
+            (p) => Math.hypot(p.x - s.x, p.y - s.y) <= SEED_RADIUS,
+          );
+          if (claimer) {
+            state.seeds.splice(i, 1);
+            this.fire();
+          }
+        }
+      }
+
+      // spawn a new seed on the interval
       this.timer += dt;
       if (this.timer >= this.interval) {
         this.timer = 0;
-        this.fire();
+        this.spawnSeed();
       }
+    },
+
+    // Place a seed at (x, y). When omitted, a random spot on the map is used.
+    spawnSeed(x, y) {
+      if (x === undefined || y === undefined) {
+        const map = state.map;
+        if (map && map.paths && map.paths.length) {
+          const path =
+            map.paths[Math.floor(this.rng.next() * map.paths.length)];
+          const t = this.rng.next() * path.pathLength;
+          [x, y] = pxPosOf(path, t);
+        } else {
+          x = 0;
+          y = 0;
+        }
+      }
+      if (!state.seeds) state.seeds = [];
+      state.seeds.push({ x, y, ttl: SEED_TTL });
     },
 
     // Force a specific event (for tests / debug), or random from catalog.

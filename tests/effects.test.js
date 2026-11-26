@@ -32,7 +32,7 @@ describe("EPIC 4 — seeded RNG (US 4.6)", () => {
   });
 });
 
-describe("US 4.1 — a random buff/debuff can occur", () => {
+describe("US 4.1 — seeds grant random buffs/debuffs", () => {
   beforeEach(() => effects.reset());
 
   test("fire() adds an active effect", () => {
@@ -42,11 +42,47 @@ describe("US 4.1 — a random buff/debuff can occur", () => {
     expect(effects.history.length).toBe(1);
   });
 
-  test("update() auto-fires after the interval (4.1)", () => {
+  test("update() spawns a seed after the interval (4.1)", () => {
     effects.reset();
-    // advance past the 18s interval
+    state.seeds = [];
     effects.update(18.01);
-    expect(effects.active.length).toBeGreaterThan(0);
+    expect(state.seeds.length).toBe(1);
+    // a seed alone does not activate an effect
+    expect(effects.active.length).toBe(0);
+    state.seeds = [];
+  });
+
+  test("a plant touching a seed consumes it and fires an effect", () => {
+    effects.reset();
+    state.seeds = [];
+    state.plants = [{ x: 100, y: 100, hp: 100 }];
+    effects.spawnSeed(100, 100); // place a seed on the plant
+    effects.update(0.01);
+    expect(state.seeds.length).toBe(0); // consumed
+    expect(effects.active.length).toBe(1);
+    state.plants = [];
+    state.seeds = [];
+  });
+
+  test("a seed out of reach is not consumed", () => {
+    effects.reset();
+    state.seeds = [];
+    state.plants = [{ x: 0, y: 0, hp: 100 }];
+    effects.spawnSeed(500, 500);
+    effects.update(0.01);
+    expect(state.seeds.length).toBe(1);
+    expect(effects.active.length).toBe(0);
+    state.plants = [];
+    state.seeds = [];
+  });
+
+  test("seeds expire after their TTL", () => {
+    effects.reset();
+    state.seeds = [];
+    effects.spawnSeed(500, 500); // far from any plant
+    effects.update(15.01); // past SEED_TTL
+    expect(state.seeds.length).toBe(0);
+    state.seeds = [];
   });
 });
 

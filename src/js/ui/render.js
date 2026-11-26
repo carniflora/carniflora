@@ -144,6 +144,20 @@ export function draw() {
     g.fillRect(c * TILE, r * TILE, TILE, TILE);
   }
 
+  // seeds (US 4.1): a plant that reaches one destroys it and gains an effect.
+  for (const s of state.seeds ?? []) {
+    const pulse = 0.7 + 0.3 * Math.sin(now / 200);
+    g.globalAlpha = Math.min(1, s.ttl / 3) * pulse;
+    g.fillStyle = "#f5d76e";
+    g.beginPath();
+    g.arc(s.x, s.y, 8, 0, 7);
+    g.fill();
+    g.strokeStyle = "#b8860b";
+    g.lineWidth = 2;
+    g.stroke();
+    g.globalAlpha = 1;
+  }
+
   // plants that are sent out (drawn after towers so they sit on top)
   for (const p of state.plants) {
     const k = PLANTS[p.plant];

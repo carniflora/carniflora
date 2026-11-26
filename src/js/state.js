@@ -10,6 +10,7 @@ export function createState() {
     enemies: [],
     keep: null,
     plants: [],
+    seeds: [],
     myTowers: [],
     fx: [],
   };
