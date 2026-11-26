@@ -8,7 +8,6 @@ const ENEMY_SHEETS = {
   keep: "works",
 };
 const TREE_FRAME = 96;
-const CLOSED_EYE_FRAME = 7;
 const images = {};
 const enemyImages = {};
 const treeImgs = {};
