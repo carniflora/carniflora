@@ -8,7 +8,7 @@ import { effects } from "../effects.js";
 import { drawPlant, drawEnemy, drawTree } from "../sprites.js";
 
 const MINION_SIZE = 48;
-const KEEP_SIZE = 96;
+const KEEP_SIZE = 125;
 const TREE_SIZE = TILE * 1.2;
 const SPRITE_SIZE = 48;
 
