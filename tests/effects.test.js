@@ -1,6 +1,7 @@
 import { describe, test, expect, beforeEach } from "vitest";
 import { effects, RNG, EVENTS } from "../src/js/effects.js";
 import { state } from "../src/js/state.js";
+import { PLANTS } from "../src/js/plants.js";
 
 // EPIC 4 — Random Buffs & Debuffs. Covers US 4.1/4.2/4.3/4.5/4.6.
 // game.js/state import is side-effect free (no DOM access at import time),
@@ -31,7 +32,7 @@ describe("EPIC 4 — seeded RNG (US 4.6)", () => {
   });
 });
 
-describe("US 4.1 — a random buff/debuff can occur", () => {
+describe("US 4.1 — seeds grant random buffs/debuffs", () => {
   beforeEach(() => effects.reset());
 
   test("fire() adds an active effect", () => {
@@ -41,11 +42,47 @@ describe("US 4.1 — a random buff/debuff can occur", () => {
     expect(effects.history.length).toBe(1);
   });
 
-  test("update() auto-fires after the interval (4.1)", () => {
+  test("update() spawns a seed after the interval (4.1)", () => {
     effects.reset();
-    // advance past the 18s interval
+    state.seeds = [];
     effects.update(18.01);
-    expect(effects.active.length).toBeGreaterThan(0);
+    expect(state.seeds.length).toBe(1);
+    // a seed alone does not activate an effect
+    expect(effects.active.length).toBe(0);
+    state.seeds = [];
+  });
+
+  test("a plant touching a seed consumes it and fires an effect", () => {
+    effects.reset();
+    state.seeds = [];
+    state.plants = [{ x: 100, y: 100, hp: 100 }];
+    effects.spawnSeed(100, 100); // place a seed on the plant
+    effects.update(0.01);
+    expect(state.seeds.length).toBe(0); // consumed
+    expect(effects.active.length).toBe(1);
+    state.plants = [];
+    state.seeds = [];
+  });
+
+  test("a seed out of reach is not consumed", () => {
+    effects.reset();
+    state.seeds = [];
+    state.plants = [{ x: 0, y: 0, hp: 100 }];
+    effects.spawnSeed(500, 500);
+    effects.update(0.01);
+    expect(state.seeds.length).toBe(1);
+    expect(effects.active.length).toBe(0);
+    state.plants = [];
+    state.seeds = [];
+  });
+
+  test("seeds expire after their TTL", () => {
+    effects.reset();
+    state.seeds = [];
+    effects.spawnSeed(500, 500); // far from any plant
+    effects.update(15.01); // past SEED_TTL
+    expect(state.seeds.length).toBe(0);
+    state.seeds = [];
   });
 });
 
@@ -153,5 +190,64 @@ describe("US 6.5 — active effects are displayable", () => {
     }
     expect(list.map((d) => d.name)).toContain("Fortified");
     expect(list.map((d) => d.name)).toContain("Slowed");
+  });
+});
+
+describe("US 4.2/4.3 — buffs and debuffs target a plant type", () => {
+  beforeEach(() => effects.reset());
+
+  test("a fired effect records which plant type it targets", () => {
+    effects.fire("sun_fury");
+    const a = effects.active[0];
+    expect(a).toHaveProperty("plantType");
+    expect(a.plantType).toBeGreaterThanOrEqual(0);
+    expect(a.plantType).toBeLessThan(PLANTS.length);
+  });
+
+  test("eff() applies the multiplier only to the targeted plant type", () => {
+    effects.reset();
+    effects.fire("sun_fury");
+    const { plantType } = effects.active[0];
+    const other = (plantType + 1) % PLANTS.length;
+    expect(effects.eff("damageMult", 1, plantType)).toBe(2.0);
+    expect(effects.eff("damageMult", 1, other)).toBe(1.0);
+  });
+
+  test("eff() without a plant index still applies globally (legacy)", () => {
+    effects.fire("sun_fury");
+    expect(effects.eff("damageMult", 1)).toBe(2.0);
+  });
+
+  test("poison stays global — no plantType is set", () => {
+    effects.fire("poisoned");
+    const a = effects.active[0];
+    expect(a.plantType).toBeNull();
+  });
+});
+
+describe("US 6.5 — icons follow towers and plants", () => {
+  beforeEach(() => effects.reset());
+
+  test("iconsFor() returns the icon for a matching plant type", () => {
+    effects.fire("sun_fury", 1); // targets Sundew
+    const icons = effects.iconsFor(1);
+    expect(icons).toEqual([{ icon: "☀", kind: "buff" }]);
+  });
+
+  test("iconsFor() excludes icons scoped to a different plant type", () => {
+    effects.fire("sun_fury", 1); // targets Sundew
+    expect(effects.iconsFor(0)).toEqual([]);
+  });
+
+  test("global effects (poison) follow every plant type", () => {
+    effects.fire("poisoned"); // plantType null
+    expect(effects.iconsFor(0).length).toBe(1);
+    expect(effects.iconsFor(3).length).toBe(1);
+  });
+
+  test("multiple active effects stack their icons on one plant", () => {
+    effects.fire("empowered", 0);
+    effects.fire("fortified", 0);
+    expect(effects.iconsFor(0).length).toBe(2);
   });
 });
