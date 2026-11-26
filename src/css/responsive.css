@@ -3301,3 +3301,74 @@
   padding: 10px 8px;
   flex-shrink: 0;
 }
+
+/* ==========================================
+   REGULAR BATTLE 
+   ========================================== */
+@media (min-width: 1251px) and (min-height: 550px) {
+  #app:has(#battleTab.active #bossControls[hidden]) #plantDetailsPanel {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 6px;
+    min-height: 0;
+    padding: 8px 8px 12px;
+    box-sizing: border-box;
+  }
+
+  /* compact ability box */
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .battle-ability-box {
+    flex: 0 0 auto;
+    height: auto;
+    min-height: 0;
+    padding: 8px;
+    margin: 0;
+  }
+
+  /* stats should NOT stretch too much */
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .plant-profile-stats {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    flex: 0 0 auto;
+    margin-top: 10px;
+    gap: 8px;
+    padding: 0;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .profile-stat {
+    gap: 4px;
+    margin: 0;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .profile-stat-track {
+    height: 7px;
+  }
+
+  /* deployment cost card */
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .profile-deployment-cost {
+    margin-top: 6px;
+    padding: 8px;
+    flex: 0 0 auto;
+  }
+
+  /* selected message card */
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .plant-message {
+    margin-top: auto;
+    margin-bottom: 0;
+    padding: 8px;
+    flex: 0 0 auto;
+  }
+}
