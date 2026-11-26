@@ -1,4 +1,5 @@
 import { state as localState } from "./state.js";
+import { PLANTS } from "./plants.js";
 
 // Event catalog (5 buffs, 5 debuffs)
 export const EVENTS = [
@@ -147,21 +148,41 @@ export function createEffects(state) {
       }
     },
 
-    // Force a specific event (for tests / debug), or random from catalog
-    fire(forceEvent = null) {
+    // Force a specific event (for tests / debug), or random from catalog.
+    // Buffs/debuffs that change plant stats target one plant type (US 4.2/4.3);
+    // global effects (poison drain) carry plantType = null.
+    fire(forceEvent = null, forceType = null) {
       let ev = forceEvent;
       if (typeof ev === "string") ev = EVENTS.find((e) => e.id === ev);
       const event = ev ?? EVENTS[Math.floor(this.rng.next() * EVENTS.length)];
-      this.active.push({ event, remaining: event.dur, mod: event.mod });
+      const targetsPlants = !event.mod?.hpDrainPerSec;
+      const plantType = targetsPlants
+        ? (forceType ?? Math.floor(this.rng.next() * PLANTS.length))
+        : null;
+      this.active.push({
+        event,
+        remaining: event.dur,
+        mod: event.mod,
+        plantType,
+      });
       this.history.push({ ev: event, action: "applied" });
       return event;
     },
 
-    // SINGLE CHOKE-POINT: effective stat multiplier
-    eff(stat, base = 1) {
+    // SINGLE CHOKE-POINT: effective stat multiplier.
+    // plantIndex scopes the lookup to one plant type (US 4.2/4.3); omit it
+    // for the legacy global behaviour used by tests and non-plant callers.
+    eff(stat, base = 1, plantIndex) {
       let m = base;
       for (const a of this.active) {
-        if (a.mod && a.mod[stat]) m *= a.mod[stat];
+        if (!a.mod || !a.mod[stat]) continue;
+        if (
+          plantIndex !== undefined &&
+          a.plantType !== null &&
+          a.plantType !== plantIndex
+        )
+          continue;
+        m *= a.mod[stat];
       }
       return m;
     },
@@ -173,6 +194,7 @@ export function createEffects(state) {
         name: a.event.name,
         kind: a.event.kind,
         remaining: Math.ceil(a.remaining),
+        plantType: a.plantType,
       }));
     },
   };

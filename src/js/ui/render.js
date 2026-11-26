@@ -187,10 +187,15 @@ export function draw() {
     g.textBaseline = "top";
     active.forEach((d, i) => {
       const y = 12 + i * 18;
+      // Plant-type scoped effects show which plant they target (US 4.2/4.3).
+      const tag =
+        d.plantType !== null && d.plantType !== undefined
+          ? ` (${PLANTS[d.plantType].n})`
+          : "";
       g.fillStyle = "rgba(0,0,0,.5)";
       g.fillRect(8, y - 2, 168, 16);
       g.fillStyle = d.kind === "buff" ? "#4ade80" : "#f87171";
-      g.fillText(`${d.icon} ${d.name}  ${d.remaining}s`, 14, y);
+      g.fillText(`${d.icon} ${d.name}${tag}  ${d.remaining}s`, 14, y);
     });
     g.textBaseline = "alphabetic";
   }

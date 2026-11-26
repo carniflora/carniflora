@@ -1,6 +1,7 @@
 import { describe, test, expect, beforeEach } from "vitest";
 import { effects, RNG, EVENTS } from "../src/js/effects.js";
 import { state } from "../src/js/state.js";
+import { PLANTS } from "../src/js/plants.js";
 
 // EPIC 4 — Random Buffs & Debuffs. Covers US 4.1/4.2/4.3/4.5/4.6.
 // game.js/state import is side-effect free (no DOM access at import time),
@@ -153,5 +154,37 @@ describe("US 6.5 — active effects are displayable", () => {
     }
     expect(list.map((d) => d.name)).toContain("Fortified");
     expect(list.map((d) => d.name)).toContain("Slowed");
+  });
+});
+
+describe("US 4.2/4.3 — buffs and debuffs target a plant type", () => {
+  beforeEach(() => effects.reset());
+
+  test("a fired effect records which plant type it targets", () => {
+    effects.fire("sun_fury");
+    const a = effects.active[0];
+    expect(a).toHaveProperty("plantType");
+    expect(a.plantType).toBeGreaterThanOrEqual(0);
+    expect(a.plantType).toBeLessThan(PLANTS.length);
+  });
+
+  test("eff() applies the multiplier only to the targeted plant type", () => {
+    effects.reset();
+    effects.fire("sun_fury");
+    const { plantType } = effects.active[0];
+    const other = (plantType + 1) % PLANTS.length;
+    expect(effects.eff("damageMult", 1, plantType)).toBe(2.0);
+    expect(effects.eff("damageMult", 1, other)).toBe(1.0);
+  });
+
+  test("eff() without a plant index still applies globally (legacy)", () => {
+    effects.fire("sun_fury");
+    expect(effects.eff("damageMult", 1)).toBe(2.0);
+  });
+
+  test("poison stays global — no plantType is set", () => {
+    effects.fire("poisoned");
+    const a = effects.active[0];
+    expect(a.plantType).toBeNull();
   });
 });
