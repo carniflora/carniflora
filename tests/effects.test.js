@@ -224,3 +224,30 @@ describe("US 4.2/4.3 — buffs and debuffs target a plant type", () => {
     expect(a.plantType).toBeNull();
   });
 });
+
+describe("US 6.5 — icons follow towers and plants", () => {
+  beforeEach(() => effects.reset());
+
+  test("iconsFor() returns the icon for a matching plant type", () => {
+    effects.fire("sun_fury", 1); // targets Sundew
+    const icons = effects.iconsFor(1);
+    expect(icons).toEqual([{ icon: "☀", kind: "buff" }]);
+  });
+
+  test("iconsFor() excludes icons scoped to a different plant type", () => {
+    effects.fire("sun_fury", 1); // targets Sundew
+    expect(effects.iconsFor(0)).toEqual([]);
+  });
+
+  test("global effects (poison) follow every plant type", () => {
+    effects.fire("poisoned"); // plantType null
+    expect(effects.iconsFor(0).length).toBe(1);
+    expect(effects.iconsFor(3).length).toBe(1);
+  });
+
+  test("multiple active effects stack their icons on one plant", () => {
+    effects.fire("empowered", 0);
+    effects.fire("fortified", 0);
+    expect(effects.iconsFor(0).length).toBe(2);
+  });
+});

@@ -20,6 +20,30 @@ function healthBar(x, y, width, valueHp, maxHp, colour) {
   g.fillRect(x - width / 2, y, width * Math.max(0, valueHp / maxHp), 4);
 }
 
+// Floating effect icons above a plant/tower (US 6.5). Each icon sits in a
+// small tinted chip so buff (green) and debuff (red) read at a glance.
+function drawIcons(g, x, topY, icons) {
+  if (!icons.length) return;
+  const r = 8;
+  const step = r * 2 + 2;
+  const total = icons.length * step;
+  let cx = x - total / 2 + r;
+  g.font = "13px system-ui, sans-serif";
+  g.textAlign = "center";
+  g.textBaseline = "middle";
+  for (const ic of icons) {
+    g.fillStyle =
+      ic.kind === "buff" ? "rgba(74,222,128,.9)" : "rgba(248,113,113,.9)";
+    g.beginPath();
+    g.arc(cx, topY, r, 0, 7);
+    g.fill();
+    g.fillText(ic.icon, cx, topY + 1);
+    cx += step;
+  }
+  g.textAlign = "left";
+  g.textBaseline = "alphabetic";
+}
+
 export function draw() {
   const { canvas, ctx: g } = dom();
   const now = performance.now();
@@ -124,6 +148,9 @@ export function draw() {
     g.fillStyle = tower.timeLeft <= 5 ? "#ff6b6b" : "#fff";
     g.fillText(Math.ceil(tower.timeLeft) + "s", x, baseY + 14);
     g.textAlign = "left";
+
+    // active effect icons float above the tower (US 6.5)
+    drawIcons(g, x, y - TREE_SIZE / 2 - 10, effects.iconsFor(tower.plant));
   });
 
   // placement preview: green if allowed, red if not
@@ -174,6 +201,9 @@ export function draw() {
       g.fill();
     }
     healthBar(p.x, p.y - SPRITE_SIZE / 2 - 2, 20, p.hp, k.hp, "#8fd45a");
+
+    // active effect icons float above the plant (US 6.5)
+    drawIcons(g, p.x, p.y - SPRITE_SIZE / 2 - 14, effects.iconsFor(p.plant));
   }
 
   // attack effects

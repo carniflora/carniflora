@@ -241,6 +241,14 @@ export function createEffects(state) {
         plantType: a.plantType,
       }));
     },
+
+    // Icons to float above a plant/tower of the given type (US 6.5).
+    // Global effects (plantType null, e.g. poison) follow every plant.
+    iconsFor(plantIndex) {
+      return this.active
+        .filter((a) => a.plantType === null || a.plantType === plantIndex)
+        .map((a) => ({ icon: a.event.icon, kind: a.event.kind }));
+    },
   };
 }
 
