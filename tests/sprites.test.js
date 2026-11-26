@@ -62,9 +62,9 @@ afterEach(() => {
 describe("loadSprites", () => {
   test("requests every sheet exactly once", async () => {
     await loadedSprites();
-    // 4 plants x 2 colours + 4 minions + 1 keep + 2 tree sheets = 15 sprites
-    expect(requested).toHaveLength(15);
-    expect(new Set(requested).size).toBe(15); // no sheet loads twice
+    // 4 plants x 2 colours + 7 minions + 1 keep + 2 tree sheets = 18 sprites
+    expect(requested).toHaveLength(18);
+    expect(new Set(requested).size).toBe(18); // no sheet loads twice
   });
 
   test("loads player 1 and player 2 versions of each plant sheet", async () => {

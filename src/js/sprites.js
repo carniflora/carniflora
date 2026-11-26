@@ -4,10 +4,11 @@ const FRAME = 64,
   FPS = 8;
 const P2_COLOUR = "blue";
 const ENEMY_SHEETS = {
-  minion: ["rivet", "cog", "piston", "boiler"],
+  minion: ["rivet", "cog", "piston", "boiler", "tower", "cannon", "harvester"],
   keep: "works",
 };
 const TREE_FRAME = 96;
+const CLOSED_EYE_FRAME = 7;
 const images = {};
 const enemyImages = {};
 const treeImgs = {};
@@ -60,7 +61,6 @@ export function drawPlant(ctx, p, now, size = 48) {
   const name = PLANTS[index].sheet;
   const img = images[name]?.[(p.owner ?? 0) === 0 ? 1 : 2];
   if (!img) return false;
-  console.log(img.src, p.owner, p.plant, p.k);
 
   p.animOffset ??= Math.floor(Math.random() * FRAMES);
   const frame = (Math.floor((now / 1000) * FPS) + p.animOffset) % FRAMES;
@@ -81,16 +81,21 @@ export function drawPlant(ctx, p, now, size = 48) {
 
 export function drawEnemy(ctx, e, now, size = 48) {
   let img;
-  if (e.keep) img = enemyImages.keep;
-  else if (enemyImages.minion) {
-    const index = ENEMY_SHEETS.minion.indexOf(e.kind ?? "cog");
+
+  if (e.keep) {
+    img = enemyImages.keep;
+  } else if (enemyImages.minion) {
+    const index = ENEMY_SHEETS.minion.indexOf(e.kind ?? e.type ?? "cog");
     img = enemyImages.minion[index >= 0 ? index : 1];
   }
+
   if (!img) return false;
+
   ctx.imageSmoothingEnabled = false;
   ctx.drawImage(
     img,
-    frameFor(e, now) * FRAME,
+    (e.hp <= 0 && e.type === "tower" ? CLOSED_EYE_FRAME : frameFor(e, now)) *
+      FRAME,
     0,
     FRAME,
     FRAME,
@@ -99,6 +104,7 @@ export function drawEnemy(ctx, e, now, size = 48) {
     size,
     size,
   );
+
   return true;
 }
 

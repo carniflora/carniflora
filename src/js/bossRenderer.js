@@ -10,7 +10,7 @@ import {
   getDistAtX,
 } from "./bossLevel.js";
 
-import { drawPlant as drawPlantSprite } from "./sprites.js";
+import { drawPlant as drawPlantSprite, drawEnemy } from "./sprites.js";
 import { BOSS_KINDS } from "./plants.js";
 
 const INK = "#e5efdc";
@@ -152,60 +152,72 @@ function drawHarvester(ctx, state) {
     ctx.shadowBlur = 18;
     ctx.shadowColor = b.shielded ? "#77b8b0" : PINK;
   }
-  circle(
+  b.animOffset ??= 0;
+  ctx.globalAlpha = alive ? 1 : 0.45;
+  const drewBoss = drawEnemy(
     ctx,
-    b.x,
-    b.y,
-    37,
-    b.flash > 0 ? "#ffffff" : b.shielded ? "#163e3d" : "#7b2540",
-    b.shielded ? "#77b8b0" : PINK,
+    { kind: "harvester", x: b.x, y: b.y, animOffset: b.animOffset },
+    state.elapsed * 1000 * 0.4,
+    150,
   );
-  ctx.shadowBlur = 0;
+  ctx.globalAlpha = 1;
+  ctx.shadowBlur = 0; // was missing: the glow would leak onto everything drawn after
+  if (!drewBoss) {
+    circle(
+      ctx,
+      b.x,
+      b.y,
+      37,
+      b.flash > 0 ? "#ffffff" : b.shielded ? "#163e3d" : "#7b2540",
+      b.shielded ? "#77b8b0" : PINK,
+    );
+  } else if (b.flash > 0) {
+    circle(ctx, b.x, b.y, 60, "rgba(255,255,255,0.35)");
+  }
   if (b.shielded && alive) {
     ctx.setLineDash([6, 5]);
     circle(
       ctx,
       b.x,
       b.y,
-      49 + Math.sin(state.elapsed * 3) * 2,
+      85 + Math.sin(state.elapsed * 3) * 2,
       null,
       "#82c0b1",
     );
     ctx.setLineDash([]);
-    text(ctx, "SHIELDED", b.x, b.y + 4, "#b9e0d5", 11, "center");
-  } else circle(ctx, b.x, b.y, 17, alive ? "#ffbb83" : "#3d4e36");
+    text(ctx, "SHIELDED", b.x, b.y + 100, "#b9e0d5", 11, "center");
+  }
   text(
     ctx,
     alive ? "FURNACE CORE" : "RECLAIMED",
     b.x,
-    354,
+    b.y + 115,
     alive ? PINK : "#a9e67b",
     10,
     "center",
   );
 }
 
-function drawDefense(ctx, t) {
-  if (t.hp <= 0) {
-    ctx.fillStyle = "#34402e";
-    ctx.fillRect(t.x - 12, t.y + 6, 24, 10);
-    return;
+function drawDefense(ctx, t, state) {
+  const size = t.type === "cannon" ? 60 : 44;
+  const drew = drawEnemy(ctx, t, state.elapsed * 1000 * 0.4, size);
+  if (!drew) {
+    // fallback shapes while sprites load
+    if (t.type === "cannon") {
+      ctx.fillStyle = t.slow > 0 ? "#608890" : "#9a9e8d";
+      ctx.fillRect(t.x - 18, t.y - 19, 36, 38);
+    } else {
+      circle(ctx, t.x, t.y, t.r, t.slow > 0 ? "#608890" : "#7e8b7b", "#b9c5af");
+    }
+  } else if (t.slow > 0) {
+    circle(ctx, t.x, t.y, t.r + 4, "rgba(103,149,155,0.35)");
   }
-  if (t.type === "cannon") {
-    ctx.fillStyle = t.slow > 0 ? "#608890" : "#9a9e8d";
-    ctx.fillRect(t.x - 18, t.y - 19, 36, 38);
-    ctx.fillStyle = "#657465";
-    ctx.fillRect(t.x - 37, t.y - 6, 34, 12);
-    text(ctx, "CANNON", t.x - 10, t.y - 31, "#d5d6bd", 10, "center");
-  } else {
-    circle(ctx, t.x, t.y, t.r, t.slow > 0 ? "#608890" : "#7e8b7b", "#b9c5af");
-    ctx.fillStyle = "#465849";
-    ctx.fillRect(t.x - 23, t.y - 4, 22, 8);
-  }
+  if (t.type === "cannon")
+    text(ctx, "CANNON", t.x, t.y - size / 2 - 4, "#d5d6bd", 10, "center");
   bar(
     ctx,
     t.x,
-    t.y + t.r + 7,
+    t.y + size / 2 + 2,
     t.type === "cannon" ? 44 : 30,
     t.hp,
     t.max,
@@ -241,7 +253,7 @@ function drawPlant(ctx, plant, elapsed) {
   if (!drewSprite) {
     circle(ctx, plant.x, y, kind.r, kind.col);
   }
-  bar(ctx, plant.x, y - kind.r - 11, 22, plant.hp, kind.hp, "#a9e67b");
+  bar(ctx, plant.x, y - 34, 22, plant.hp, kind.hp, "#a9e67b");
 }
 
 function drawWorld(ctx, state) {
@@ -279,17 +291,16 @@ function drawWorld(ctx, state) {
     );
   }
   drawHarvester(ctx, state);
-  state.towers.forEach((t) => drawDefense(ctx, t));
+  state.towers.forEach((t) => drawDefense(ctx, t, state));
   for (const m of state.minions) {
-    ctx.fillStyle = m.slow > 0 ? "#67959b" : "#96a5a0";
-    ctx.fillRect(m.x - 10, m.y - 10, 20, 20);
-    ctx.strokeStyle = "#e5dbb7";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(m.x - 9, m.y);
-    ctx.lineTo(m.x - 20, m.y - 5);
-    ctx.stroke();
-    bar(ctx, m.x, m.y - 18, 22, m.hp, m.max, PINK);
+    const drew = drawEnemy(ctx, m, state.elapsed * 1000 * 0.4, 40);
+    if (!drew) {
+      ctx.fillStyle = m.slow > 0 ? "#67959b" : "#96a5a0";
+      ctx.fillRect(m.x - 10, m.y - 10, 20, 20);
+    } else if (m.slow > 0) {
+      circle(ctx, m.x, m.y, 18, "rgba(103,149,155,0.35)");
+    }
+    bar(ctx, m.x, m.y - 28, 22, m.hp, m.max, PINK);
   }
   state.plants.forEach((p) => drawPlant(ctx, p, state.elapsed));
   for (let lane = 0; lane < 3; lane++) {
