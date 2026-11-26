@@ -56,7 +56,8 @@ function frameFor(obj, now) {
 }
 
 export function drawPlant(ctx, p, now, size = 48) {
-  const name = PLANTS[p.plant].sheet;
+  const index = p.plant ?? p.k;
+  const name = PLANTS[index].sheet;
   const img = images[name]?.[p.owner === 0 ? 1 : 2];
   if (!img) return false;
 

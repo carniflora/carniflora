@@ -10,6 +10,7 @@ import {
   getDistAtX,
 } from "./bossLevel.js";
 
+import { drawPlant as drawPlantSprite } from "./sprites.js";
 import { BOSS_KINDS } from "./plants.js";
 
 const INK = "#e5efdc";
@@ -215,55 +216,30 @@ function drawDefense(ctx, t) {
 function drawPlant(ctx, plant, elapsed) {
   const kind = BOSS_KINDS[plant.k];
   const y = plant.y + Math.sin(elapsed * 7 + plant.s * 0.04) * 1.5;
+
+  // shadow 
   ctx.fillStyle = "rgba(0,0,0,0.3)";
   ctx.beginPath();
   ctx.ellipse(plant.x, plant.y + 11, kind.r + 4, 4, 0, 0, TAU);
   ctx.fill();
-  ctx.strokeStyle = "#536f39";
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.moveTo(plant.x, y + 5);
-  ctx.lineTo(plant.x - 5, y + 12);
-  ctx.stroke();
+
+  // pitcher heal aura
   if (plant.k === 2) {
-    ctx.fillStyle = kind.col;
-    ctx.fillRect(plant.x - 10, y - 12, 20, 23);
-    circle(ctx, plant.x, y - 11, 10, "#f2cf73");
-    circle(ctx, plant.x, y - 11, 5, "#564623");
     circle(ctx, plant.x, plant.y, 77, null, "rgba(232,176,74,0.08)");
-  } else if (plant.k === 3) {
-    for (let i = 0; i < 5; i++) {
-      const angle = (i * TAU) / 5 + elapsed * 0.15;
-      circle(
-        ctx,
-        plant.x + Math.cos(angle) * 7,
-        y + Math.sin(angle) * 7,
-        6,
-        kind.col,
-      );
-    }
-    circle(ctx, plant.x, y, 5, "#422e50");
-  } else {
+  } 
+  
+  // sprite (keep a stable animation offset on the real plant)
+  plant.animOffset ??= Math.floor(Math.random() * 16);
+  const drewSprite = drawPlantSprite(
+    ctx,
+    { ...plant, y }, 
+    performance.now(),
+    44.
+  );
+  
+  // fallback shapes while sprites are still loading
+  if (!drewSprite) {
     circle(ctx, plant.x, y, kind.r, kind.col);
-    if (plant.k === 0) {
-      ctx.strokeStyle = "#29432a";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(plant.x - 5, y - 2);
-      ctx.lineTo(plant.x + 5, y + 2);
-      ctx.stroke();
-    } else {
-      for (let i = 0; i < 6; i++) {
-        const a = (i * TAU) / 6;
-        circle(
-          ctx,
-          plant.x + Math.cos(a) * 10,
-          y + Math.sin(a) * 10,
-          2,
-          "#f6a7b8",
-        );
-      }
-    }
   }
   bar(ctx, plant.x, y - kind.r - 11, 22, plant.hp, kind.hp, "#a9e67b");
 }
