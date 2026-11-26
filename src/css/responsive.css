@@ -1838,9 +1838,7 @@
   }
 
   #app
-    .game-layout:has(#battleTab.active):not(
-      :has(#bossControls:not([hidden]), .network-panel.is-open)
-    ) {
+    .game-layout:has(#battleTab.active):not(:has(#bossControls:not([hidden]))) {
     height: calc(100dvh - 16px);
     min-height: 0;
 
@@ -3371,4 +3369,149 @@
     padding: 8px;
     flex: 0 0 auto;
   }
+}
+
+/* ==========================================
+   MULTIPLAYER LOBBY — CENTERED POPUP
+   ========================================== */
+
+/* Multiplayer modal */
+#app .network-panel.is-open {
+  position: fixed;
+
+  top: 50%;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+
+  transform: translate(-50%, -50%);
+
+  width: min(800px, calc(100vw - 32px));
+  max-width: none;
+  height: auto;
+  max-height: calc(100dvh - 40px);
+
+  margin: 0;
+  padding: 20px 20px 12px;
+
+  background: #faf6fd;
+  border: 1px solid #d5bfea;
+  border-radius: 20px;
+
+  box-sizing: border-box;
+  overflow-y: auto;
+
+  box-shadow: 0 20px 60px rgba(45, 25, 75, 0.25);
+
+  z-index: 9999;
+}
+
+/* Prevent navigation from trapping the modal */
+#app:has(.network-panel.is-open) .side-nav {
+  z-index: auto;
+  isolation: auto;
+  transform: none;
+}
+/* Dim and blur the page behind the popup */
+/* Dim and blur the background behind the lobby */
+body:has(.network-panel.is-open)::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+
+  background: rgba(45, 25, 75, 0.3);
+  backdrop-filter: blur(3px);
+
+  z-index: 1000;
+}
+
+/* Prevent scrolling while the lobby is open */
+body:has(.network-panel.is-open) {
+  overflow: hidden;
+}
+
+/* Mobile adjustments */
+@media (max-width: 650px) {
+  #app .network-panel.is-open {
+    width: calc(100vw - 24px);
+    padding: 14px;
+    border-radius: 16px;
+  }
+}
+/* ==========================================
+   MULTIPLAYER — CLOSE BUTTON
+   ========================================== */
+
+#app .network-panel .network-panel-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+
+  display: grid;
+  place-items: center;
+
+  width: 30px;
+  height: 30px;
+  padding: 0;
+
+  background: #ede3f7;
+  color: #7046a3;
+  border: 1px solid #dac2f7;
+  border-radius: 50%;
+
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 2;
+
+  transition:
+    background 200ms ease,
+    color 200ms ease;
+}
+
+#app .network-panel .network-panel-close:hover {
+  background: #9070c8;
+  color: #ffffff;
+}
+
+#app .network-panel .lobby-heading {
+  padding-right: 38px;
+}
+/* Multiplayer keyboard shortcut hint */
+#app .network-panel .lobby-keyboard-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #e3d3f3;
+
+  color: #9479b3;
+  font-size: 11px;
+}
+
+/* Escape keyboard key */
+#app .network-panel .lobby-keyboard-hint kbd {
+  padding: 3px 7px;
+  background: #ede3f7;
+  border: 1px solid #dac2f7;
+  border-radius: 5px;
+
+  color: #7046a3;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* Hide keyboard hint on touch-only devices */
+@media (hover: none) and (pointer: coarse) {
+  #app .network-panel .lobby-keyboard-hint {
+    display: none;
+  }
+}
+
+#app .network-panel .lobby-status:not(:has(button:not([hidden]))) {
+  display: none;
 }

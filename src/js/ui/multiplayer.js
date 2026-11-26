@@ -139,6 +139,31 @@ export function mountMultiplayer() {
     }
   };
   $("leaveSession").onclick = () => battleService.leave();
+
+  // Close the multiplayer lobby.
+  function closeMultiplayerLobby() {
+    const panel = document.querySelector(".network-panel");
+    const toggle = $("networkToggle");
+
+    if (!panel?.classList.contains("is-open")) {
+      return;
+    }
+
+    panel.classList.remove("is-open");
+    toggle?.setAttribute("aria-expanded", "false");
+    toggle?.focus();
+  }
+
+  // Close using the X button.
+  $("closeMultiplayerBtn")?.addEventListener("click", closeMultiplayerLobby);
+
+  // Close using the Escape key.
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closeMultiplayerLobby();
+    }
+  });
+
   battleService.restore();
   controls();
 }
