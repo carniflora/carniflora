@@ -3512,7 +3512,6 @@ body:has(.network-panel.is-open) {
   font-weight: 600;
 }
 
-/* Hide keyboard hint on touch-only devices */
 @media (hover: none) and (pointer: coarse) {
   #app .network-panel .lobby-keyboard-hint {
     display: none;
