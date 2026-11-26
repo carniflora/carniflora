@@ -62,9 +62,9 @@ afterEach(() => {
 describe("loadSprites", () => {
   test("requests every sheet exactly once", async () => {
     await loadedSprites();
-    // 4 plants x 2 colours + 7 minions + 1 keep + 2 tree sheets = 18 sprites
-    expect(requested).toHaveLength(18);
-    expect(new Set(requested).size).toBe(18); // no sheet loads twice
+    // 4 plants x 2 colours + 7 minions + 1 keep + 2 tree sheets + (2 tanks x 2 status) = 22 sprites
+    expect(requested).toHaveLength(22);
+    expect(new Set(requested).size).toBe(22); // no sheet loads twice
   });
 
   test("loads player 1 and player 2 versions of each plant sheet", async () => {
@@ -94,6 +94,13 @@ describe("loadSprites", () => {
     await expect(sprites.loadSprites()).rejects.toThrow(
       /Could not load assets\/carniflora-cog-sheet16-1x\.png/,
     );
+  });
+
+  test("loads all four tank sheets", async () => {
+    await loadedSprites();
+    for (const n of ["upper", "upper-destroyed", "lower", "lower-destroyed"]) {
+      expect(requested).toContain(`assets/carniflora-tank-${n}-sheet16-1x.png`);
+    }
   });
 });
 
@@ -283,5 +290,28 @@ describe("drawTree", () => {
     expect(drawTree(ctx, { plant: 4, owner: 0 }, 0, 0, 60)).toBe(false);
     expect(drawTree(ctx, { plant: -1, owner: 0 }, 0, 0, 60)).toBe(false);
     expect(ctx.calls).toHaveLength(0);
+  });
+});
+
+// ---------------------------------------------------------------
+// drawTank
+// ---------------------------------------------------------------
+
+describe("drawTank", () => {
+  test("returns false before sprites are loaded", async () => {
+    const { drawTank } = await freshSprites();
+    expect(drawTank(fakeCtx(), { x: 0, y: 0, lane: 0, hp: 1 }, 0)).toBe(false);
+  });
+
+  test("draws a 145x52 frame over the tank box and picks the right sheet", async () => {
+    const { drawTank } = await loadedSprites();
+    const ctx = fakeCtx();
+    drawTank(ctx, { x: 1840, y: 180, lane: 0, hp: 450, animOffset: 0 }, 0);
+    drawTank(ctx, { x: 1840, y: 400, lane: 2, hp: 0, animOffset: 0 }, 0);
+    expect(ctx.calls[0][0].src).toContain("tank-upper-sheet");
+    expect(ctx.calls[0].slice(1, 9)).toEqual([
+      0, 0, 145, 52, 1803, 154, 145, 52,
+    ]);
+    expect(ctx.calls[1][0].src).toContain("tank-lower-destroyed-sheet");
   });
 });

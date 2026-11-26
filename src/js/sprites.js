@@ -13,6 +13,11 @@ const images = {};
 const enemyImages = {};
 const treeImgs = {};
 
+const TANK_W = 145;
+const TANK_H = 52;
+const TANK_SHEETS = ["upper", "upper-destroyed", "lower", "lower-destroyed"];
+const tankImages = {};
+
 function load(src) {
   return new Promise((res, rej) => {
     const img = new Image();
@@ -46,6 +51,15 @@ export async function loadSprites() {
       treeImgs[1] = await load("assets/carniflora-tree-plants-sheet4-1x.png");
       treeImgs[2] = await load(
         `assets/carniflora-tree-plants-sheet4-1x-p2-${P2_COLOUR}.png`,
+      );
+    })(),
+    (async () => {
+      await Promise.all(
+        TANK_SHEETS.map(async (n) => {
+          tankImages[n] = await load(
+            `assets/carniflora-tank-${n}-sheet16-1x.png`,
+          );
+        }),
       );
     })(),
   ]);
@@ -105,6 +119,27 @@ export function drawEnemy(ctx, e, now, size = 48) {
     size,
   );
 
+  return true;
+}
+
+// Armoured tank: 145x52 frames, drawn 1:1 so it fills the yellow box exactly.
+export function drawTank(ctx, tank, now, destroyed = tank.hp <= 0) {
+  const side = tank.lane === 0 ? "upper" : "lower";
+  const img = tankImages[destroyed ? `${side}-destroyed` : side];
+  if (!img) return false;
+
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(
+    img,
+    frameFor(tank, now) * TANK_W,
+    0,
+    TANK_W,
+    TANK_H,
+    tank.x - 37,
+    tank.y - 26,
+    TANK_W,
+    TANK_H,
+  );
   return true;
 }
 

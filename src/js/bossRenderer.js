@@ -10,7 +10,11 @@ import {
   getDistAtX,
 } from "./bossLevel.js";
 
-import { drawPlant as drawPlantSprite, drawEnemy } from "./sprites.js";
+import {
+  drawPlant as drawPlantSprite,
+  drawEnemy,
+  drawTank,
+} from "./sprites.js";
 import { BOSS_KINDS } from "./plants.js";
 
 const INK = "#e5efdc";
@@ -122,35 +126,44 @@ function drawHarvester(ctx, state) {
     ctx.lineTo(1920, b.y);
     ctx.lineTo(b.x, b.y);
     ctx.stroke();
-    ctx.fillStyle =
-      tank.flash > 0 ? "#f7eec9" : tank.hp > 0 && alive ? "#5d4d27" : "#2e382b";
-    ctx.fillRect(tank.x - 37, tank.y - 26, 145, 52);
-    ctx.strokeStyle = tank.hp > 0 && alive ? "#c6a752" : "#53604a";
-    ctx.lineWidth = 2;
-    ctx.strokeRect(tank.x - 37, tank.y - 26, 145, 52);
+    const intact = tank.hp > 0 && alive;
+    const drewTank = drawTank(ctx, tank, state.elapsed * 1000 * 0.4, !intact);
+    if (!drewTank) {
+      // fallback box while sprites load
+      ctx.fillStyle =
+        tank.flash > 0 ? "#f7eec9" : intact ? "#5d4d27" : "#2e382b";
+      ctx.fillRect(tank.x - 37, tank.y - 26, 145, 52);
+      ctx.strokeStyle = intact ? "#c6a752" : "#53604a";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(tank.x - 37, tank.y - 26, 145, 52);
+    } else if (tank.flash > 0) {
+      ctx.fillStyle = "rgba(247,238,201,0.5)"; // hit flash
+      ctx.fillRect(tank.x - 37, tank.y - 26, 145, 52);
+    }
+    const side = tank.lane === 0 ? "UPPER" : "LOWER";
     text(
       ctx,
-      `${tank.lane === 0 ? "UPPER" : "LOWER"} / ARMOUR ${tank.armour}`,
-      tank.x + 34,
-      tank.y - 8,
-      "#e8c97d",
+      intact ? `${side} / ARMOUR ${tank.armour}` : `${side} TANK`,
+      tank.x + 35,
+      tank.y - 4,
+      intact ? "#e8c97d" : "#7d8a74",
       10,
       "center",
     );
     text(
       ctx,
-      tank.hp > 0 && alive ? `${Math.ceil(tank.hp)} / ${tank.max}` : "BREACHED",
-      tank.x + 34,
-      tank.y + 12,
-      INK,
+      intact ? `${Math.ceil(tank.hp)} / ${tank.max}` : "BREACHED",
+      tank.x + 35,
+      tank.y + 11,
+      intact ? INK : "#c2d7af",
       11,
       "center",
     );
     bar(ctx, tank.x + 34, tank.y + 32, 135, tank.hp, tank.max, "#e8b04a");
   }
-  if (alive) {
-    ctx.shadowBlur = 18;
-    ctx.shadowColor = b.shielded ? "#77b8b0" : PINK;
+  if (alive && !b.shielded) {
+    ctx.shadowBlur = 14;
+    ctx.shadowColor = PINK; // glow only once the core is exposed
   }
   b.animOffset ??= 0;
   ctx.globalAlpha = alive ? 1 : 0.45;
@@ -158,10 +171,10 @@ function drawHarvester(ctx, state) {
     ctx,
     { kind: "harvester", x: b.x, y: b.y, animOffset: b.animOffset },
     state.elapsed * 1000 * 0.4,
-    150,
+    130,
   );
   ctx.globalAlpha = 1;
-  ctx.shadowBlur = 0; // was missing: the glow would leak onto everything drawn after
+  ctx.shadowBlur = 0;
   if (!drewBoss) {
     circle(
       ctx,
@@ -172,30 +185,23 @@ function drawHarvester(ctx, state) {
       b.shielded ? "#77b8b0" : PINK,
     );
   } else if (b.flash > 0) {
-    circle(ctx, b.x, b.y, 60, "rgba(255,255,255,0.35)");
+    circle(ctx, b.x, b.y, 55, "rgba(255,255,255,0.35)");
   }
   if (b.shielded && alive) {
+    ctx.globalAlpha = 0.6;
     ctx.setLineDash([6, 5]);
     circle(
       ctx,
       b.x,
       b.y,
-      85 + Math.sin(state.elapsed * 3) * 2,
+      72 + Math.sin(state.elapsed * 3) * 2,
       null,
       "#82c0b1",
     );
     ctx.setLineDash([]);
-    text(ctx, "SHIELDED", b.x, b.y + 100, "#b9e0d5", 11, "center");
+    ctx.globalAlpha = 1;
   }
-  text(
-    ctx,
-    alive ? "FURNACE CORE" : "RECLAIMED",
-    b.x,
-    b.y + 115,
-    alive ? PINK : "#a9e67b",
-    10,
-    "center",
-  );
+  if (!alive) text(ctx, "RECLAIMED", b.x, b.y + 90, "#a9e67b", 10, "center");
 }
 
 function drawDefense(ctx, t, state) {
@@ -212,8 +218,6 @@ function drawDefense(ctx, t, state) {
   } else if (t.slow > 0) {
     circle(ctx, t.x, t.y, t.r + 4, "rgba(103,149,155,0.35)");
   }
-  if (t.type === "cannon")
-    text(ctx, "CANNON", t.x, t.y - size / 2 - 4, "#d5d6bd", 10, "center");
   bar(
     ctx,
     t.x,
