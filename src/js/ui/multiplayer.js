@@ -1,7 +1,13 @@
 import { battleService } from "../battleService.js";
-import { state, normalLevel, BOSS_LEVEL } from "../state.js";
+import { state, normalLevel, saveProgress, BOSS_LEVEL } from "../state.js";
 import { build } from "../build.js";
-import { MAP_COLS, MAP_ROWS, TILE } from "../constants.js";
+import {
+  MAP_COLS,
+  MAP_ROWS,
+  TILE,
+  BOSS_CANVAS_WIDTH,
+  BOSS_CANVAS_HEIGHT,
+} from "../constants.js";
 import { session } from "./session.js";
 import { dom, resizeCanvas } from "./dom.js";
 import { setActiveTab, showPlantDetails } from "./tabs.js";
@@ -27,6 +33,29 @@ export function mountMultiplayer() {
     for (const id of ["ob", "pz", "rs"]) {
       $(id).disabled = waiting;
     }
+  }
+
+  // The room runs the boss; the browser only mirrors it into its session.
+  function syncBoss(boss) {
+    if (!boss) {
+      return;
+    }
+    const entering = session.mode !== "boss";
+    session.mode = "boss";
+    session.bossState = boss;
+    if (!entering) {
+      return;
+    }
+
+    saveProgress(BOSS_LEVEL);
+    resizeCanvas(BOSS_CANVAS_WIDTH, BOSS_CANVAS_HEIGHT);
+    $("bossControls").hidden = false;
+    $("battleTitle").textContent = "Online Boss Battle";
+    $("battleHint").textContent =
+      "Each browser controls two lanes: W/S or ↑/↓ to choose, 1-4 to deploy. Spores are shared. P pauses.";
+    showPlantMessage(
+      `Player ${session.activePlayer + 1}: choose a lane, then deploy plants.`,
+    );
   }
 
   battleService.mount({
@@ -70,6 +99,7 @@ export function mountMultiplayer() {
       if (status.textContent !== text) {
         status.textContent = text;
       }
+      syncBoss(message.snapshot.boss);
       controls();
       const stamp = `${state.phase}:${message.ready}:${message.snapshot.generation}`;
       if (overlayStamp === stamp) {

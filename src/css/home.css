@@ -136,7 +136,7 @@
 .garden-castle {
   position: absolute;
   left: 86%;
-  top: 60%;
+  top: 55%;
   width: 13%;
   transform: translate(-50%, -100%);
   text-align: center;
@@ -790,186 +790,336 @@
 }
 
 /* ==========================================
-   HOMEPAGE — FIT SCREEN WITHOUT SCROLLING
+   HOMEPAGE — SINGLE SCREEN RESPONSIVE LAYOUT
+   Desktop, laptop, iPad and smart displays
    ========================================== */
 
-@media (min-width: 900px) and (min-height: 550px) {
-  /* Overall application */
-  #app:has(#plantsTab.active) {
-    height: 100dvh;
-    min-height: 0;
-    padding: 8px 12px;
-    box-sizing: border-box;
+@media (min-width: 651px) {
+  /* Full viewport */
 
+  #app:has(#plantsTab.active) {
     display: flex;
     flex-direction: column;
+    width: 100%;
+    height: 100dvh;
+    min-height: 0;
+    padding: 8px;
+    box-sizing: border-box;
+    justify-content: flex-start;
   }
 
-  /* Main homepage layout */
+  /* Main application layout */
+
   #app .game-layout:has(#plantsTab.active) {
-    flex: 1;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+
+    width: 100%;
     height: auto;
     min-height: 0;
-    width: 100%;
+    min-width: 0;
+
+    margin: 0;
     padding: 0;
-    margin: 0 auto;
-    box-sizing: border-box;
+    gap: 6px;
+
+    align-items: stretch;
+    justify-content: flex-start;
   }
 
-  #app:has(#plantsTab.active) .main-panel,
-  #plantsTab.active {
-    height: 100%;
-    min-height: 0;
+  #app:has(#plantsTab.active) .main-panel {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+
     width: 100%;
+    height: auto;
+    min-height: 0;
+    min-width: 0;
+
     padding: 0;
     margin: 0;
+    background: transparent;
+    border: none;
+  }
+
+  #plantsTab.active {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+
+    width: 100%;
+    height: auto;
+    min-height: 0;
+  }
+
+  #app:has(#plantsTab.active) #plantDetailsPanel {
+    display: none;
   }
 
   /* Main garden container */
+
   #plantsTab .living-garden {
     display: flex;
     flex-direction: column;
+    flex: 1 1 0;
 
-    width: min(1200px, 100%);
-    height: 100%;
+    width: 100%;
+    max-width: 1400px;
+    height: auto;
     min-height: 0;
 
     margin: 0 auto;
-    padding: clamp(10px, 2vh, 22px);
-    gap: 8px;
+    padding: clamp(8px, 1.5vh, 22px);
+    gap: clamp(5px, 1vh, 14px);
 
     box-sizing: border-box;
+    justify-content: flex-start;
   }
 
-  /* Homepage heading */
+  /* Heading */
+
   #plantsTab .garden-heading {
-    flex-shrink: 0;
+    flex: 0 0 auto;
     margin: 0;
     padding: 0;
-    gap: 4px;
   }
 
   #plantsTab .garden-eyebrow {
-    font-size: 10px;
-    letter-spacing: 1.5px;
+    font-size: clamp(9px, 1.2vh, 14px);
   }
 
   #plantsTab .garden-heading h2 {
-    font-size: clamp(26px, 5vh, 46px);
+    font-size: clamp(24px, 4vh, 48px);
     line-height: 1.15;
     margin: 4px 0;
   }
 
   #plantsTab .garden-heading p {
-    font-size: 12px;
+    font-size: clamp(10px, 1.5vh, 16px);
     line-height: 1.3;
-    margin: 4px 0;
+    margin: 0;
   }
 
-  /* Garden landscape */
+  /* Garden expands into remaining space */
+
   #plantsTab .garden-scene {
     position: relative;
-
     flex: 1 1 0;
+
     width: 100%;
     height: auto;
     min-height: 0;
-    max-height: 340px;
+    max-height: none;
 
     aspect-ratio: auto;
     margin: 0;
 
+    container-type: size;
     overflow: hidden;
   }
 
   #plantsTab .garden-landscape {
+    display: block;
     width: 100%;
     height: 100%;
   }
 
-  /* Homepage action buttons */
+  /* Responsive plants and castle */
+
+  #plantsTab .garden-character {
+    width: min(11%, 30cqh);
+  }
+
+  #plantsTab .garden-castle {
+    width: min(13%, 33cqh);
+    top: 60%;
+  }
+
+  #plantsTab .garden-castle img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* Garden labels */
+
+  #plantsTab .garden-status,
+  #plantsTab .garden-boss-status {
+    font-size: clamp(8px, 1.2vh, 12px);
+    padding: 3px 7px;
+  }
+
+  #plantsTab .garden-plant-name,
+  #plantsTab .garden-boss-name {
+    font-size: clamp(9px, 1.3vh, 14px);
+    padding: 3px 8px;
+  }
+
+  #plantsTab .garden-level,
+  #plantsTab .garden-boss-icon {
+    top: calc(100% + 24px);
+    width: clamp(16px, 2.5vh, 24px);
+    height: clamp(16px, 2.5vh, 24px);
+    font-size: 10px;
+  }
+
+  /* Adventure buttons */
+
   #plantsTab .garden-actions {
-    flex-shrink: 0;
-    margin: 0;
-    padding: 6px;
-    gap: 8px;
-  }
+    flex: 0 0 auto;
+    grid-template-columns: 2fr 1fr 1fr;
 
-  #plantsTab .garden-actions button {
-    min-height: 36px;
-    padding: 8px 10px;
-    font-size: 12px;
-  }
-
-  /* Meet Your Plant Army */
-  #plantsTab .garden-collection {
-    flex-shrink: 0;
     margin: 0;
-    padding: 10px 12px;
+    padding: 5px;
     gap: 6px;
   }
 
+  #plantsTab .garden-actions button {
+    min-width: 0;
+    min-height: clamp(34px, 5vh, 54px);
+    padding: 6px;
+    font-size: clamp(11px, 1.4vh, 15px);
+    white-space: normal;
+  }
+
+  /* Plant collection */
+
+  #plantsTab .garden-collection {
+    flex: 0 0 auto;
+    min-width: 0;
+    margin: 0;
+    padding: clamp(6px, 1.2vh, 18px);
+  }
+
   #plantsTab .garden-collection h3 {
-    font-size: clamp(18px, 3vh, 24px);
-    line-height: 1.2;
-    margin: 0 0 4px;
+    font-size: clamp(18px, 2.8vh, 32px);
+    line-height: 1.15;
+    margin: 0;
   }
 
   #plantsTab .garden-collection > p {
-    font-size: 11px;
-    margin: 3px 0 8px;
+    font-size: clamp(10px, 1.3vh, 14px);
+    margin: 3px 0 6px;
   }
 
-  /* Plant collection grid */
   #plantsTab .garden-plant-grid {
-    display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 8px;
-    margin: 0;
+    gap: clamp(5px, 1vh, 12px);
   }
 
-  #plantsTab .garden-plant-grid > button {
-    height: auto;
-    min-height: 0;
-    padding: 8px;
+  #plantsTab .garden-plant-card {
+    min-width: 0;
+    padding: clamp(5px, 1vh, 14px);
     gap: 4px;
   }
 
-  #plantsTab .garden-plant-grid img {
-    width: clamp(35px, 7vh, 65px);
-    height: clamp(35px, 7vh, 65px);
+  #plantsTab .garden-plant-card img {
+    width: clamp(35px, 7vh, 100px);
+    height: clamp(40px, 8vh, 110px);
     object-fit: contain;
   }
 
-  #plantsTab .garden-plant-grid strong {
-    font-size: 12px;
+  #plantsTab .garden-plant-card strong {
+    font-size: clamp(11px, 1.5vh, 17px);
   }
 
-  #plantsTab .garden-plant-grid span {
-    font-size: 10px;
+  #plantsTab .garden-plant-card span {
+    font-size: clamp(9px, 1.2vh, 13px);
+    text-align: center;
+    overflow-wrap: anywhere;
   }
 
-  /* Selected plant information */
+  /* Selected plant details */
+
   #plantsTab .garden-plant-details {
-    margin: 8px 0 0;
-    padding: 8px;
-    min-height: 0;
+    margin-top: 6px;
+    padding: clamp(5px, 1vh, 14px);
   }
 
   #plantsTab .garden-plant-details strong {
-    font-size: 12px;
+    font-size: clamp(11px, 1.5vh, 16px);
   }
 
   #plantsTab .garden-plant-details p {
-    font-size: 11px;
-    margin: 4px 0 0;
+    font-size: clamp(10px, 1.3vh, 14px);
+    margin: 3px 0 0;
+    line-height: 1.3;
   }
 
-  /* Homepage footer */
+  /* Footer */
+
   #plantsTab .garden-footer {
-    flex-shrink: 0;
+    flex: 0 0 auto;
     margin: 0;
-    padding: 4px 0;
-    font-size: 10px;
+    padding: 3px 0;
+    font-size: clamp(9px, 1.1vh, 12px);
+  }
+
+  /* Existing navigation */
+
+  #app:has(#plantsTab.active) .side-nav {
+    flex-shrink: 0;
+    order: 2;
+  }
+
+  /* Achievements popup */
+
+  #plantsTab .garden-achievements-dialog {
+    max-height: calc(100dvh - 24px);
+    overflow-y: auto;
+  }
+}
+
+/* ==========================================
+   EXTRA SHORT SCREENS
+   ========================================== */
+
+@media (min-width: 651px) and (max-height: 650px) {
+  #plantsTab .living-garden {
+    padding: 6px;
+    gap: 4px;
+  }
+
+  #plantsTab .garden-heading h2 {
+    font-size: 24px;
+    margin: 2px 0;
+  }
+
+  #plantsTab .garden-actions button {
+    min-height: 32px;
+    padding: 4px;
+  }
+
+  #plantsTab .garden-collection {
+    padding: 5px;
+  }
+
+  #plantsTab .garden-plant-card {
+    padding: 4px;
+    gap: 2px;
+  }
+
+  #plantsTab .garden-plant-card img {
+    width: 35px;
+    height: 40px;
+  }
+
+  #plantsTab .garden-plant-details {
+    padding: 4px;
+    margin-top: 4px;
+  }
+
+  #plantsTab .garden-footer {
+    padding: 1px 0;
+  }
+
+  #plantsTab .garden-level,
+  #plantsTab .garden-boss-icon {
+    top: calc(100% + 19px);
+    width: 15px;
+    height: 15px;
+    font-size: 8px;
   }
 }

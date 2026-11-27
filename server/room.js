@@ -126,9 +126,7 @@ export function createRoom(level, now = Date.now(), creatorToken = null) {
     }
     p.socket = null;
     p.deadline = time + GRACE_MS;
-    if (battle.state.phase === "play") {
-      battle.state.phase = "pause";
-    }
+    battle.command({ type: Action.PAUSE }, 0);
     broadcast();
   }
 

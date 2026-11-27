@@ -1,11 +1,11 @@
 import { test, describe, beforeEach, expect } from "vitest";
-import { createState } from "../src/js/state.js";
+import { createState, maxSpores } from "../src/js/state.js";
 import { createEffects } from "../src/js/effects.js";
 import { build } from "../src/js/build.js";
 import { update } from "../src/js/combat.js";
 import { pxPosOf } from "../src/js/levels.js";
 import { PLANTS } from "../src/js/plants.js";
-import { LEVEL_TIME_LIMIT } from "../src/js/constants.js";
+import { LEVEL_TIME_LIMIT, SPORES_PER_KILL } from "../src/js/constants.js";
 
 let state, effects;
 
@@ -191,6 +191,45 @@ describe("US 4.2/4.3 — buffs target a plant type in combat", () => {
     const baseA = PLANTS[a.plant].dmg;
     const baseB = PLANTS[b.plant].dmg;
     expect(dmgA / baseA / (dmgB / baseB)).toBeCloseTo(1.5, 5);
+  });
+});
+
+describe("kill rewards", () => {
+  // A plant that fires this tick and kills the enemy in one hit.
+  function killOne(enemyExtra = {}) {
+    const p = addPlant(5);
+    p.cooldown = 0;
+    const e = addEnemy(p, { hp: 1, dmg: 0, cooldown: 99, ...enemyExtra });
+    state.spores = 0;
+    update(0.01, state, effects);
+    return e;
+  }
+
+  test("killing an enemy gives spores", () => {
+    const e = killOne();
+    expect(e.hp).toBeLessThanOrEqual(0);
+    expect(state.spores).toBeGreaterThan(SPORES_PER_KILL - 1);
+  });
+
+  test("a kill is rewarded once", () => {
+    killOne();
+    const after = state.spores;
+    update(0.01, state, effects);
+    expect(state.spores).toBeCloseTo(after + 6 * 0.01, 5);
+  });
+
+  test("rewards do not exceed the spore cap", () => {
+    const p = addPlant(5);
+    p.cooldown = 0;
+    addEnemy(p, { hp: 1, dmg: 0, cooldown: 99 });
+    state.spores = maxSpores(state);
+    update(0.01, state, effects);
+    expect(state.spores).toBe(maxSpores(state));
+  });
+
+  test("a surviving enemy gives nothing", () => {
+    killOne({ hp: 100000, max: 100000 });
+    expect(state.spores).toBeCloseTo(6 * 0.01, 5);
   });
 });
 

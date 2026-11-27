@@ -2,7 +2,7 @@ import { state as localState, maxSpores } from "./state.js";
 import { ENEMY_KINDS, PLANTS } from "./plants.js";
 import { effects as localEffects } from "./effects.js";
 import { pxPosOf } from "./levels.js";
-import { PLANT_BLOCK, LEVEL_TIME_LIMIT } from "./constants.js";
+import { PLANT_BLOCK, LEVEL_TIME_LIMIT, SPORES_PER_KILL } from "./constants.js";
 import { updateTowers } from "./towers.js";
 // US 6.4 — per-plant damage cue (Part 1) and plant health display (Part 2).
 import { noteDamage, advanceCue } from "./damageCue.js";
@@ -148,6 +148,14 @@ export function update(deltaTime, state = localState, effects = localEffects) {
       }
     }
   }
+
+  // Reward each minion killed this tick. `alive` was filtered at the start
+  // of the tick, so every kill is counted once. The keep ends the level.
+  const kills = alive.filter((e) => !e.keep && e.hp <= 0).length;
+  state.spores = Math.min(
+    maxSpores(state),
+    state.spores + kills * SPORES_PER_KILL,
+  );
 
   // =========================
   // TOWER ATTACKS

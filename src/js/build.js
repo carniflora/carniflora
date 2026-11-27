@@ -19,11 +19,12 @@ export function build(
   state.spores = maxSpores(state);
   state.elapsed = 0;
 
-  // create the enemy tower at the end of all paths
-  const firstPath = state.map.paths[0];
+  // Get the actual goal tile shared by all paths
+  const [goalC, goalR] = state.map.goal;
 
-  // grab coordinates of the last cell
-  const [ex, ey] = pxPosOf(firstPath, firstPath.pathLength);
+  // Position the Keep at the centre of the goal tile
+  const ex = (goalC + 0.5) * TILE;
+  const ey = (goalR + 0.5) * TILE;
 
   // create the enemy tower
   state.keep = {
