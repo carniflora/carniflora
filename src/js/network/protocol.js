@@ -32,6 +32,7 @@ export const HTTP = {
 export const Action = {
   PLACE: "place",
   DEPLOY: "deploy",
+  LANE: "lane",
   START: "start",
   PAUSE: "pause",
   RESUME: "resume",

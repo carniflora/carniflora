@@ -261,10 +261,14 @@ export function setPlayers(n) {
 }
 
 export function setBossLane(lane, player = session.activePlayer) {
-  if (
-    session.mode !== "boss" ||
-    !selectBossLane(session.bossState, lane, player)
-  ) {
+  if (session.mode !== "boss") {
+    return;
+  }
+  if (battleService.online()) {
+    battleService.submit({ type: Action.LANE, lane });
+    return;
+  }
+  if (!selectBossLane(session.bossState, lane, player)) {
     return;
   }
   showPlantMessage(`Player ${player + 1} selected lane ${lane + 1}.`);
@@ -273,6 +277,12 @@ export function setBossLane(lane, player = session.activePlayer) {
 
 export function primaryAction() {
   if (battleService.online()) {
+    // The boss is the last stage: a win ends the session and resets progress.
+    if (session.mode === "boss" && activePhase() === "won") {
+      saveProgress(1);
+      battleService.leave();
+      return;
+    }
     const type =
       activePhase() === "menu"
         ? Action.START
