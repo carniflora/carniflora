@@ -13,4 +13,7 @@ export const TOWER_LIFETIME = 30;
 
 // for level progression
 export const LAST_REGULAR_LEVEL = 3;
+export const BOSS_CANVAS_WIDTH = 960;
+export const BOSS_CANVAS_HEIGHT = 540;
 export const LEVEL_TIME_LIMIT = 300; // seconds before a regular level is lost
+export const SPORES_PER_KILL = 10; // spores gained per defeated minion
