@@ -9,8 +9,11 @@
 // advance calls.
 
 // Plant-only bar size.
-export const HEALTH_BAR_W = 32;
-export const HEALTH_BAR_H = 6;
+export const HEALTH_BAR_W = 28;
+export const HEALTH_BAR_H = 5;
+
+// 1px dark border around the bar so two touching bars read as separate.
+export const HEALTH_BAR_BORDER = "#0b1710";
 
 // Colours: green above 50%, amber from 30% up to 50%, red at 30% or below.
 // The green matches the plant definition colour so it reads as full health.
@@ -33,7 +36,9 @@ export const GHOST_EASE = 100;
 export const HIT_SHAKE = 0.22;
 // The pulse ring's gentle radius breathing when a plant is low on health.
 export const CRING_RADIUS = 3;
-export const CRING_PERIOD = 0.9;
+// Slow pulse period in seconds (renderers pass `now` in ms; the ring uses
+// (now/1000) * (TAU / CRING_PERIOD), i.e. one full pulse per CRING_PERIOD s).
+export const CRING_PERIOD = 2.4;
 
 // Colour for a bar given the fraction of health remaining (0..1).
 export function healthColor(ratio) {
@@ -55,20 +60,35 @@ export function isCritical(ratio) {
 //     a hit, then shrinks toward the real hp, giving the white "lost" chip.
 //     A heal snaps it up so a recovering plant shows no white section.
 //   - shake: a hit shake timer the renderer decays into a ±3px jitter.
+//   - prevHp: last frame's hp, kept so a fresh or deepening loss is detected.
+//
+// Repeat-hit rule: when hp < ghost AND hp < prevHp this frame (a fresh or
+// deepening loss), ghostHold is re-armed to GHOST_HOLD — even if a previous
+// ghost already fully shrank — so every new hit gets its own hold before the
+// ghost shrinks. Otherwise ghostHold counts down by dt; once ghostHold <= 0
+// the ghost eases down by GHOST_EASE*dt toward hp. Healing or catching up
+// snaps the ghost up and clears the hold.
 export function advancePlantFx(plant, dt) {
   const hp = plant.hp;
   if (plant.ghost === undefined) plant.ghost = hp;
+  const prevHp = plant.prevHp ?? hp;
   if (hp >= plant.ghost) {
     plant.ghost = hp; // healed or caught up — snap up, no white chip
     plant.ghostHold = 0;
   } else {
-    // still showing the old, higher reading: hold it, then ease it down.
-    plant.ghostHold = (plant.ghostHold ?? GHOST_HOLD) - dt;
+    // still showing the old, higher reading...
+    if (hp < prevHp) {
+      plant.ghostHold = GHOST_HOLD; // fresh/deepening loss re-arms the hold
+    } else {
+      plant.ghostHold = (plant.ghostHold ?? GHOST_HOLD) - dt;
+    }
+    // ...hold it, then ease it down once the hold ends.
     if (plant.ghostHold <= 0) {
       plant.ghost = Math.max(hp, plant.ghost - GHOST_EASE * dt);
       plant.ghostHold = 0;
     }
   }
+  plant.prevHp = hp; // remember for next frame's deepening-loss check
 
   if (plant.shake > 0) plant.shake = Math.max(0, plant.shake - dt);
 }

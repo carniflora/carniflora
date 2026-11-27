@@ -201,6 +201,19 @@ export function draw() {
         c.arc(p.x, p.y, k.radius * 0.45, 0, 7);
         c.fill();
       },
+      // BUG 3 — shape-masked flash: silhouette of the same sprite (or fallback
+      // circle) drawn for `tintDraw`; no bob here, so `spriteY` is p.y.
+      tintDraw: (off, ox, oy, size) => {
+        const cx = ox + size / 2;
+        const cy = oy + size / 2;
+        if (drawPlant(off, { ...p, x: cx, y: cy }, now, size)) return;
+        off.fillStyle = k.col; // fallback circle = the shape, tinted
+        off.beginPath();
+        off.arc(cx, cy, k.radius, 0, 7);
+        off.fill();
+      },
+      spriteSize: SPRITE_SIZE,
+      spriteY: p.y,
     });
 
     // active effect icons float above the plant (US 6.5) — kept in fixed UI

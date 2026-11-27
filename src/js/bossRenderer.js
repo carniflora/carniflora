@@ -20,6 +20,7 @@ import { reducedMotion, drawPlantWithFx } from "./plantFx.js";
 import { drawTerrain, strokeTrail } from "./terrainRenderer.js";
 
 const PANEL = "#fffaff";
+const BOSS_SPRITE_SIZE = 44; // boss sprite box size (drawPlantSprite + flash mask)
 const PURPLE = "#7046a3";
 const SUBTLE = "#63566e";
 const WARNING = "#865d1e";
@@ -255,11 +256,31 @@ function drawPlant(ctx, plant, elapsed, reduced) {
         c,
         { ...plant, y },
         elapsed * 1000 * 0.4,
-        44,
+        BOSS_SPRITE_SIZE,
       );
       // fallback shapes while sprites are still loading
       if (!drew) circle(c, plant.x, y, kind.r, kind.col);
     },
+    // BUG 3 — shape-masked flash: silhouette of the same sprite (or fallback
+    // circle); `spriteY` is the BOBBED centre-y so the flash follows the bob.
+    tintDraw: (off, ox, oy, size) => {
+      const cx = ox + size / 2;
+      const cy = oy + size / 2;
+      const drew = drawPlantSprite(
+        off,
+        { ...plant, x: cx, y: cy },
+        elapsed * 1000 * 0.4,
+        size,
+      );
+      if (!drew) {
+        off.fillStyle = kind.col; // fallback circle = the shape, tinted
+        off.beginPath();
+        off.arc(cx, cy, kind.r, 0, TAU);
+        off.fill();
+      }
+    },
+    spriteSize: BOSS_SPRITE_SIZE,
+    spriteY: y, // bobbed y (draw-only); plant.y in game logic is unchanged
   });
 }
 

@@ -6,15 +6,16 @@ import {
   HIT_SHAKE,
   HEALTH_BAR_W,
   HEALTH_BAR_H,
+  GHOST_HOLD,
   shakeOffset,
 } from "../src/js/plantHealth.js";
 
 // US 6.4 Part 2 — the plant-only health display (separately droppable).
 // These are the pure, DOM-free helpers that back the renderer.
 describe("US 6.4 Part 2 — plant health display logic", () => {
-  it("uses a fixed 32x6 bar for plants", () => {
-    expect(HEALTH_BAR_W).toBe(32);
-    expect(HEALTH_BAR_H).toBe(6);
+  it("uses a fixed 28x5 bar for plants", () => {
+    expect(HEALTH_BAR_W).toBe(28);
+    expect(HEALTH_BAR_H).toBe(5);
   });
 
   it("colours bars green above 50%, amber to 30%, red at 30% or less", () => {
@@ -42,6 +43,50 @@ describe("US 6.4 Part 2 — plant health display logic", () => {
     expect(p.ghost).toBeGreaterThan(p.hp); // still showing the old reading
     advancePlantFx(p, 5); // enough time to ease away
     expect(p.ghost).toBe(p.hp); // ghost has shrunk to real HP
+  });
+
+  it("holds a fresh loss for GHOST_HOLD before the ghost starts shrinking", () => {
+    const p = { hp: 100 };
+    advancePlantFx(p, 0); // ghost initialised at full HP
+    p.hp = 40; // lose 60 HP
+    advancePlantFx(p, 0.05); // hit frame: hold is armed
+    expect(p.ghostHold).toBeGreaterThan(0);
+    const held = p.ghost;
+    // no shrink while inside the hold...
+    advancePlantFx(p, GHOST_HOLD - 0.1);
+    expect(p.ghost).toBe(held);
+    // ...then it eases down.
+    advancePlantFx(p, 0.2);
+    expect(p.ghost).toBeLessThan(held);
+  });
+
+  // Repeat-hit rule: a fresh or deepening loss re-arms the hold. When a second
+  // hit lands after the first ghost has fully shrunk back to hp, the ghost
+  // shows the pre-hit reading again and stays above hp for a full GHOST_HOLD
+  // before shrinking; it is NOT shrunk immediately (ghostHold is no longer 0).
+  it("re-arms the ghost hold on a second hit after the first ghost fully shrank", () => {
+    const p = { hp: 100 };
+    advancePlantFx(p, 0); // ghost = 100
+    p.hp = 90; // first hit
+    advancePlantFx(p, 0.05); // hold armed
+    // let the first ghost fully shrink back to hp
+    advancePlantFx(p, GHOST_HOLD + 1);
+    advancePlantFx(p, 1);
+    expect(p.ghost).toBe(90); // ghost caught up; hold cleared
+
+    p.hp = 70; // second hit after the first ghost has fully shrunk
+    advancePlantFx(p, 0.05);
+    const rearmed = p.ghost;
+    expect(p.ghost).toBe(90); // white chip shown again at the old reading
+    expect(p.ghost).toBeGreaterThan(p.hp);
+    expect(p.ghostHold).toBeGreaterThan(0); // hold re-armed, not 0
+
+    // ghost stays above hp for GHOST_HOLD, then shrinks
+    advancePlantFx(p, GHOST_HOLD - 0.1); // inside the re-armed hold
+    expect(p.ghost).toBe(rearmed); // no shrink yet
+    advancePlantFx(p, 0.2); // hold now expired
+    expect(p.ghost).toBeLessThan(rearmed); // shrinking toward hp
+    expect(p.ghost).toBeGreaterThanOrEqual(p.hp);
   });
 
   it("snaps the ghost up when healed so a recovering plant shows no white chip", () => {
