@@ -4,6 +4,7 @@ import {
   isCritical,
   advancePlantFx,
   HIT_SHAKE,
+  HIT_SHAKE_PX,
   HEALTH_BAR_W,
   HEALTH_BAR_H,
   GHOST_HOLD,
@@ -107,9 +108,43 @@ describe("US 6.4 Part 2 — plant health display logic", () => {
     expect(p.shake).toBe(0);
   });
 
-  it("returns no shake under reduced motion or when the plant is not shaking", () => {
-    expect(shakeOffset({ shake: 1 }, true)).toBe(0);
-    expect(shakeOffset({ shake: 0 }, false)).toBe(0);
-    expect(shakeOffset({ shake: 0.5 }, false)).toBeLessThanOrEqual(3);
+  // The magnitude is pinned with a controllable random source so exact offsets
+  // are testable: full timer => ±HIT_SHAKE_PX, half => ±HIT_SHAKE_PX/2, zero => 0.
+  it("pins the shake magnitude with a controllable random source", () => {
+    const max = HIT_SHAKE_PX; // 3px
+    const full = { shake: HIT_SHAKE };
+    const half = { shake: HIT_SHAKE / 2 };
+    const none = { shake: 0 };
+    // full strength: the extremes are exactly ±HIT_SHAKE_PX
+    expect(shakeOffset(full, false, () => 1)).toBeCloseTo(max, 6);
+    expect(shakeOffset(full, false, () => 0)).toBeCloseTo(-max, 6);
+    expect(shakeOffset(full, false, () => 0.5)).toBe(0); // mid random is centred
+    // half the timer fades linearly toward the cap
+    expect(shakeOffset(half, false, () => 1)).toBeCloseTo(max / 2, 6);
+    expect(shakeOffset(half, false, () => 0)).toBeCloseTo(-max / 2, 6);
+    // a never-shaking plant never moves
+    expect(shakeOffset(none, false, () => 1)).toBe(0);
+    expect(shakeOffset(none, false, () => 0.5)).toBe(0);
+  });
+
+  // Upper limit is exactly HIT_SHAKE_PX at a full hit; an over-driven timer is
+  // clamped so it can never exceed the cap in either direction.
+  it("caps the magnitude at HIT_SHAKE_PX (timer ratio clamped to [0,1])", () => {
+    const over = { shake: HIT_SHAKE * 10 }; // a timer far past its own limit
+    expect(shakeOffset(over, false, () => 1)).toBeCloseTo(HIT_SHAKE_PX, 6);
+    expect(shakeOffset(over, false, () => 0)).toBeCloseTo(-HIT_SHAKE_PX, 6);
+    // no random draw can exceed the cap in magnitude
+    for (let i = 0; i < 300; i++) {
+      const o = shakeOffset(over, false, () => Math.random());
+      expect(Math.abs(o)).toBeLessThanOrEqual(HIT_SHAKE_PX + 1e-9);
+    }
+  });
+
+  it("returns 0 for reduced motion, or missing / zero / negative shake", () => {
+    expect(shakeOffset({ shake: 1 }, true, () => 1)).toBe(0); // reduced motion
+    expect(shakeOffset({}, false, () => 1)).toBe(0); // shake missing
+    expect(shakeOffset({ shake: 0 }, false, () => 1)).toBe(0); // zero
+    expect(shakeOffset({ shake: -5 }, false, () => 1)).toBe(0); // negative
+    expect(shakeOffset({ shake: 2 }, true)).toBe(0); // reduced motion wins
   });
 });

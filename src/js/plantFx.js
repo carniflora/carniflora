@@ -26,7 +26,7 @@ import {
 
 const TAU = Math.PI * 2;
 const REDUCED_QUERY = "(prefers-reduced-motion: reduce)";
-const FLASH_TINT_MAX = 0.6; // tint opacity at the start of a flash
+const FLASH_TINT_MAX = 0.35; // red tint at flash start, kept low so the face shows through
 // BUG 3 — shape-masked tint: recolour the plant's own sprite silhouette.
 const FLASH_RED = "rgba(255,45,45,1)"; // red silhouette fill on the offscreen
 const HALO_WHITE = "#ffffff"; // white halo silhouette fill on the offscreen
@@ -99,7 +99,9 @@ export function drawDamageCue(
   const paint = tintDraw ?? flatCircleTint(radius); // shape source
 
   // Shape-masked silhouettes; null when no offscreen 2D canvas (headless).
-  const halo = buildSilhouette(size, paint, HALO_WHITE, HALO_SPREAD);
+  // The halo is a true OUTLINE (a ring around the plant), not a fill that
+  // would paint over the face; the red core tints the sprite at low opacity.
+  const halo = buildHaloRing(size, paint, HALO_WHITE, HALO_SPREAD);
   const core = buildSilhouette(size, paint, FLASH_RED, 0);
 
   ctx.save();
@@ -165,6 +167,31 @@ function buildSilhouette(size, paint, color, spread) {
   off.ctx.globalCompositeOperation = "source-in";
   off.ctx.fillStyle = color;
   off.ctx.fillRect(0, 0, box, box);
+  return { canvas: off.canvas, ctx: off.ctx, spread };
+}
+
+// Build the white OUTLINE: the dilated silhouette recoloured `color`, with the
+// sprite's own (undilated) silhouette punched out via `destination-out`, so the
+// ring sits *around* the plant instead of filling over its face. Returns null
+// when no offscreen 2D canvas is available (headless), so the caller draws flat.
+function buildHaloRing(size, paint, color, spread) {
+  const pad = FLASH_PAD + spread; // room for padding + dilation
+  const box = size + pad * 2;
+  const off = makeOffscreenCanvas(box);
+  if (!off) return null;
+
+  // 1) dilated silhouette in its natural colour, then recoloured `color`.
+  for (const [dx, dy] of DILATE_OFFSETS)
+    paint(off.ctx, pad + dx * spread, pad + dy * spread, size);
+  off.ctx.globalCompositeOperation = "source-in";
+  off.ctx.fillStyle = color;
+  off.ctx.fillRect(0, 0, box, box);
+
+  // 2) carve the sprite's own silhouette out of the middle -> a ring, not a
+  //    fill. `paint` at the undilated position erases exactly where the sprite
+  //    is, so a thin ring of `color` remains around it.
+  off.ctx.globalCompositeOperation = "destination-out";
+  paint(off.ctx, pad, pad, size);
   return { canvas: off.canvas, ctx: off.ctx, spread };
 }
 

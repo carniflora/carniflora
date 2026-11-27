@@ -481,7 +481,7 @@ function offscreenCalls(canvas, name) {
   return canvas.ctx.calls.filter((c) => c.name === name);
 }
 
-const FLASH_TINT_MAX = 0.6; // red tint opacity at the start of a flash
+const FLASH_TINT_MAX = 0.35; // red tint at flash start; must match plantFx.js (<0.5 so the face reads)
 const RED_SILHOUETTE = "rgba(255,45,45,1)";
 const HALO_WHITE = "#ffffff";
 
@@ -523,7 +523,10 @@ describe("BUG 3 — shape-masked tint flash, no disc overlay", () => {
       (c) => c.style.fillStyle === HALO_WHITE,
     );
     expect(whiteFills.length).toBe(1);
-    expect(halo.ctx.globalCompositeOperation).toBe("source-in");
+    // BUG 1: the white halo is now a ring — after the source-in recolor it is
+    // punched out with destination-out, while the red core stays a solid fill.
+    expect(core.ctx.globalCompositeOperation).toBe("source-in");
+    expect(halo.ctx.globalCompositeOperation).toBe("destination-out");
 
     // blit order on the real canvas: white halo first (behind), red tint on top
     const blits = calls(list, "drawImage");
@@ -616,5 +619,59 @@ describe("BUG 3 — shape-masked tint flash, no disc overlay", () => {
       );
     };
     expect(sample(1000)).toBe(sample(1900)); // still ring under reduced motion
+  });
+});
+
+// ---------------------------------------------------------------
+// BUG 1 — hit flash is a true outline, not a fill that hides the face
+// ---------------------------------------------------------------
+
+describe("BUG 1 — hit flash is a true outline; face stays visible", () => {
+  const k = PLANTS[0];
+
+  // The white halo must carve the sprite's own silhouette out of it
+  // (destination-out) so it becomes a ring *around* the plant, not a fill that
+  // paints over the face.
+  test("the white halo punches the sprite out (destination-out) to form a ring", () => {
+    const created = stubDocument();
+    const ctx = recordingCtx();
+    drawOnce(ctx, plantOn(k, 0.5), k, { tintDraw: spriteTint() });
+    const [halo] = created;
+    const gco = halo.ctx.calls.map((c) => c.style.globalCompositeOperation);
+    expect(gco.includes("source-in")).toBe(true); // recoloured white first
+    expect(gco.includes("destination-out")).toBe(true); // then punched out
+    expect(gco.at(-1)).toBe("destination-out"); // the punch is the last op
+    const idxSourceIn = gco.lastIndexOf("source-in");
+    const idxDestOut = gco.indexOf("destination-out");
+    expect(idxDestOut).toBeGreaterThan(idxSourceIn); // the ring comes after recolor
+  });
+
+  // The fallback shape (a not-yet-loaded sprite) is outlined the same way.
+  test("the fallback circle is also outlined, not overwritten by a fill", () => {
+    const created = stubDocument();
+    const ctx = recordingCtx();
+    drawOnce(ctx, plantOn(k, 0.5), k, {
+      tintDraw: fallbackCircleTint(k.radius),
+    });
+    const [halo] = created;
+    const gco = halo.ctx.calls.map((c) => c.style.globalCompositeOperation);
+    expect(gco.at(-1)).toBe("destination-out");
+  });
+
+  // With the ring in place the only thing over the face is the red core; its
+  // opacity must stay low (< 0.5) so the face still reads at the start.
+  test("the red core opacity is low enough that the face still reads (< 0.5)", () => {
+    const created = stubDocument();
+    const ctx = recordingCtx();
+    const list = drawOnce(ctx, plantOn(k, 0.5), k, { tintDraw: spriteTint() });
+    const core = created[1]; // the red core is the 2nd offscreen buffer
+    const redFills = offscreenCalls(core, "fillRect").filter(
+      (c) => c.style.fillStyle === RED_SILHOUETTE,
+    );
+    expect(redFills.length).toBe(1);
+    // the red core blit uses globalAlpha = flashAlpha * FLASH_TINT_MAX
+    const coreBlit = calls(list, "drawImage").at(-1);
+    expect(coreBlit.style.globalAlpha).toBeGreaterThan(0);
+    expect(coreBlit.style.globalAlpha).toBeLessThan(0.5); // face shows through
   });
 });

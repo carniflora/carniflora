@@ -103,11 +103,16 @@ export function hitShake(plant) {
 // in the game logic; this only offsets the canvas draw.
 export const HIT_SHAKE_PX = 3;
 
-// Draw-only jitter for a hit: 0 when the plant is not shaking or when the user
-// has asked for reduced motion, otherwise a small decaying offset in the range
-// [-HIT_SHAKE_PX, +HIT_SHAKE_PX]. Kept out of the sim so a hit never nudges a
-// plant's real position.
-export function shakeOffset(plant, reduced) {
-  if (reduced || plant.shake <= 0) return 0;
-  return (Math.random() - 0.5) * 2 * plant.shake * HIT_SHAKE_PX;
+// Draw-only jitter for a hit: 0 when reduced motion is on or the plant is not
+// shaking, otherwise a small decaying offset. The *magnitude* starts at
+// HIT_SHAKE_PX for a fresh hit and fades with plant.shake / HIT_SHAKE, clamped
+// to [0,1] so a full hit never exceeds it. `random` is injectable (defaults to
+// Math.random) so tests can pin exact offsets. Kept out of the sim so a hit
+// never nudges a plant's real position.
+export function shakeOffset(plant, reduced, random = Math.random) {
+  if (reduced) return 0; // user asked for reduced motion
+  if (!plant.shake || plant.shake <= 0) return 0; // missing / zero / negative
+  const strength = Math.min(1, plant.shake / HIT_SHAKE); // 1.0 at a fresh hit, fading to 0
+  const dir = (random() - 0.5) * 2; // -1 .. +1 (0 at random 0.5)
+  return dir * strength * HIT_SHAKE_PX;
 }
