@@ -20,6 +20,18 @@ export function resetPhase() {
   lastPhase = null;
 }
 
+// 1P/2P button should only work before the first level has started.
+function syncPlayerToggle($) {
+  const button = $("playerToggle");
+  const locked =
+    battleService.online() || activePhase() !== "menu" || state.level > 1;
+  button.disabled = locked;
+  button.classList.toggle("is-locked", locked);
+  button.title = locked
+    ? "Player number can only be changed before the first level starts."
+    : "";
+}
+
 function loop(timer) {
   const { canvas, ctx: g, $ } = dom();
   const deltaTime = Math.min(0.05, (timer - last) / 1000);
@@ -35,6 +47,7 @@ function loop(timer) {
   // check if game is ended
   const phase = activePhase();
   if (phase !== lastPhase) {
+    syncPlayerToggle($);
     if (session.mode === "boss" && phase === "won") {
       saveCastleConquered();
       show(
