@@ -440,8 +440,9 @@ function showUpgradeDetails(index) {
   };
 
   // Update plant colour theme.
+  // Update plant colour theme.
   if (upgradePanel) {
-    upgradePanel.dataset.plant = String(plant.level);
+    upgradePanel.dataset.plant = plant.name.toLowerCase();
   }
 
   // Update discovery heading.

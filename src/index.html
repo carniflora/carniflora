@@ -127,6 +127,15 @@
           </button>
 
           <section class="network-panel" aria-label="Online multiplayer">
+            <button
+              type="button"
+              id="closeMultiplayerBtn"
+              class="network-panel-close"
+              aria-label="Close multiplayer lobby"
+            >
+              &times;
+            </button>
+
             <div class="lobby-heading">
               <i class="icon-users" aria-hidden="true"></i>
 
@@ -183,10 +192,6 @@
             </div>
 
             <div class="lobby-status">
-              <p id="networkStatus" role="status" aria-live="polite">
-                Local play
-              </p>
-
               <button class="ctl" id="copySession" type="button" hidden>
                 Copy Key
               </button>
@@ -194,6 +199,11 @@
               <button class="ctl" id="leaveSession" type="button" hidden>
                 Leave Session
               </button>
+            </div>
+
+            <div class="lobby-keyboard-hint">
+              <i class="icon-keyboard" aria-hidden="true"></i>
+              <span>Press <kbd>Esc</kbd> to close the lobby</span>
             </div>
           </section>
 
@@ -748,7 +758,8 @@
                 ></div>
                 <aside class="upgrade-info">
                   <div id="upgradeInfoHeader" class="upgrade-info-header">
-                    PLANT DISCOVERY
+                    <i class="icon-sprout" aria-hidden="true"></i>
+                    <span>PLANT PROFILE</span>
                   </div>
 
                   <button
@@ -761,17 +772,21 @@
                   </button>
 
                   <div class="upgrade-info-content">
-                    <img
-                      id="upgradePreview"
-                      class="upgrade-preview"
-                      alt="Selected plant"
-                    />
+                    <div class="upgrade-profile-top">
+                      <div class="upgrade-preview-wrap">
+                        <img
+                          id="upgradePreview"
+                          class="upgrade-preview"
+                          alt="Selected plant"
+                        />
+                      </div>
 
-                    <h3 id="upgradeName"></h3>
+                      <h3 id="upgradeName"></h3>
 
-                    <p id="upgradeTerritory" class="upgrade-territory"></p>
+                      <p id="upgradeTerritory" class="upgrade-territory"></p>
 
-                    <span id="upgradeRole" class="upgrade-role"></span>
+                      <span id="upgradeRole" class="upgrade-role"></span>
+                    </div>
 
                     <div class="upgrade-requirements">
                       <h4>Unlock requirements</h4>

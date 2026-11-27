@@ -15,6 +15,7 @@ export function build(
   state.plants = [];
   state.enemies = [];
   state.fx = [];
+  state.seeds = [];
   state.spores = maxSpores(state);
 
   // create the enemy tower at the end of all paths
