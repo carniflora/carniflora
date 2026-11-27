@@ -1,7 +1,7 @@
 import { battleService } from "../battleService.js";
 import { dom } from "./dom.js";
 import { session, activePhase } from "./session.js";
-import { state } from "../state.js";
+import { state, saveCastleConquered } from "../state.js";
 import { update } from "../combat.js";
 import { updateBossLevel } from "../bossLevel.js";
 import { drawBossLevel } from "../bossRenderer.js";
@@ -33,7 +33,7 @@ function syncPlayerToggle($) {
 }
 
 function loop(timer) {
-  const { canvas, ctx: g } = dom();
+  const { canvas, ctx: g, $ } = dom();
   const deltaTime = Math.min(0.05, (timer - last) / 1000);
   last = timer;
   if (!battleService.online()) {
@@ -47,13 +47,15 @@ function loop(timer) {
   // check if game is ended
   const phase = activePhase();
   if (phase !== lastPhase) {
-    if (session.mode === "boss" && phase === "won")
+    if (session.mode === "boss" && phase === "won") {
+      saveCastleConquered();
       show(
         "Harvester breached",
         `The garden is reclaimed in ${Math.ceil(session.bossState.elapsed)} seconds. ${session.bossState.stats.deployed} plants deployed; ${session.bossState.stats.lost} lost (${session.bossState.stats.mistLost} to mist).`,
         "Return Home",
       );
-    else if (session.mode === "boss" && phase === "lost")
+      $("ob2").hidden = false;
+    } else if (session.mode === "boss" && phase === "lost")
       show(
         "The mist caught up",
         `The battlefield was overrun with ${Math.ceil(session.bossState.boss.hp)} boss HP remaining. Deploy early and combine plant abilities to push farther.`,

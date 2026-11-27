@@ -15,6 +15,7 @@ import {
   setActivePlayer,
   setPlayers,
   deploy,
+  restartFromLevelOne,
 } from "./flow.js";
 import { showPlantDetails } from "./tabs.js";
 import { showPlantMessage } from "./hud.js";
@@ -32,6 +33,7 @@ export function mountInput() {
   };
 
   $("ob").onclick = () => primaryAction();
+  $("ob2").onclick = restartFromLevelOne;
 
   function cellFromEvent(e) {
     const rect = canvas.getBoundingClientRect();
