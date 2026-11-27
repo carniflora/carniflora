@@ -754,7 +754,19 @@
 /* ==========================================
    4. MOBILE — other pages and Upgrades (one block)
    ========================================== */
+/* Stack the arena and lane controls when the side panels crowd the canvas. */
+@media (max-width: 900px) {
+  .game-layout:has(#battleTab.active #bossControls:not([hidden])) {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
 @media (max-width: 650px) {
+  #battleTab .battle-topbar {
+    flex-direction: column;
+  }
+
   .game-layout {
     display: flex;
     flex-direction: column;

@@ -7,6 +7,8 @@ import { canPlaceTower } from "../towers.js";
 import { effects } from "../effects.js";
 import { drawPlant, drawEnemy, drawTree } from "../sprites.js";
 
+import { drawTerrain, strokeTrail } from "../terrainRenderer.js";
+
 const MINION_SIZE = 48;
 const KEEP_SIZE = 125;
 const TREE_SIZE = TILE * 1.2;
@@ -50,11 +52,7 @@ export function draw() {
 
   // clear the canvas
   g.clearRect(0, 0, canvas.width, canvas.height);
-  const bg = g.createLinearGradient(0, 0, 0, canvas.height);
-  bg.addColorStop(0, "#16301f");
-  bg.addColorStop(1, "#0f2217");
-  g.fillStyle = bg;
-  g.fillRect(0, 0, canvas.width, canvas.height);
+  drawTerrain(g, canvas.width, canvas.height);
 
   // draw the paths
   g.lineCap = "round";
@@ -68,12 +66,7 @@ export function draw() {
       if (i) g.lineTo(x, y);
       else g.moveTo(x, y);
     });
-    g.strokeStyle = "#4a3a28";
-    g.lineWidth = TILE * 0.65;
-    g.stroke();
-    g.strokeStyle = "#5d4a33";
-    g.lineWidth = TILE * 0.5;
-    g.stroke();
+    strokeTrail(g);
   }
 
   // dead enemies first so everything else is drawn above them

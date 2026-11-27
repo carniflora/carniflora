@@ -1,4 +1,4 @@
-/** Three-lane reverse tower defense simulation. Coordinates are in world pixels. */
+/** Reverse tower defense simulation. Coordinates are in world pixels. */
 import { BOSS_KINDS } from "./plants.js";
 export const WORLD_WIDTH = 2000;
 export const ARENA_X = WORLD_WIDTH - 960;
@@ -8,6 +8,18 @@ export const OVERRUN_X = 1700;
 export const TAU = Math.PI * 2;
 export const LANE_Y = [180, 290, 400];
 export const LANE_NAMES = ["Upper tank", "Centre cannon", "Lower tank"];
+const COOP_LANE_Y = [165, 245, 325, 405];
+export const COOP_LANE_NAMES = [
+  "Upper tank",
+  "Centre cannon",
+  "Lower staging",
+  "Lower tank",
+];
+
+export function bossLaneOwner(state, lane) {
+  return state.selectedLanes.length === 1 ? 0 : Math.floor(lane / 2);
+}
+
 export const BOSS_PATH = [
   [-20, 290],
   [300, 290],
@@ -29,7 +41,7 @@ const APPROACH_X = 1300;
 const MINION_SPAWN_X = 1680;
 const MINION_SPAWN_CLEARANCE = 120;
 
-export function atBossPath(s, lane = 1) {
+export function atBossPath(s, lane = 1, laneY = LANE_Y) {
   let d = Math.max(0, Math.min(BOSS_TOTAL, s));
   for (let i = 0; i < BOSS_SEG.length; i++) {
     if (d <= BOSS_SEG[i] || i === BOSS_SEG.length - 1) {
@@ -38,7 +50,7 @@ export function atBossPath(s, lane = 1) {
         BOSS_PATH[i][0] + (BOSS_PATH[i + 1][0] - BOSS_PATH[i][0]) * t,
         BOSS_PATH[i][1] +
           (BOSS_PATH[i + 1][1] - BOSS_PATH[i][1]) * t +
-          LANE_Y[lane] -
+          laneY[lane] -
           290,
       ];
     }
@@ -62,10 +74,11 @@ export function getDistAtX(x) {
   return BOSS_TOTAL;
 }
 
-function tower(x, lane, hp, cannon = false) {
-  const [, y] = atBossPath(getDistAtX(x), lane);
+function tower(x, lane, hp, laneY, type = "tower") {
+  const cannon = type === "cannon";
+  const [, y] = atBossPath(getDistAtX(x), lane, laneY);
   return {
-    type: cannon ? "cannon" : "tower",
+    type,
     lane,
     x,
     y,
@@ -80,9 +93,9 @@ function tower(x, lane, hp, cannon = false) {
   };
 }
 
-export function createMinion(x, lane = 1) {
+export function createMinion(x, lane = 1, laneY = LANE_Y) {
   const s = getDistAtX(x);
-  const [px, y] = atBossPath(s, lane);
+  const [px, y] = atBossPath(s, lane, laneY);
   return {
     type: "minion",
     lane,
@@ -101,11 +114,14 @@ export function createMinion(x, lane = 1) {
   };
 }
 
-export function createBossLevelState() {
+export function createBossLevelState(players = 1) {
+  const laneY = players === 2 ? COOP_LANE_Y : LANE_Y;
   return {
     state: "play",
     phase: "approach",
-    selectedLane: 0,
+    laneY,
+    laneNames: players === 2 ? COOP_LANE_NAMES : LANE_NAMES,
+    selectedLanes: players === 2 ? [0, 2] : [0],
     elapsed: 0,
     leftEdge: -20,
     advanceSpeed: 9,
@@ -113,16 +129,18 @@ export function createBossLevelState() {
     spores: 140,
     shake: 0,
     plants: [],
-    towers: LANE_Y.flatMap((_, lane) => [
-      tower(500, lane, 80),
-      tower(1000, lane, 100),
-    ]).concat(tower(1770, 1, 240, true)),
-    minions: LANE_Y.map((_, lane) => createMinion(760, lane)),
-    tanks: [0, 2].map((lane) => ({
+    towers: laneY
+      .flatMap((_, lane) => [
+        tower(500, lane, 80, laneY),
+        tower(1000, lane, 100, laneY),
+      ])
+      .concat(tower(1770, 1, 240, laneY, "cannon")),
+    minions: laneY.map((_, lane) => createMinion(760, lane, laneY)),
+    tanks: [0, laneY.length - 1].map((lane) => ({
       type: "tank",
       lane,
       x: 1840,
-      y: LANE_Y[lane],
+      y: laneY[lane],
       hp: 450,
       max: 450,
       armour: 8,
@@ -161,11 +179,23 @@ export function createBossLevelState() {
   };
 }
 
-export function selectBossLane(state, lane) {
-  if (!Number.isInteger(lane) || lane < 0 || lane >= LANE_Y.length)
+function ownsLane(state, lane, player) {
+  return (
+    Number.isInteger(lane) &&
+    lane >= 0 &&
+    lane < state.laneY.length &&
+    bossLaneOwner(state, lane) === player
+  );
+}
+
+export function selectBossLane(state, lane, player = 0) {
+  if (
+    !ownsLane(state, lane, player) ||
+    !["play", "pause"].includes(state.state)
+  ) {
     return false;
-  if (state.state !== "play" && state.state !== "pause") return false;
-  state.selectedLane = lane;
+  }
+  state.selectedLanes[player] = lane;
   return true;
 }
 
@@ -179,22 +209,25 @@ export function getBossOverrunSeconds(state) {
     : scrollTime + (distance - closingDistance) / state.advanceSpeed;
 }
 
-export function spawnBossPlant(state, kindIndex, lane = state.selectedLane) {
+export function spawnBossPlant(state, kindIndex, lane, player = 0) {
+  if (lane === undefined) {
+    lane = state.selectedLanes[player];
+  }
   const kind = BOSS_KINDS[kindIndex];
   if (
     state.state !== "play" ||
     !kind ||
     state.spores < kind.cost ||
-    !Number.isInteger(lane) ||
-    lane < 0 ||
-    lane >= LANE_Y.length
-  )
+    !ownsLane(state, lane, player)
+  ) {
     return false;
+  }
   state.spores -= kind.cost;
   const s = getDistAtX(state.leftEdge + SPAWN_OFFSET);
-  const [x, y] = atBossPath(s, lane);
+  const [x, y] = atBossPath(s, lane, state.laneY);
   state.plants.push({
     k: kindIndex,
+    owner: player,
     lane,
     s,
     x,
@@ -209,7 +242,7 @@ export function spawnBossPlant(state, kindIndex, lane = state.selectedLane) {
 }
 
 function syncPlant(state, plant) {
-  [plant.x, plant.y] = atBossPath(plant.s, plant.lane);
+  [plant.x, plant.y] = atBossPath(plant.s, plant.lane, state.laneY);
   // Once exposed, the flank paths physically join the central furnace approach.
   if (state.phase === "core") {
     const merge = Math.max(0, Math.min(1, (plant.x - 1560) / 240));
@@ -369,7 +402,7 @@ function updateDefenses(state, dt) {
         0,
         enemy.s - enemy.spd * (enemy.slow > 0 ? 0.5 : 1) * dt,
       );
-      [enemy.x, enemy.y] = atBossPath(enemy.s, enemy.lane);
+      [enemy.x, enemy.y] = atBossPath(enemy.s, enemy.lane, state.laneY);
       if (enemy.x <= state.leftEdge + SPAWN_OFFSET) {
         enemy.hp = 0;
         state.spores = Math.max(0, state.spores - 20);
@@ -460,7 +493,7 @@ function updateBoss(state, dt) {
       // Include the attack positions around the tanks and exposed furnace.
       const x2 = 1800;
       if (x1 < x2) {
-        const counts = LANE_Y.map(
+        const counts = state.laneY.map(
           (_, lane) =>
             state.plants.filter(
               (plant) =>
@@ -497,8 +530,8 @@ function updateBoss(state, dt) {
     );
     // Keep time to intercept a guard; skip the wave if that gap no longer fits.
     if (spawnX <= BOSS_PATH[BOSS_PATH.length - 1][0]) {
-      const lane = Math.floor(Math.random() * 3);
-      state.minions.push(createMinion(spawnX, lane));
+      const lane = Math.floor(Math.random() * state.laneY.length);
+      state.minions.push(createMinion(spawnX, lane, state.laneY));
     }
   }
 }

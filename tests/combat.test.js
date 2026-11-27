@@ -5,6 +5,7 @@ import { build } from "../src/js/build.js";
 import { update } from "../src/js/combat.js";
 import { pxPosOf } from "../src/js/levels.js";
 import { PLANTS } from "../src/js/plants.js";
+import { LEVEL_TIME_LIMIT } from "../src/js/constants.js";
 
 let state, effects;
 
@@ -204,5 +205,32 @@ describe("win and lose", () => {
     state.spores = 0;
     update(0.01, state, effects);
     expect(state.phase).toBe("lost");
+  });
+
+  test("running out of time loses", () => {
+    addPlant(0);
+    state.elapsed = LEVEL_TIME_LIMIT - 0.005;
+    update(0.01, state, effects);
+    expect(state.phase).toBe("lost");
+  });
+
+  test("time left keeps the battle going", () => {
+    addPlant(0);
+    state.elapsed = LEVEL_TIME_LIMIT - 10;
+    update(0.01, state, effects);
+    expect(state.phase).not.toBe("lost");
+  });
+
+  test("destroying the keep on the last tick still wins", () => {
+    state.keep.hp = 0;
+    state.elapsed = LEVEL_TIME_LIMIT;
+    update(0.01, state, effects);
+    expect(state.phase).toBe("won");
+  });
+
+  test("building a level resets the timer", () => {
+    state.elapsed = 50;
+    build(state, effects, () => 0.5);
+    expect(state.elapsed).toBe(0);
   });
 });

@@ -1,19 +1,32 @@
 import { dom } from "./dom.js";
-import { LANE_NAMES } from "../bossLevel.js";
+import { COOP_LANE_NAMES } from "../bossLevel.js";
 import { BOSS_KINDS } from "../plants.js";
 
 import { plantImages, plantRoles, plantRoleIcons } from "./assets.js";
 import { showPlantDetails } from "./tabs.js";
 import { session } from "./session.js";
 
+export const BOSS_KEYS = [
+  ["1", "2", "3", "4"],
+  ["7", "8", "9", "0"],
+];
+
+// The live button arrays. hud() mutates these elements, so it must
+// receive these same arrays, never copies.
 export let bossLaneButtons = [];
 export let bossDeployButtons = [];
 
-const laneIcons = ["icon-shield", "icon-crosshair", "icon-shield"];
+const laneIcons = [
+  "icon-shield",
+  "icon-crosshair",
+  "icon-shield",
+  "icon-shield",
+];
 
 const laneDescriptions = [
   "Armoured defence",
   "Enemy artillery",
+  "Approach lane",
   "Armoured defence",
 ];
 
@@ -24,7 +37,7 @@ export function mountBossControls({ onLane, onDeploy }) {
   $("bossDeploy").replaceChildren();
 
   // Attack direction buttons
-  bossLaneButtons = LANE_NAMES.map((name, lane) => {
+  bossLaneButtons = COOP_LANE_NAMES.map((name, lane) => {
     const button = document.createElement("button");
 
     button.type = "button";
@@ -102,7 +115,8 @@ export function mountBossControls({ onLane, onDeploy }) {
 
     button.type = "button";
     button.className = "boss-deploy-button";
-
+    button.style.setProperty("--plant-color", plant.col);
+    button.title = plant.d;
     button.setAttribute(
       "aria-label",
       `Deploy ${plant.n}, ${plant.cost} spores`,
@@ -110,7 +124,7 @@ export function mountBossControls({ onLane, onDeploy }) {
 
     button.innerHTML = `
     <i class="icon-sprout" aria-hidden="true"></i>
-    Deploy ${plant.n}
+    Deploy ${plant.n} <kbd>${index + 1}</kbd>
   `;
 
     button.addEventListener("click", () => onDeploy(index));
