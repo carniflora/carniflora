@@ -97,7 +97,7 @@ export function drawEnemy(ctx, e, now, size = 48) {
 
   if (e.keep) img = enemyImages.keep;
   else if (enemyImages.minion) {
-    const index = ENEMY_SHEETS.minion.indexOf(e.kind ?? "cog");
+    const index = ENEMY_SHEETS.minion.indexOf(e.kind ?? e.type ?? "cog");
     img = enemyImages.minion[index >= 0 ? index : 1];
   }
 

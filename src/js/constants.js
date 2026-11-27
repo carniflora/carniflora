@@ -13,3 +13,4 @@ export const TOWER_LIFETIME = 30;
 
 // for level progression
 export const LAST_REGULAR_LEVEL = 3;
+export const LEVEL_TIME_LIMIT = 300; // seconds before a regular level is lost

@@ -55,6 +55,12 @@
           </span>
 
           <span>
+            <i class="icon-clock hud-icon" aria-hidden="true"></i>
+            Time
+            <b id="tm">0:00</b>
+          </span>
+
+          <span>
             <i class="icon-castle hud-icon" aria-hidden="true"></i>
             Enemies
             <b id="tw">0</b>
@@ -849,7 +855,7 @@
 
                   <button class="ctl" id="rs" title="Restart Level">
                     <i class="icon-rotate-ccw" aria-hidden="true"></i>
-                    <span class="control-label">Restart Level</span>
+                    <span>Restart Level</span>
                   </button>
 
                   <details class="battle-shortcuts">
@@ -1136,6 +1142,9 @@
                   </span>
                 </p>
 
+                <button id="bossPlayer" type="button" class="ctl" hidden>
+                  Switch player
+                </button>
                 <div
                   id="bossLanes"
                   class="boss-lanes"

@@ -34,12 +34,15 @@ describe("Level checkpoints", () => {
     expect(loadProgress()).toBe(1);
   });
 
-  it.each([1, 2, LEVEL_PATHS.length])("restores level %i", (level) => {
-    saveProgress(level);
+  it.each([1, 2, LEVEL_PATHS.length, LEVEL_PATHS.length + 1])(
+    "restores level %i",
+    (level) => {
+      saveProgress(level);
 
-    expect(storage.getItem(STORAGE_KEY)).toBe(String(level));
-    expect(loadProgress()).toBe(level);
-  });
+      expect(storage.getItem(STORAGE_KEY)).toBe(String(level));
+      expect(loadProgress()).toBe(level);
+    },
+  );
 
   it("rebuilds the saved level with a fresh battle", () => {
     saveProgress(2);
@@ -67,13 +70,13 @@ describe("Level checkpoints", () => {
     "-1",
     "1.5",
     "Infinity",
-    String(LEVEL_PATHS.length + 1),
+    String(LEVEL_PATHS.length + 2),
   ])("ignores invalid saved data: %s", (value) => {
     storage.setItem(STORAGE_KEY, value);
     expect(loadProgress()).toBe(1);
   });
 
-  it.each([0, -1, 1.5, NaN, Infinity, "2", LEVEL_PATHS.length + 1])(
+  it.each([0, -1, 1.5, NaN, Infinity, "2", LEVEL_PATHS.length + 2])(
     "does not overwrite a checkpoint with invalid level %s",
     (level) => {
       saveProgress(2);

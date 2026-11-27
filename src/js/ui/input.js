@@ -5,7 +5,7 @@ import { state } from "../state.js";
 import { maxTowers } from "../towers.js";
 import { PLANTS } from "../plants.js";
 import { session, activePhase } from "./session.js";
-import { LANE_Y } from "../bossLevel.js";
+import { BOSS_KEYS } from "./bossControls.js";
 import {
   pause,
   toggleMode,
@@ -53,9 +53,10 @@ export function mountInput() {
       const rect = canvas.getBoundingClientRect();
       const y = (e.clientY - rect.top) * (canvas.height / rect.height);
       if (y >= 120 && y <= 455) {
-        const lane = LANE_Y.reduce(
-          (best, laneY, i) =>
-            Math.abs(laneY - y) < Math.abs(LANE_Y[best] - y) ? i : best,
+        const { laneY } = session.bossState;
+        const lane = laneY.reduce(
+          (best, center, i) =>
+            Math.abs(center - y) < Math.abs(laneY[best] - y) ? i : best,
           0,
         );
         setBossLane(lane);
@@ -113,28 +114,40 @@ export function mountInput() {
     if (e.target.closest?.("input, textarea, select, [contenteditable=true]")) {
       return;
     }
-    if (
-      session.mode === "boss" &&
-      (e.key === "ArrowUp" || e.key === "ArrowDown")
-    ) {
-      e.preventDefault();
-      setBossLane(
-        Math.max(
-          0,
-          Math.min(
-            2,
-            session.bossState.selectedLane + (e.key === "ArrowUp" ? -1 : 1),
-          ),
-        ),
-      );
-      return;
+    if (session.mode === "boss") {
+      const battle = session.bossState;
+      const coop = battle.selectedLanes.length === 2;
+      const arrows = e.key === "ArrowUp" || e.key === "ArrowDown";
+      const letters = coop && (e.code === "KeyW" || e.code === "KeyS");
+      if (arrows || letters) {
+        e.preventDefault();
+        const player = coop && arrows ? 1 : 0;
+        const step = e.key === "ArrowUp" || e.code === "KeyW" ? -1 : 1;
+        setBossLane(battle.selectedLanes[player] + step, player);
+        return;
+      }
+      for (const [player, keys] of BOSS_KEYS.entries()) {
+        const plant = keys.indexOf(e.key);
+        if (plant >= 0 && player < battle.selectedLanes.length) {
+          if (player === session.activePlayer) {
+            showPlantDetails(plant);
+          }
+          deploy(plant, player);
+          return;
+        }
+      }
     }
     if (e.code === "KeyP" || e.code === "Escape") {
       pause();
     }
 
     // tab to switch players
-    if (e.code === "Tab" && state.players === 2 && !battleService.online()) {
+    if (
+      session.mode !== "boss" &&
+      e.code === "Tab" &&
+      state.players === 2 &&
+      !battleService.online()
+    ) {
       e.preventDefault();
       setActivePlayer(1 - session.activePlayer);
     }
@@ -147,6 +160,8 @@ export function mountInput() {
       deploy(n - 1);
     }
   });
+
+  $("bossPlayer").onclick = () => setActivePlayer(1 - session.activePlayer);
 
   const playerToggle = $("playerToggle");
 

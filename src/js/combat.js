@@ -2,7 +2,7 @@ import { state as localState, maxSpores } from "./state.js";
 import { ENEMY_KINDS, PLANTS } from "./plants.js";
 import { effects as localEffects } from "./effects.js";
 import { pxPosOf } from "./levels.js";
-import { PLANT_BLOCK } from "./constants.js";
+import { PLANT_BLOCK, LEVEL_TIME_LIMIT } from "./constants.js";
 import { updateTowers } from "./towers.js";
 
 // ============================
@@ -47,6 +47,7 @@ export function moveEnemy(enemy, state, dt) {
 
 // update over time
 export function update(deltaTime, state = localState, effects = localEffects) {
+  state.elapsed += deltaTime;
   state.spores = Math.min(maxSpores(state), state.spores + 6 * deltaTime); // spores regenerate 6 per time up to max
   updateTowers(deltaTime, state);
   // Advance buff/debuff system (auto-fire + expire + poison drain — 4.1 / 4.5)
@@ -205,10 +206,11 @@ export function update(deltaTime, state = localState, effects = localEffects) {
     end("won", state);
   }
 
-  // Lose.
+  // Lose: out of time, or no plants and no way to send more.
   else if (
-    !state.plants.length &&
-    state.spores < Math.min(...PLANTS.map((k) => k.cost))
+    state.elapsed >= LEVEL_TIME_LIMIT ||
+    (!state.plants.length &&
+      state.spores < Math.min(...PLANTS.map((k) => k.cost)))
   ) {
     end("lost", state);
   }

@@ -315,3 +315,34 @@ describe("drawTank", () => {
     expect(ctx.calls[1][0].src).toContain("tank-lower-destroyed-sheet");
   });
 });
+
+describe("Boss arena sprites", () => {
+  test("draws both players, boss defenses and the Harvester with their own sheets", async () => {
+    await loadedSprites();
+    const { createBossLevelState, spawnBossPlant } =
+      await import("../src/js/bossLevel.js");
+    const { drawBossLevel } = await import("../src/js/bossRenderer.js");
+    const state = createBossLevelState(2);
+    spawnBossPlant(state, 0, 0, 0);
+    spawnBossPlant(state, 0, 3, 1);
+    const ctx = new Proxy(fakeCtx(), {
+      get(target, key) {
+        if (key === "createLinearGradient") {
+          return () => ({ addColorStop() {} });
+        }
+        return target[key] ?? (() => {});
+      },
+    });
+    drawBossLevel(ctx, state);
+    const sheets = ctx.calls.map(([img]) => img.src);
+    for (const sheet of [
+      "snap-sheet16-1x",
+      "snap-sheet16-1x-p2-blue",
+      "tower-sheet16-1x",
+      "cannon-sheet16-1x",
+      "harvester-sheet16-1x",
+    ]) {
+      expect(sheets).toContain(`assets/carniflora-${sheet}.png`);
+    }
+  });
+});
