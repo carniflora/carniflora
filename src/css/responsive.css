@@ -754,13 +754,6 @@
 /* ==========================================
    4. MOBILE — other pages and Upgrades (one block)
    ========================================== */
-/* Stack the arena and lane controls when the side panels crowd the canvas. */
-@media (max-width: 900px) {
-  .game-layout:has(#battleTab.active #bossControls:not([hidden])) {
-    display: flex;
-    flex-direction: column;
-  }
-}
 
 @media (max-width: 650px) {
   #battleTab .battle-topbar {
@@ -1453,51 +1446,245 @@
    BOSS BATTLE RESPONSIVE LAYOUT
    ========================================== */
 
-@media (min-width: 1251px) {
-  #battleTab .boss-controls:not([hidden]) {
-    display: contents;
+/* ==========================================
+   BOSS BATTLE RESPONSIVE LAYOUT
+   ========================================== */
+
+/* Shared Boss Battle structure */
+#app .game-layout:has(#battleTab.active #bossControls:not([hidden])) {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  height: auto;
+  min-height: 0;
+  gap: 8px;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+/* Allow boss components to participate in the main grid */
+#battleTab #bossControls:not([hidden]) {
+  display: contents;
+}
+
+/* Desktop and landscape tablets */
+@media (min-width: 900px) {
+  #app .game-layout:has(#battleTab.active #bossControls:not([hidden])) {
+    grid-template-columns:
+      clamp(145px, 17vw, 240px)
+      minmax(0, 1fr)
+      clamp(145px, 17vw, 240px);
+
+    grid-template-rows:
+      auto
+      minmax(0, 1fr)
+      auto
+      auto;
   }
 
-  #battleTab .boss-arsenal {
+  #battleTab:has(#bossControls:not([hidden])) .boss-arsenal {
     grid-column: 1;
+    grid-row: 2 / 4;
+
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    height: auto;
+
+    min-width: 0;
+    min-height: 0;
+
+    padding: 6px;
+    gap: 5px;
+
+    align-self: stretch;
+    overflow-y: auto;
+    box-sizing: border-box;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .stage:not(:fullscreen) {
+    grid-column: 2;
     grid-row: 2;
+    min-width: 0;
+    width: 100%;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-attack-panel {
+    grid-column: 2;
+    grid-row: 3;
+    min-width: 0;
+    order: 0;
+  }
+
+  #app:has(#battleTab.active #bossControls:not([hidden])) #plantDetailsPanel {
+    grid-column: 3;
+    grid-row: 2 / 4;
+    min-width: 0;
+    height: auto;
     align-self: stretch;
   }
 
-  #battleTab .boss-deploy {
+  #battleTab:has(#bossControls:not([hidden])) .boss-deploy {
+    display: grid;
+
+    flex: 1 1 0;
+    min-height: 0;
+    min-width: 0;
+
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: repeat(4, minmax(75px, 1fr));
+
+    gap: 5px;
+  }
+
+  #app:has(#battleTab.active #bossControls:not([hidden])) .side-nav {
+    grid-column: 1 / -1;
+    grid-row: 4;
+  }
+}
+
+/* Portrait tablets */
+@media (min-width: 651px) and (max-width: 899px),
+  (min-width: 900px) and (max-width: 1250px) and (orientation: portrait) {
+  #app .game-layout:has(#battleTab.active #bossControls:not([hidden])) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(5, auto);
+    height: auto;
+    align-items: start;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .battle-header {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .stage:not(:fullscreen) {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+    height: auto;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-attack-panel {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    order: 0;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-arsenal {
+    grid-column: 1;
+    grid-row: 4;
+    height: auto;
+    align-self: stretch;
+  }
+
+  #app:has(#battleTab.active #bossControls:not([hidden])) #plantDetailsPanel {
+    grid-column: 2;
+    grid-row: 4;
+    height: auto;
+    min-width: 0;
+    align-self: stretch;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-deploy {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  #battleTab .boss-attack-panel {
-    grid-column: 2;
-    grid-row: 3;
-  }
-}
-
-@media (max-width: 1250px) {
-  #battleTab .boss-controls:not([hidden]) {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+  #app:has(#battleTab.active #bossControls:not([hidden])) .side-nav {
     grid-column: 1 / -1;
-  }
-
-  #battleTab .boss-deploy {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
-  #battleTab .boss-attack-panel {
-    order: -1;
+    grid-row: 5;
   }
 }
 
+/* Mobile phones */
 @media (max-width: 650px) {
-  #battleTab .boss-deploy {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  #app .game-layout:has(#battleTab.active #bossControls:not([hidden])) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: repeat(6, auto);
+    height: auto;
+    gap: 8px;
+    padding: 7px;
   }
 
-  #battleTab .boss-lanes {
-    grid-template-columns: 1fr;
+  #battleTab:has(#bossControls:not([hidden])) .battle-header {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .stage:not(:fullscreen) {
+    grid-column: 1;
+    grid-row: 2;
+    width: 100%;
+    height: auto;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-attack-panel {
+    grid-column: 1;
+    grid-row: 3;
+    order: 0;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-arsenal {
+    grid-column: 1;
+    grid-row: 4;
+    height: auto;
+  }
+
+  #app:has(#battleTab.active #bossControls:not([hidden])) #plantDetailsPanel {
+    grid-column: 1;
+    grid-row: 5;
+    width: 100%;
+    height: auto;
+    min-width: 0;
+  }
+
+  #app:has(#battleTab.active #bossControls:not([hidden])) .side-nav {
+    grid-column: 1;
+    grid-row: 6;
+  }
+
+  /* Boss Battle mobile navigation */
+  #app:has(#battleTab.active #bossControls:not([hidden])) .side-nav {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    height: auto;
+
+    inset: auto;
+    transform: none;
+    margin: 0;
+    padding: 6px;
+    gap: 5px;
+    box-sizing: border-box;
+  }
+
+  #app:has(#battleTab.active #bossControls:not([hidden])) .nav-links {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  #app:has(#battleTab.active #bossControls:not([hidden])) .nav-btn {
+    min-width: 0;
+    min-height: 44px;
+    padding: 6px 3px;
+    gap: 3px;
+    font-size: 10px;
+    justify-content: center;
+  }
+
+  #app:has(#battleTab.active #bossControls:not([hidden])) .network-toggle {
+    grid-column: 1;
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    white-space: normal;
+    margin: 0;
   }
 }
 @media (max-width: 650px) {
@@ -1692,32 +1879,59 @@
 @media (min-width: 1251px) {
   /* Left sidebar */
 
-  #battleTab .boss-arsenal {
-    padding: 12px;
-    gap: 10px;
-  }
+  /* Left sidebar — Responsive Plant Arsenal */
 
-  #battleTab .boss-deploy {
-    flex: 1;
-    grid-template-rows: repeat(4, minmax(0, 1fr));
-    gap: 10px;
-  }
+  #battleTab:has(#bossControls:not([hidden])) .boss-arsenal {
+    grid-column: 1;
+    grid-row: 2 / 4;
 
-  #battleTab .boss-plant-card {
-    justify-content: space-between;
-    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+
+    height: auto;
+    min-height: 0;
+    min-width: 0;
+
     gap: 6px;
+    padding: 8px;
+
+    overflow-y: auto;
+    box-sizing: border-box;
   }
 
-  #battleTab .boss-plant-profile {
-    grid-template-columns: 62px minmax(0, 1fr);
+  #battleTab:has(#bossControls:not([hidden])) .boss-deploy {
+    display: grid;
+    flex: 1 1 auto;
+
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: repeat(4, minmax(min-content, 1fr));
+
+    gap: 5px;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-plant-card {
+    min-height: 0;
+    justify-content: space-between;
+    padding: 6px;
+    gap: 4px;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-plant-profile {
+    grid-template-columns:
+      clamp(30px, 5vh, 50px)
+      minmax(0, 1fr);
+
     align-items: center;
     flex: 1;
+    gap: 5px;
   }
 
-  #battleTab .boss-plant-image {
-    width: 62px;
-    height: 72px;
+  #battleTab:has(#bossControls:not([hidden])) .boss-plant-image {
+    width: clamp(30px, 5vh, 50px);
+    height: clamp(35px, 6vh, 60px);
+
+    object-fit: contain;
   }
 
   #battleTab .boss-plant-information strong {
@@ -1734,17 +1948,34 @@
     font-size: 11px;
   }
 
-  #battleTab .boss-strategy-tip {
-    margin-top: 0;
-    padding: 12px;
+  #battleTab:has(#bossControls:not([hidden])) .boss-strategy-tip {
+    margin: 0;
+    padding: 7px;
+    font-size: 11px;
+    flex-shrink: 0;
   }
 
   /* Right sidebar */
 
+  /* Right sidebar — Responsive Plant Profile */
+
   #app:has(#battleTab.active #bossControls:not([hidden])) #plantDetailsPanel {
-    padding: 12px;
-    gap: 10px;
-    justify-content: space-between;
+    grid-column: 3;
+    grid-row: 2 / 4;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+
+    height: auto;
+    min-height: 0;
+    min-width: 0;
+
+    padding: 8px;
+    gap: 6px;
+
+    overflow-y: auto;
+    box-sizing: border-box;
   }
 
   /* Circular plant portrait */
@@ -1837,10 +2068,13 @@
 
 @media (min-width: 900px) and (min-height: 550px) {
   /* Overall application */
-  #app:has(#battleTab.active) {
+  #app:has(#battleTab.active #bossControls[hidden]) {
+    display: flex;
+    flex-direction: column;
     width: 100%;
-    padding: 8px 12px;
+    height: 100dvh;
     min-height: 0;
+    padding: 8px;
     box-sizing: border-box;
   }
 
@@ -1849,26 +2083,30 @@
     min-height: 0;
   }
 
-  #app
-    .game-layout:has(#battleTab.active):not(:has(#bossControls:not([hidden]))) {
-    height: calc(100dvh - 16px);
+  #app .game-layout:has(#battleTab.active #bossControls[hidden]) {
+    display: grid;
+    flex: 1 1 0;
+
+    width: 100%;
+    height: auto;
+    min-width: 0;
     min-height: 0;
 
     grid-template-columns:
-      clamp(160px, 18vw, 240px)
+      clamp(145px, 17vw, 240px)
       minmax(0, 1fr)
-      clamp(160px, 18vw, 240px);
+      clamp(145px, 17vw, 240px);
 
     grid-template-rows:
       auto
       minmax(0, 1fr)
-      auto
-      auto
       auto;
 
     gap: 8px;
-    padding: 10px;
+    padding: 8px;
     margin: 0 auto;
+
+    align-items: stretch;
     box-sizing: border-box;
   }
 
@@ -2011,7 +2249,7 @@
     height: 100%;
     min-width: 0;
     min-height: 0;
-
+    overflow: hidden;
     margin: 0;
     padding: 0;
 
@@ -2021,18 +2259,19 @@
 
     container-type: size;
 
-    background: linear-gradient(180deg, #16301f 0%, #0f2217 100%);
+    background: #12251b;
 
     border: 1px solid #cdb4ed;
     border-radius: 12px;
     overflow: hidden;
   }
 
-  /* Scale the battlefield without cropping */
   #battleTab:has(#bossControls[hidden]) .stage:not(:fullscreen) canvas {
     display: block;
+
     width: 100%;
     height: 100%;
+
     max-width: 100%;
     max-height: 100%;
 
@@ -2045,7 +2284,6 @@
     border-radius: 0;
     box-shadow: none;
   }
-
   #battleTab .stage #ov {
     position: absolute;
     inset: 0;
@@ -2053,7 +2291,7 @@
   }
 
   /* Right plant profile panel */
-  #app:has(#battleTab.active) #plantDetailsPanel {
+  #app:has(#battleTab.active #bossControls[hidden]) #plantDetailsPanel {
     min-height: 0;
     padding: 8px;
     gap: 5px;
@@ -2135,24 +2373,28 @@
     gap: 4px;
   }
 
-  /* Bottom navigation */
-  #app:has(#battleTab.active) .side-nav {
+  #app .game-layout:has(#battleTab.active #bossControls[hidden]) > .side-nav {
     position: relative;
+
     grid-column: 1 / -1;
-    grid-row: 5;
+    grid-row: 3;
 
     width: min(1000px, 100%);
+    max-width: 100%;
+
     height: auto;
     min-height: 0;
+    min-width: 0;
 
     margin: 0 auto;
     padding: 5px 8px;
-    gap: 6px;
+    gap: 5px;
 
-    left: auto;
-    bottom: auto;
+    inset: auto;
     transform: none;
+
     align-self: end;
+    box-sizing: border-box;
   }
 
   #app:has(#battleTab.active) .nav-links {
@@ -2829,7 +3071,7 @@
    BOSS BATTLE — FIT SCREEN WITHOUT SCROLLING
    ========================================== */
 
-@media (min-width: 1251px) and (min-height: 550px) {
+@media (min-width: 1251px) and (min-height: 550px) and (orientation: landscape) {
   /* Overall application */
   #app:has(#battleTab.active #bossControls:not([hidden])) {
     height: 100dvh;
@@ -2841,32 +3083,49 @@
   }
 
   /* Main Boss Battle layout */
+  /* Main Boss Battle layout */
   #app .game-layout:has(#battleTab.active #bossControls:not([hidden])) {
-    height: 100%;
+    display: grid;
+    flex: 1 1 0;
+
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+
+    min-width: 0;
     min-height: 0;
-    flex: 1;
 
     grid-template-columns:
-      clamp(160px, 18vw, 240px)
+      clamp(145px, 16vw, 225px)
       minmax(0, 1fr)
-      clamp(160px, 18vw, 240px);
+      clamp(145px, 16vw, 225px);
 
     grid-template-rows:
       auto
       minmax(0, 1fr)
       auto
-      auto
       auto;
 
     gap: 8px;
-    padding: 10px;
+    padding: 8px;
     margin: 0 auto;
+
+    align-items: stretch;
+    align-content: start;
     box-sizing: border-box;
   }
 
   /* Main battle content */
-  #battleTab.active:has(#bossControls:not([hidden])) {
+  #app:has(#battleTab.active #bossControls:not([hidden])) {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    height: 100dvh;
     min-height: 0;
+
+    padding: 8px;
+    box-sizing: border-box;
   }
 
   /* Boss Battle heading */
@@ -2904,46 +3163,74 @@
   /* ==========================================
      CENTRAL BATTLEFIELD
      ========================================== */
-
   #battleTab:has(#bossControls:not([hidden])) .stage:not(:fullscreen) {
+    position: relative;
+
     grid-column: 2;
     grid-row: 2;
 
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    align-self: stretch;
+
     width: 100%;
     height: 100%;
+
     min-width: 0;
     min-height: 0;
-    max-width: none;
+    max-width: 100%;
+    max-height: 100%;
+
+    aspect-ratio: auto;
+    container-type: size;
 
     margin: 0;
     padding: 0;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    align-self: stretch;
-
-    container-type: size;
-    overflow: hidden;
-
     background: #12251b;
+    border: 1px solid #cdb4ed;
     border-radius: 12px;
+
+    box-sizing: border-box;
+    overflow: hidden;
   }
 
-  /* Keep the entire battlefield visible */
   #battleTab:has(#bossControls:not([hidden])) .stage:not(:fullscreen) canvas {
     display: block;
-    width: 100%;
-    height: 100%;
+
+    width: min(100cqw, calc(100cqh * 16 / 9));
+    height: auto;
+
+    min-width: 0;
     max-width: 100%;
     max-height: 100%;
 
+    aspect-ratio: 16 / 9;
     object-fit: contain;
-    aspect-ratio: auto;
+
+    margin: 0;
+    padding: 0;
+
+    border: none;
+    border-radius: 10px;
+    box-shadow: none;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .stage:not(:fullscreen) canvas {
+    display: block;
+
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
 
     margin: 0;
     padding: 0;
     border: none;
+    border-radius: 0;
     box-shadow: none;
   }
 
@@ -3084,8 +3371,19 @@
   #app:has(#battleTab.active #bossControls:not([hidden]))
     #plantDetailsPanel
     .plant-profile-stats {
-    gap: 6px;
-    padding: 3px 0;
+    display: flex;
+    flex-direction: column;
+
+    flex: 0 0 auto;
+    height: auto;
+    min-height: 0;
+
+    justify-content: flex-start;
+    align-content: start;
+
+    gap: 10px;
+    padding: 4px 0;
+    margin: 4px 0;
   }
 
   #app:has(#battleTab.active #bossControls:not([hidden]))
@@ -3102,18 +3400,18 @@
     grid-column: 2;
     grid-row: 3;
 
+    align-self: start;
+
     width: 100%;
     height: auto;
+    min-width: 0;
     min-height: 0;
 
     padding: 8px;
     margin: 0;
-    gap: 6px;
 
-    align-self: start;
     box-sizing: border-box;
   }
-
   #battleTab .boss-attack-heading {
     margin: 0;
   }
@@ -3140,7 +3438,7 @@
     position: relative;
 
     grid-column: 1 / -1;
-    grid-row: 5;
+    grid-row: 4;
 
     width: min(1000px, 100%);
     height: auto;
@@ -3163,8 +3461,10 @@
   }
 
   #battleTab:has(#bossControls:not([hidden])) .boss-lane-button {
-    min-height: 38px;
-    padding: 4px 6px;
+    min-height: 52px;
+    height: auto;
+    padding: 6px 8px;
+    gap: 5px;
   }
 
   #battleTab:has(#bossControls:not([hidden])) .boss-attack-heading {
@@ -3322,7 +3622,7 @@
 /* ==========================================
    REGULAR BATTLE 
    ========================================== */
-@media (min-width: 1251px) and (min-height: 550px) {
+@media (min-width: 651px) and (min-height: 550px) {
   #app:has(#battleTab.active #bossControls[hidden]) #plantDetailsPanel {
     display: flex;
     flex-direction: column;
@@ -3532,4 +3832,1380 @@ body:has(.network-panel.is-open) {
 
 #app .network-panel .lobby-status:not(:has(button:not([hidden]))) {
   display: none;
+}
+
+/* ==========================================
+   REGULAR BATTLE — IPAD PORTRAIT
+   ========================================== */
+
+@media (min-width: 651px) and (max-width: 1250px) and (orientation: portrait) {
+  /* Main application */
+
+  #app:has(#battleTab.active #bossControls[hidden]) {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100dvh;
+    min-height: 0;
+    padding: 8px;
+    box-sizing: border-box;
+  }
+
+  /* Two-column responsive layout */
+
+  #app .game-layout:has(#battleTab.active #bossControls[hidden]) {
+    display: grid;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(0, 1fr);
+
+    grid-template-rows:
+      auto
+      minmax(0, 1fr)
+      auto
+      auto;
+
+    flex: 1 1 0;
+
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    min-width: 0;
+
+    margin: 0 auto;
+    padding: 10px;
+    gap: 8px;
+
+    box-sizing: border-box;
+    align-items: stretch;
+  }
+
+  /* Preserve grid structure */
+
+  #app:has(#battleTab.active #bossControls[hidden]) .main-panel,
+  #battleTab.active:has(#bossControls[hidden]),
+  #battleTab:has(#bossControls[hidden]) .battle-arena-layout {
+    display: contents;
+  }
+
+  /* ==========================================
+     BATTLE HEADER
+     ========================================== */
+
+  #battleTab:has(#bossControls[hidden]) .battle-header {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    width: 100%;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-heading {
+    padding: 0;
+    margin: 0;
+  }
+
+  #battleTab:has(#bossControls[hidden]) #battleTitle {
+    font-size: clamp(26px, 4vw, 40px);
+    margin: 4px 0;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-heading p {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  /* HUD statistics */
+
+  #battleTab:has(#bossControls[hidden]) .battle-hud {
+    width: 100%;
+    margin: 0;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-hud .stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 5px;
+    width: 100%;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-hud .stats > span {
+    justify-content: center;
+    min-width: 0;
+    padding: 7px 4px;
+    gap: 4px;
+    font-size: 11px;
+    white-space: normal;
+  }
+
+  #battleTab .spore-progress {
+    width: 30px;
+    flex-shrink: 1;
+  }
+
+  /* ==========================================
+     FULL-WIDTH BATTLEFIELD
+     ========================================== */
+
+  #battleTab:has(#bossControls[hidden]) .stage:not(:fullscreen) {
+    grid-column: 1 / -1;
+    grid-row: 2;
+
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    max-width: none;
+
+    margin: 0;
+    padding: 0;
+
+    container-type: size;
+    background: #12251b;
+    border-radius: 12px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .stage:not(:fullscreen) canvas {
+    display: block;
+
+    width: min(100cqw, calc(100cqh * 16 / 9));
+    height: auto;
+
+    max-width: 100%;
+    max-height: 100%;
+
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
+
+    margin: 0;
+    padding: 0;
+    border: none;
+  }
+
+  /* ==========================================
+     PLANT SELECTION — BOTTOM LEFT
+     ========================================== */
+
+  #battleTab:has(#bossControls[hidden]) .battle-toolbar:not([hidden]) {
+    grid-column: 1;
+    grid-row: 3;
+
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+
+    margin: 0;
+    padding: 8px;
+    gap: 6px;
+
+    box-sizing: border-box;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-selection {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-toolbar-label {
+    padding: 8px 5px;
+    font-size: 11px;
+  }
+
+  /* Four plants in a 2 × 2 grid */
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(75px, auto));
+
+    gap: 6px;
+    margin-top: 6px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-option {
+    display: grid;
+    grid-template-columns: 35px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+
+    width: 100%;
+    height: auto;
+    min-width: 0;
+    min-height: 75px;
+
+    padding: 5px;
+    gap: 3px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-option img {
+    width: 35px;
+    height: 48px;
+    object-fit: contain;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-text {
+    min-width: 0;
+    gap: 2px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-text strong {
+    font-size: 12px;
+    overflow-wrap: anywhere;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-role,
+  #battleTab:has(#bossControls[hidden]) .battle-plant-cost {
+    font-size: 10px;
+    line-height: 1.2;
+    white-space: normal;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-key {
+    font-size: 9px;
+    padding: 3px 5px;
+  }
+
+  /* Deployment instructions */
+
+  #battleTab:has(#bossControls[hidden]) .battle-deploy-guide {
+    padding: 6px;
+    margin: 0;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-deploy-guide h3 {
+    font-size: 10px;
+    margin: 0 0 4px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-deploy-guide ol {
+    margin: 0;
+    gap: 3px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-deploy-guide li {
+    font-size: 10px;
+    line-height: 1.3;
+  }
+
+  /* Deploy button */
+
+  #battleTab:has(#bossControls[hidden]) .battle-deploy-btn {
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+
+    margin: auto 0 0;
+    padding: 6px;
+    flex-shrink: 0;
+  }
+
+  /* ==========================================
+     PLANT PROFILE — BOTTOM RIGHT
+     ========================================== */
+
+  #app:has(#battleTab.active #bossControls[hidden]) #plantDetailsPanel {
+    grid-column: 2;
+    grid-row: 3;
+
+    display: flex;
+    flex-direction: column;
+    position: relative;
+
+    inset: auto;
+    transform: none;
+
+    width: 100%;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+    max-height: none;
+
+    margin: 0;
+    padding: 8px;
+    gap: 5px;
+
+    box-sizing: border-box;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .sidebar-label {
+    padding: 7px;
+    font-size: 11px;
+  }
+
+  /* Plant portrait */
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .detail-color {
+    width: 65px;
+    height: 65px;
+    margin: 2px auto;
+    padding: 6px;
+    flex-shrink: 0;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden]) #detailName {
+    font-size: 22px;
+    margin: 2px 0;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden]) .battle-detail-role {
+    font-size: 10px;
+    padding: 3px 6px;
+  }
+
+  /* Special ability */
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .battle-ability-box {
+    flex: 0 0 auto;
+    height: auto;
+    min-height: 0;
+    margin: 0;
+    padding: 6px;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .detail-description {
+    min-height: 0;
+    font-size: 10px;
+    line-height: 1.35;
+  }
+
+  /* Statistics — two columns */
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .plant-profile-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 0;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .profile-stat {
+    min-width: 0;
+    gap: 4px;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .profile-stat-heading,
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .profile-stat-heading
+    strong {
+    font-size: 10px;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .profile-stat-track {
+    height: 6px;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .profile-deployment-cost {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 7px;
+    font-size: 10px;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .plant-message {
+    margin: 4px 0 0;
+    padding: 5px;
+    font-size: 10px;
+  }
+
+  /* ==========================================
+     BOTTOM NAVIGATION
+     ========================================== */
+
+  #app:has(#battleTab.active #bossControls[hidden]) .side-nav {
+    grid-column: 1 / -1;
+    grid-row: 4;
+
+    position: relative;
+    inset: auto;
+    transform: none;
+
+    width: 100%;
+    height: auto;
+    min-height: 0;
+
+    margin: 0;
+    padding: 5px;
+    gap: 5px;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden]) .side-nav .nav-btn {
+    min-height: 44px;
+    padding: 6px;
+    font-size: 11px;
+  }
+
+  /* Keyboard shortcuts popup */
+
+  #battleTab:has(#bossControls[hidden]) .shortcuts-panel {
+    top: calc(100% + 8px);
+    left: auto;
+    right: 0;
+    max-height: 75dvh;
+    overflow-y: auto;
+  }
+}
+
+/* ==========================================
+   REGULAR BATTLE — MOBILE RESPONSIVE
+   Pixel, iPhone, Samsung and other phones
+   ========================================== */
+
+@media (max-width: 650px) {
+  /* Application container */
+
+  #app:has(#battleTab.active #bossControls[hidden]) {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+    min-height: 100dvh;
+    padding: 5px;
+    box-sizing: border-box;
+  }
+
+  /* Main battle layout */
+
+  #app .game-layout:has(#battleTab.active #bossControls[hidden]) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: repeat(5, auto);
+
+    width: 100%;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+
+    margin: 0;
+    padding: 6px;
+    gap: 6px;
+
+    align-content: start;
+    box-sizing: border-box;
+  }
+
+  /* Preserve existing structure */
+
+  #app:has(#battleTab.active #bossControls[hidden]) .main-panel,
+  #battleTab.active:has(#bossControls[hidden]),
+  #battleTab:has(#bossControls[hidden]) .battle-arena-layout {
+    display: contents;
+  }
+
+  /* ==========================================
+     BATTLE HEADER
+     ========================================== */
+
+  #battleTab:has(#bossControls[hidden]) .battle-header {
+    grid-column: 1;
+    grid-row: 1;
+
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    gap: 5px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-topbar {
+    align-items: center;
+    gap: 4px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) #bm {
+    min-width: 0;
+    min-height: 36px;
+    padding: 6px 8px;
+    font-size: 10px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-quick-actions {
+    gap: 4px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-quick-actions .ctl,
+  #battleTab:has(#bossControls[hidden]) .battle-shortcuts summary {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    font-size: 14px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-heading {
+    margin: 0;
+    padding: 0;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-heading #battleTitle {
+    font-size: clamp(22px, 6vw, 30px);
+    line-height: 1.15;
+    margin: 2px 0;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-eyebrow {
+    font-size: 10px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-heading p {
+    font-size: 10px;
+    line-height: 1.3;
+  }
+
+  /* ==========================================
+     HUD — TWO COLUMN GRID
+     ========================================== */
+
+  #battleTab:has(#bossControls[hidden]) .battle-hud {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-hud .stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    gap: 4px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-hud .stats > span {
+    justify-content: center;
+    min-width: 0;
+    padding: 5px 4px;
+    gap: 4px;
+    font-size: 10px;
+    white-space: normal;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .spore-progress {
+    width: 25px;
+    min-width: 0;
+    flex-shrink: 1;
+  }
+
+  /* ==========================================
+     BATTLEFIELD
+     ========================================== */
+
+  #battleTab:has(#bossControls[hidden]) .stage:not(:fullscreen) {
+    grid-column: 1;
+    grid-row: 2;
+
+    position: relative;
+    display: block;
+
+    width: 100%;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+    max-width: none;
+
+    aspect-ratio: 16 / 9;
+    container-type: normal;
+
+    margin: 0;
+    padding: 0;
+    align-self: start;
+    border-radius: 10px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .stage:not(:fullscreen) canvas {
+    display: block;
+
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    max-height: none;
+
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
+
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 10px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-status {
+    top: 4px;
+    left: 4px;
+    padding: 4px 6px;
+    font-size: 9px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .castle-health:not([hidden]) {
+    top: 4px;
+    right: 4px;
+    width: 110px;
+    padding: 5px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .castle-health-heading {
+    font-size: 9px;
+    gap: 3px;
+    margin-bottom: 4px;
+  }
+
+  /* ==========================================
+     PLANT SELECTION
+     ========================================== */
+
+  #battleTab:has(#bossControls[hidden]) .battle-toolbar:not([hidden]) {
+    grid-column: 1;
+    grid-row: 3;
+
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    max-width: none;
+    height: auto;
+    min-height: 0;
+    min-width: 0;
+
+    margin: 0;
+    padding: 6px;
+    gap: 5px;
+    box-sizing: border-box;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-selection {
+    flex: 0 0 auto;
+    min-width: 0;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-toolbar-label {
+    padding: 6px;
+    font-size: 10px;
+  }
+
+  /* Two plants per row */
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(2, auto);
+    gap: 5px;
+    margin-top: 5px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-option {
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+
+    width: 100%;
+    height: auto;
+    min-height: 68px;
+    min-width: 0;
+
+    padding: 5px;
+    gap: 2px 4px;
+    box-sizing: border-box;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-option img {
+    width: 32px;
+    height: 42px;
+    object-fit: contain;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-text {
+    min-width: 0;
+    gap: 2px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-text strong {
+    font-size: 11px;
+    overflow-wrap: anywhere;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-role,
+  #battleTab:has(#bossControls[hidden]) .battle-plant-cost {
+    font-size: 9px;
+    line-height: 1.2;
+    white-space: normal;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-key {
+    font-size: 9px;
+    padding: 2px 5px;
+    max-width: 100%;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-selected-icon {
+    font-size: 12px;
+    top: 3px;
+    right: 3px;
+  }
+
+  /* Deployment instructions */
+
+  #battleTab:has(#bossControls[hidden]) .battle-deploy-guide {
+    margin: 0;
+    padding: 5px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-deploy-guide h3 {
+    font-size: 9px;
+    margin: 0 0 4px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-deploy-guide ol {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: 0;
+    gap: 4px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-deploy-guide li {
+    flex-direction: column;
+    text-align: center;
+    font-size: 9px;
+    gap: 3px;
+    line-height: 1.2;
+  }
+
+  /* Deploy button */
+
+  #battleTab:has(#bossControls[hidden]) .battle-deploy-btn {
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    margin: 0;
+    padding: 5px;
+    gap: 2px;
+  }
+
+  /* ==========================================
+     COMPACT PLANT PROFILE
+     ========================================== */
+
+  #app:has(#battleTab.active #bossControls[hidden]) #plantDetailsPanel {
+    grid-column: 1;
+    grid-row: 4;
+
+    display: grid;
+    grid-template-columns: 65px minmax(0, 1fr);
+
+    position: relative;
+    inset: auto;
+    transform: none;
+
+    width: 100%;
+    max-width: none;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+
+    margin: 0;
+    padding: 6px;
+    gap: 5px;
+
+    align-items: center;
+    box-sizing: border-box;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .sidebar-label {
+    grid-column: 1 / -1;
+    padding: 6px;
+    font-size: 10px;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .detail-color {
+    grid-column: 1;
+    grid-row: 2 / 4;
+
+    width: 60px;
+    height: 60px;
+    margin: 0 auto;
+    padding: 5px;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden]) #detailName {
+    grid-column: 2;
+    grid-row: 2;
+
+    font-size: 18px;
+    line-height: 1.1;
+    margin: 0;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden]) .battle-detail-role {
+    grid-column: 2;
+    grid-row: 3;
+    justify-self: center;
+    font-size: 9px;
+    padding: 3px 6px;
+  }
+
+  /* Special ability */
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .battle-ability-box {
+    grid-column: 1 / -1;
+    height: auto;
+    min-height: 0;
+    margin: 0;
+    padding: 5px;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .detail-description {
+    min-height: 0;
+    margin: 0;
+    font-size: 10px;
+    line-height: 1.3;
+  }
+
+  /* Plant statistics */
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .plant-profile-stats {
+    grid-column: 1 / -1;
+
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 6px;
+    padding: 0;
+    margin: 0;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .profile-stat {
+    min-width: 0;
+    gap: 3px;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .profile-stat-heading,
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .profile-stat-heading
+    strong {
+    font-size: 10px;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .profile-stat-track {
+    height: 5px;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .profile-deployment-cost {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 5px;
+    font-size: 10px;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .plant-message {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 5px;
+    font-size: 10px;
+  }
+
+  /* ==========================================
+     BOTTOM NAVIGATION
+     ========================================== */
+
+  #app:has(#battleTab.active #bossControls[hidden]) .side-nav {
+    grid-column: 1;
+    grid-row: 5;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+
+    position: relative;
+    inset: auto;
+    transform: none;
+
+    width: 100%;
+    height: auto;
+    min-height: 0;
+
+    margin: 0;
+    padding: 5px;
+    gap: 5px;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden]) .nav-links {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 3px;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden]) .side-nav .nav-btn {
+    flex-direction: column;
+    justify-content: center;
+
+    min-width: 0;
+    min-height: 44px;
+
+    padding: 4px 2px;
+    gap: 3px;
+    font-size: 9px;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden]) .nav-btn span {
+    flex: 0 1 auto;
+    white-space: normal;
+    text-align: center;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden]) .nav-icon {
+    width: auto;
+    flex: 0 0 auto;
+    font-size: 15px;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden]) .network-toggle {
+    width: 100%;
+    min-height: 44px;
+    padding: 5px;
+    font-size: 11px;
+    white-space: normal;
+  }
+
+  /* ==========================================
+     MISSION OVERLAY
+     ========================================== */
+  #battleTab:has(#bossControls[hidden]) #ov .box {
+    width: 94%;
+    max-height: 96%;
+    padding: 6px;
+    overflow-y: auto;
+    box-sizing: border-box;
+  }
+
+  #battleTab:has(#bossControls[hidden]) #overlayLevel {
+    margin-bottom: 3px;
+    font-size: 9px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .mission-icon {
+    width: 24px;
+    height: 24px;
+    margin: 0 auto 3px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .mission-icon i {
+    font-size: 18px;
+    margin: 0;
+  }
+
+  #battleTab:has(#bossControls[hidden]) #ot {
+    font-size: 18px;
+    line-height: 1.1;
+    margin: 3px 0;
+  }
+
+  #battleTab:has(#bossControls[hidden]) #om {
+    font-size: 10px;
+    line-height: 1.3;
+    margin: 3px 0;
+  }
+
+  #battleTab:has(#bossControls[hidden]) #ob {
+    min-width: 0;
+    min-height: 36px;
+    padding: 5px 12px;
+    font-size: 11px;
+    margin: 3px 0;
+  }
+
+  /* Keyboard shortcuts popup */
+  #battleTab:has(#bossControls[hidden]) .shortcuts-panel {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    left: auto;
+
+    width: min(260px, calc(100vw - 30px));
+    max-height: 70dvh;
+    overflow-y: auto;
+  }
+}
+
+/* ==========================================
+   REGULAR BATTLE — SHORT SCREEN REFINEMENT
+   Prevent sidebar content overflow
+   ========================================== */
+
+@media (min-width: 900px) and (max-height: 850px) and (orientation: landscape) {
+  /* LEFT — Plant Selection Panel */
+
+  #battleTab:has(#bossControls[hidden]) .battle-toolbar {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+
+    width: 100%;
+    height: auto;
+
+    min-height: 0;
+    min-width: 0;
+
+    padding: 5px;
+    gap: 4px;
+
+    align-self: stretch;
+
+    overflow: visible;
+
+    box-sizing: border-box;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-selection {
+    display: flex;
+    flex-direction: column;
+
+    flex: 1 1 0;
+    height: auto;
+    min-height: 0;
+    min-width: 0;
+
+    gap: 3px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-grid {
+    display: grid;
+
+    flex: 1 1 0;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    min-width: 0;
+
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: repeat(4, minmax(0, 1fr));
+
+    align-content: stretch;
+
+    gap: 3px;
+    margin: 0;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-option {
+    position: relative;
+    display: grid;
+
+    grid-template-columns: 24px minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+
+    align-items: center;
+
+    height: 100%;
+    min-height: 0;
+    min-width: 0;
+
+    padding: 3px 4px;
+    gap: 3px;
+
+    box-sizing: border-box;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-option img {
+    width: 26px;
+    height: 28px;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-text {
+    gap: 1px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-text strong {
+    font-size: 11px;
+    line-height: 1.1;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-role,
+  #battleTab:has(#bossControls[hidden]) .battle-plant-cost {
+    font-size: 9px;
+    line-height: 1.15;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-key {
+    padding: 1px 4px;
+    font-size: 8px;
+    line-height: 1;
+    margin: 0;
+  }
+
+  /* Deployment guide */
+  #battleTab:has(#bossControls[hidden]) .battle-deploy-guide {
+    position: relative;
+
+    flex: 0 0 auto;
+
+    width: 100%;
+    height: auto;
+    min-height: min-content;
+
+    padding: 4px 6px;
+    margin: 0;
+
+    box-sizing: border-box;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-deploy-guide h3 {
+    font-size: 9px;
+    margin: 0 0 3px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-deploy-guide ol {
+    gap: 1px;
+    margin: 0;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-deploy-guide li {
+    font-size: 9px;
+    line-height: 1.1;
+    gap: 4px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-deploy-guide li i {
+    font-size: 11px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-deploy-btn {
+    min-height: 36px;
+    padding: 4px;
+    margin: 0;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+
+  /* RIGHT — Plant Profile Panel */
+
+  #app:has(#battleTab.active #bossControls[hidden]) #plantDetailsPanel {
+    display: flex;
+    flex-direction: column;
+
+    height: auto;
+    min-height: 0;
+    min-width: 0;
+
+    padding: 6px;
+    gap: 4px;
+
+    justify-content: flex-start;
+    align-self: stretch;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    box-sizing: border-box;
+  }
+
+  /* Profile heading */
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .sidebar-label {
+    padding: 6px;
+    font-size: 10px;
+  }
+
+  /* Plant portrait */
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .detail-color {
+    width: clamp(40px, 7vh, 65px);
+    height: clamp(40px, 7vh, 65px);
+    margin: 2px auto;
+    padding: 4px;
+    flex-shrink: 0;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden]) #detailName {
+    font-size: 18px;
+    line-height: 1.1;
+    margin: 2px 0;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden]) .battle-detail-role {
+    font-size: 9px;
+    padding: 2px 6px;
+  }
+
+  /* Special ability description */
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .battle-ability-box {
+    flex: 0 0 auto;
+    height: auto;
+    min-height: 0;
+    padding: 5px;
+    margin: 0;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .battle-ability-label {
+    font-size: 9px;
+    margin-bottom: 3px;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .detail-description {
+    min-height: 0;
+    margin: 0;
+    font-size: 10px;
+    line-height: 1.25;
+  }
+
+  /* Plant statistics */
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .plant-profile-stats {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+
+    flex: 0 0 auto;
+    height: auto;
+    min-height: min-content;
+
+    gap: 4px;
+    padding: 2px 0;
+    margin: 2px 0;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .profile-stat {
+    gap: clamp(2px, 0.6vh, 6px);
+    margin: 0;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .profile-stat-heading,
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .profile-stat-heading
+    strong {
+    font-size: 10px;
+    line-height: 1.2;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .profile-stat-track {
+    height: 5px;
+  }
+
+  /* Deployment cost */
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .profile-deployment-cost {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 auto;
+    min-height: min-content;
+
+    gap: 4px;
+    margin: 3px 0 0;
+    padding: 5px;
+
+    font-size: 10px;
+    line-height: 1.2;
+    box-sizing: border-box;
+  }
+
+  /* Selected plant message */
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .plant-message {
+    margin: 3px 0 0;
+    padding: 5px;
+
+    height: auto;
+    min-height: min-content;
+
+    font-size: 10px;
+    line-height: 1.2;
+
+    flex: 0 0 auto;
+    box-sizing: border-box;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-header {
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-heading {
+    padding: 0;
+    margin: 0;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-heading #battleTitle {
+    font-size: clamp(22px, 3.5vh, 32px);
+    margin: 2px 0;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-hud .stats > span {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
 }
