@@ -116,17 +116,23 @@ export function mountInput() {
     }
     if (session.mode === "boss") {
       const battle = session.bossState;
+      const online = battleService.online();
       const coop = battle.selectedLanes.length === 2;
       const arrows = e.key === "ArrowUp" || e.key === "ArrowDown";
       const letters = coop && (e.code === "KeyW" || e.code === "KeyS");
       if (arrows || letters) {
         e.preventDefault();
-        const player = coop && arrows ? 1 : 0;
+        const player = online ? session.activePlayer : coop && arrows ? 1 : 0;
         const step = e.key === "ArrowUp" || e.code === "KeyW" ? -1 : 1;
         setBossLane(battle.selectedLanes[player] + step, player);
         return;
       }
-      for (const [player, keys] of BOSS_KEYS.entries()) {
+      for (const [keyPlayer, keys] of BOSS_KEYS.entries()) {
+        // Online, each browser has one player and uses the first key set.
+        if (online && keyPlayer !== 0) {
+          continue;
+        }
+        const player = online ? session.activePlayer : keyPlayer;
         const plant = keys.indexOf(e.key);
         if (plant >= 0 && player < battle.selectedLanes.length) {
           if (player === session.activePlayer) {

@@ -56,18 +56,14 @@ function loop(timer) {
         `The garden is reclaimed in ${Math.ceil(session.bossState.elapsed)} seconds. ${session.bossState.stats.deployed} plants deployed; ${session.bossState.stats.lost} lost (${session.bossState.stats.mistLost} to mist).`,
         "Return Home",
       );
-      $("ob2").hidden = false;
+      $("ob2").hidden = battleService.online();
     } else if (session.mode === "boss" && phase === "lost")
       show(
         "The mist caught up",
         `The battlefield was overrun with ${Math.ceil(session.bossState.boss.hp)} boss HP remaining. Deploy early and combine plant abilities to push farther.`,
         RESTART_LABEL,
       );
-    else if (
-      phase === "won" &&
-      !battleService.online() &&
-      state.level >= LAST_REGULAR_LEVEL
-    )
+    else if (phase === "won" && state.level >= LAST_REGULAR_LEVEL)
       show(
         "Final Level Complete!",
         `You cleared Level ${state.level}. The Apex Harvester is waiting at the end of the road.`,
