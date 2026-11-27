@@ -614,16 +614,19 @@ export function renderEvolutionCards() {
   }
 
   previousUnlockedCount = totalUnlocked;
+  refreshPlantLocks();
 
   // Update journey achievements.
+  const conquered = loadCastleConquered();
+  const collected = conquered ? plantProgression.length : totalUnlocked;
+
   updateMilestone("firstDiscoveryMilestone", totalUnlocked >= 1);
 
   updateMilestone(
     "plantCollectorMilestone",
-    totalUnlocked === plantProgression.length,
+    collected === plantProgression.length,
   );
 
-  const conquered = loadCastleConquered();
   updateMilestone("castleConquerorMilestone", conquered);
 
   // Update the green progression path.
@@ -647,15 +650,15 @@ export function renderEvolutionCards() {
 
   const totalPlants = plantProgression.length;
 
-  const percentage = Math.round((totalUnlocked / totalPlants) * 100);
+  const percentage = Math.round((collected / totalPlants) * 100);
 
   if (collectionCount) {
-    collectionCount.textContent = `${totalUnlocked} / ${totalPlants}`;
+    collectionCount.textContent = `${collected} / ${totalPlants}`;
   }
 
   if (collectionProgress) {
     collectionProgress.max = totalPlants;
-    collectionProgress.value = totalUnlocked;
+    collectionProgress.value = collected;
   }
 
   if (collectionPercentage) {
@@ -663,7 +666,7 @@ export function renderEvolutionCards() {
   }
 
   if (unlockedCount) {
-    unlockedCount.textContent = `${totalUnlocked} of ${plantProgression.length} unlocked`;
+    unlockedCount.textContent = `${collected} of ${plantProgression.length} unlocked`;
   }
 
   // Remove previous checkpoints before rendering.
