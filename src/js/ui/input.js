@@ -15,6 +15,7 @@ import {
   setActivePlayer,
   setPlayers,
   deploy,
+  restartFromLevelOne,
 } from "./flow.js";
 import { showPlantDetails } from "./tabs.js";
 import { showPlantMessage } from "./hud.js";
@@ -32,6 +33,7 @@ export function mountInput() {
   };
 
   $("ob").onclick = () => primaryAction();
+  $("ob2").onclick = restartFromLevelOne;
 
   function cellFromEvent(e) {
     const rect = canvas.getBoundingClientRect();
@@ -149,7 +151,7 @@ export function mountInput() {
   const playerToggle = $("playerToggle");
 
   playerToggle.addEventListener("click", () => {
+    if (activePhase() !== "menu" || state.level > 1) return;
     setPlayers(state.players === 2 ? 1 : 2);
-    if (activePhase() !== "menu") startLevel(); // restart so towers match session.mode
   });
 }
