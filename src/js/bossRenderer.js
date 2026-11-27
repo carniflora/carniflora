@@ -3,8 +3,7 @@ import {
   WORLD_WIDTH,
   BOSS_PATH,
   KILLZONE_OFFSET,
-  LANE_Y,
-  LANE_NAMES,
+  bossLaneOwner,
   TAU,
   atBossPath,
   getDistAtX,
@@ -18,12 +17,19 @@ import {
 import { BOSS_KINDS } from "./plants.js";
 import { reducedMotion, drawPlantWithFx } from "./plantFx.js";
 
+import { drawTerrain, strokeTrail } from "./terrainRenderer.js";
+
+const PANEL = "#fffaff";
+const PURPLE = "#7046a3";
+const SUBTLE = "#63566e";
+const WARNING = "#865d1e";
+const DANGER = "#a2375c";
 const INK = "#e5efdc";
 const MUTED = "#8da58e";
 const PINK = "#f06891";
 
 function text(ctx, value, x, y, color = INK, size = 11, align = "left") {
-  ctx.font = `${size >= 13 ? "bold " : ""}${size}px monospace`;
+  ctx.font = `${size >= 13 ? "bold " : ""}${size}px system-ui, sans-serif`;
   ctx.fillStyle = color;
   ctx.textAlign = align;
   ctx.fillText(value, x, y);
@@ -55,12 +61,14 @@ function bar(ctx, x, y, width, hp, max, color, height = 4) {
 }
 
 function pathPoints(state, lane) {
-  const points = BOSS_PATH.map(([x]) => atBossPath(getDistAtX(x), lane));
+  const points = BOSS_PATH.map(([x]) =>
+    atBossPath(getDistAtX(x), lane, state.laneY),
+  );
   if (state.phase === "core")
     points.splice(
       points.length - 1,
       1,
-      [1560, LANE_Y[lane]],
+      [1560, state.laneY[lane]],
       [1800, 290],
       [1840, 290],
     );
@@ -70,31 +78,21 @@ function pathPoints(state, lane) {
 function drawPath(ctx, points) {
   ctx.beginPath();
   points.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
-  ctx.strokeStyle = "#283c29";
-  ctx.lineWidth = 35;
-  ctx.stroke();
-  ctx.strokeStyle = "#49503a";
-  ctx.lineWidth = 25;
-  ctx.stroke();
-  ctx.setLineDash([3, 18]);
-  ctx.strokeStyle = "rgba(225,208,155,0.28)";
-  ctx.lineWidth = 2;
-  ctx.stroke();
-  ctx.setLineDash([]);
+  strokeTrail(ctx);
 }
 
 function drawGround(ctx, state, width) {
-  const bg = ctx.createLinearGradient(0, 0, 0, 540);
-  bg.addColorStop(0, "#11251b");
-  bg.addColorStop(1, "#0a1a13");
-  ctx.fillStyle = bg;
-  ctx.fillRect(0, 0, width, 540);
+  drawTerrain(ctx, width, 540);
   ctx.fillStyle = "rgba(143,212,90,0.06)";
-  ctx.fillRect(0, LANE_Y[state.selectedLane] - 55, width, 110);
+  const spacing = state.laneY[1] - state.laneY[0];
+  for (const lane of state.selectedLanes) {
+    ctx.fillRect(0, state.laneY[lane] - spacing / 2, width, spacing);
+  }
   ctx.strokeStyle = "rgba(143,212,90,0.16)";
   ctx.lineWidth = 1;
   ctx.setLineDash([5, 9]);
-  for (const y of [235, 345]) {
+  for (const center of state.laneY.slice(1)) {
+    const y = center - spacing / 2;
     ctx.beginPath();
     ctx.moveTo(0, y);
     ctx.lineTo(width, y);
@@ -279,17 +277,18 @@ function drawWorld(ctx, state) {
     ctx.lineTo(x + 5, y + 4);
     ctx.stroke();
   }
-  LANE_Y.forEach((_, lane) => drawPath(ctx, pathPoints(state, lane)));
+  state.laneY.forEach((_, lane) => drawPath(ctx, pathPoints(state, lane)));
   if (state.spray) {
     const s = state.spray;
-    const y = LANE_Y[s.lane] - 51;
+    const height = state.laneY[1] - state.laneY[0] - 8;
+    const y = state.laneY[s.lane] - height / 2;
     const firing = s.stage === "firing";
     ctx.fillStyle = firing ? "rgba(240,68,113,0.38)" : "rgba(232,176,74,0.12)";
-    ctx.fillRect(s.x1, y, s.x2 - s.x1, 102);
+    ctx.fillRect(s.x1, y, s.x2 - s.x1, height);
     ctx.strokeStyle = firing ? PINK : "#e8b04a";
     ctx.lineWidth = 2;
     ctx.setLineDash(firing ? [] : [8, 6]);
-    ctx.strokeRect(s.x1, y, s.x2 - s.x1, 102);
+    ctx.strokeRect(s.x1, y, s.x2 - s.x1, height);
     ctx.setLineDash([]);
     text(
       ctx,
@@ -313,9 +312,13 @@ function drawWorld(ctx, state) {
     bar(ctx, m.x, m.y - 28, 22, m.hp, m.max, PINK);
   }
   state.plants.forEach((p) => drawPlant(ctx, p, state.elapsed, reduced));
-  for (let lane = 0; lane < 3; lane++) {
-    const [x, y] = atBossPath(getDistAtX(state.leftEdge + 85), lane);
-    const selected = lane === state.selectedLane;
+  for (let lane = 0; lane < state.laneY.length; lane++) {
+    const [x, y] = atBossPath(
+      getDistAtX(state.leftEdge + 85),
+      lane,
+      state.laneY,
+    );
+    const selected = state.selectedLanes.includes(lane);
     ctx.lineWidth = selected ? 2 : 1;
     circle(
       ctx,
@@ -327,7 +330,11 @@ function drawWorld(ctx, state) {
     );
     text(
       ctx,
-      selected ? "DEPLOY" : `0${lane + 1}`,
+      selected
+        ? state.selectedLanes.length > 1
+          ? `P${bossLaneOwner(state, lane) + 1} DEPLOY`
+          : "DEPLOY"
+        : `0${lane + 1}`,
       x,
       y + 35,
       selected ? "#a9e67b" : MUTED,
@@ -401,9 +408,9 @@ function drawWorld(ctx, state) {
 
 function drawHUD(ctx, state, width) {
   const b = state.boss;
-  ctx.fillStyle = "rgba(7,18,12,0.96)";
+  ctx.fillStyle = PANEL;
   ctx.fillRect(0, 0, width, 108);
-  text(ctx, "FINAL ASSAULT", 20, 25, "#a9e67b", 13);
+  text(ctx, "Final assault", 20, 25, PURPLE, 16);
   text(
     ctx,
     state.phase === "approach"
@@ -413,7 +420,7 @@ function drawHUD(ctx, state, width) {
         : "03 / OVERRUN THE CORE",
     20,
     46,
-    MUTED,
+    SUBTLE,
     10,
   );
   text(
@@ -421,10 +428,10 @@ function drawHUD(ctx, state, width) {
     `TANKS ${state.tanks.filter((t) => t.hp > 0).length}/2  |  CANNON ${state.towers.some((t) => t.type === "cannon" && t.hp > 0) ? "ONLINE" : "SILENCED"}`,
     20,
     67,
-    "#d7c79b",
+    SUBTLE,
     10,
   );
-  text(ctx, "APEX HARVESTER", width / 2, 25, INK, 14, "center");
+  text(ctx, "Apex Harvester", width / 2, 25, PURPLE, 18, "center");
   bar(
     ctx,
     width / 2,
@@ -442,7 +449,7 @@ function drawHUD(ctx, state, width) {
       : `CORE EXPOSED / ${Math.ceil(b.hp)} HP / ARMOUR ${b.armour}`,
     width / 2,
     65,
-    b.shielded ? "#9ac8b8" : "#ff9bb6",
+    b.shielded ? "#376c60" : DANGER,
     10,
     "center",
   );
@@ -452,18 +459,18 @@ function drawHUD(ctx, state, width) {
     `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`,
     width - 20,
     40,
-    seconds <= 25 ? PINK : "#e8c97d",
+    seconds <= 25 ? DANGER : WARNING,
     24,
     "right",
   );
-  text(ctx, "UNTIL OVERRUN", width - 20, 62, MUTED, 10, "right");
+  text(ctx, "UNTIL OVERRUN", width - 20, 62, SUBTLE, 10, "right");
   if (state.spray)
     text(
       ctx,
       `LANE ${state.spray.lane + 1} / ${state.spray.stage === "warning" ? `HERBICIDE IN ${state.spray.timer.toFixed(1)}s` : "HERBICIDE FIRING"}`,
       width / 2,
       92,
-      state.spray.stage === "warning" ? "#e8c97d" : PINK,
+      state.spray.stage === "warning" ? WARNING : DANGER,
       12,
       "center",
     );
@@ -477,19 +484,19 @@ function drawHUD(ctx, state, width) {
           : "Rafflesia pierces armour. Sundew slows boss fire.",
       width / 2,
       92,
-      state.noticeTime > 0 ? "#c2d7af" : MUTED,
+      SUBTLE,
       11,
       "center",
     );
-  for (let lane = 0; lane < 3; lane++) {
-    const selected = state.selectedLane === lane;
+  for (let lane = 0; lane < state.laneY.length; lane++) {
+    const selected = state.selectedLanes.includes(lane);
     ctx.fillStyle = "rgba(9,24,16,0.88)";
-    ctx.fillRect(8, LANE_Y[lane] - 53, 168, 22);
+    ctx.fillRect(8, state.laneY[lane] - 38, 168, 22);
     text(
       ctx,
-      `${selected ? ">" : " "} 0${lane + 1} / ${state.phase === "core" ? "Furnace core" : LANE_NAMES[lane]}`,
+      `${selected ? ">" : " "} 0${lane + 1} / ${state.phase === "core" ? "Furnace core" : state.laneNames[lane]}`,
       15,
-      LANE_Y[lane] - 38,
+      state.laneY[lane] - 23,
       selected ? "#a9e67b" : MUTED,
       10,
     );
@@ -518,9 +525,11 @@ function drawMap(ctx, state, width) {
     Math.max(0, state.leftEdge + KILLZONE_OFFSET) * scale,
     29,
   );
-  for (let lane = 0; lane < 3; lane++) {
+  for (let lane = 0; lane < state.laneY.length; lane++) {
     const y = 502 + lane * 9;
-    ctx.strokeStyle = lane === state.selectedLane ? "#6a9158" : "#354d36";
+    ctx.strokeStyle = state.selectedLanes.includes(lane)
+      ? "#6a9158"
+      : "#354d36";
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(24, y);

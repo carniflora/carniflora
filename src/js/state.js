@@ -1,4 +1,5 @@
 import { LEVEL_PATHS } from "./path.js";
+const CASTLE_KEY = "carniflora.harvesterConquered";
 
 export function createState() {
   return {
@@ -6,6 +7,7 @@ export function createState() {
     level: 1,
     players: 1,
     spores: 0,
+    elapsed: 0,
     map: null,
     enemies: [],
     keep: null,
@@ -21,13 +23,15 @@ export const state = createState();
 // progress
 const STORAGE_KEY = "carniflora.level";
 const FIRST_LEVEL = 1;
+export const BOSS_LEVEL = LEVEL_PATHS.length + 1;
+
+// Online rooms and normal battle replays use tower-defense maps.
+export function normalLevel(level) {
+  return Math.min(level, LEVEL_PATHS.length);
+}
 
 function validLevel(level) {
-  return (
-    Number.isInteger(level) &&
-    level >= FIRST_LEVEL &&
-    level <= LEVEL_PATHS.length
-  );
+  return Number.isInteger(level) && level >= FIRST_LEVEL && level <= BOSS_LEVEL;
 }
 
 export function loadProgress() {
@@ -55,3 +59,20 @@ export function saveProgress(level) {
 // economy -- how spores are counted
 export const maxSpores = (localState = state) =>
   localState.players === 2 ? 180 : 120; // set the number of spores available for the level (180 for 2 players or 120 for 1)
+
+// Defeated Harvester
+export function loadCastleConquered() {
+  try {
+    return localStorage.getItem(CASTLE_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+export function saveCastleConquered() {
+  try {
+    localStorage.setItem(CASTLE_KEY, "1");
+  } catch {
+    // Storage restrictions must not interrupt play.
+  }
+}

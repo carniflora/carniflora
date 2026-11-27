@@ -8,7 +8,6 @@ const ENEMY_SHEETS = {
   keep: "works",
 };
 const TREE_FRAME = 96;
-const CLOSED_EYE_FRAME = 7;
 const images = {};
 const enemyImages = {};
 const treeImgs = {};
@@ -96,9 +95,8 @@ export function drawPlant(ctx, p, now, size = 48) {
 export function drawEnemy(ctx, e, now, size = 48) {
   let img;
 
-  if (e.keep) {
-    img = enemyImages.keep;
-  } else if (enemyImages.minion) {
+  if (e.keep) img = enemyImages.keep;
+  else if (enemyImages.minion) {
     const index = ENEMY_SHEETS.minion.indexOf(e.kind ?? e.type ?? "cog");
     img = enemyImages.minion[index >= 0 ? index : 1];
   }
@@ -106,15 +104,24 @@ export function drawEnemy(ctx, e, now, size = 48) {
   if (!img) return false;
 
   ctx.imageSmoothingEnabled = false;
+
+  let drawX = e.x - size / 2;
+  let drawY = e.y - size / 2;
+
+  if (e.keep && ctx.canvas) {
+    drawX = ctx.canvas.width - size + 18;
+    drawY = ctx.canvas.height - size - 12;
+  }
+
+  // Default for normal enemies
   ctx.drawImage(
     img,
-    (e.hp <= 0 && e.type === "tower" ? CLOSED_EYE_FRAME : frameFor(e, now)) *
-      FRAME,
+    frameFor(e, now) * FRAME,
     0,
     FRAME,
     FRAME,
-    e.x - size / 2,
-    e.y - size / 2,
+    drawX,
+    drawY,
     size,
     size,
   );

@@ -103,6 +103,10 @@ button:focus-visible {
   gap: 8px;
 }
 
+.boss-lanes:has(> :nth-child(4):not([hidden])) {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .boss-lane-button {
   padding: 10px 6px;
   border: 1px solid var(--line);
@@ -1726,6 +1730,7 @@ button:focus-visible {
 
 #battleTab .battle-topbar {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: flex-start;
   gap: 12px;
@@ -1754,6 +1759,14 @@ button:focus-visible {
   border-radius: 9px;
   font-size: 17px;
   cursor: pointer;
+}
+
+#battleTab #rs {
+  width: auto;
+  padding: 0 10px;
+  gap: 6px;
+  font-size: 13px;
+  white-space: nowrap;
 }
 
 #battleTab .battle-quick-actions .ctl:hover,
@@ -2102,6 +2115,27 @@ button:focus-visible {
   border-radius: 20px;
   text-align: center;
   box-shadow: 0 16px 40px rgba(112, 70, 163, 0.15);
+}
+
+#battleTab .mission-briefing #ob2 {
+  width: 100%;
+  margin-top: 10px;
+  padding: 14px;
+  background: #e5d5f5;
+  color: #7046a3;
+  border: 1px solid #dcc9ef;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#battleTab .mission-briefing #ob2:hover {
+  background: #d8c0f1;
+}
+
+#battleTab .mission-briefing #ob2[hidden] {
+  display: none;
 }
 
 #battleTab #overlayLevel:not([hidden]) {
@@ -3115,4 +3149,9 @@ button:focus-visible {
 #battleTab .battle-plant-option.is-locked .battle-plant-key {
   background: #e5d9f2;
   color: #927bb2;
+}
+
+#battleTab .boss-lane-button[hidden],
+#battleTab #bossPlayer[hidden] {
+  display: none;
 }

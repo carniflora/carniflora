@@ -17,6 +17,7 @@ export function build(
   state.fx = [];
   state.seeds = [];
   state.spores = maxSpores(state);
+  state.elapsed = 0;
 
   // create the enemy tower at the end of all paths
   const firstPath = state.map.paths[0];

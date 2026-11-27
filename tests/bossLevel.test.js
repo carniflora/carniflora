@@ -402,7 +402,7 @@ describe("Three-lane Harvester breach", () => {
     state.state = "pause";
     const snapshot = JSON.stringify(state);
     expect(selectBossLane(state, 2)).toBe(true);
-    state.selectedLane = 0;
+    selectBossLane(state, 0);
     updateBossLevel(state, 3);
     expect(JSON.stringify(state)).toBe(snapshot);
     for (const dt of [0, -1, NaN, Infinity]) updateBossLevel(state, dt);
@@ -584,5 +584,39 @@ describe("US 6.4 — damage cues at the boss level", () => {
     expect(hit.shake).toBeGreaterThan(0);
     expect(safe.hp).toBe(150); // not hit, not splashed
     expect(safe.cue).toBeUndefined();
+  });
+});
+
+describe("Local boss co-op", () => {
+  it("keeps each player's deployment in their own pair of lanes", () => {
+    const battle = createBossLevelState(2);
+    expect(battle.tanks.map((tank) => tank.lane)).toEqual([0, 3]);
+    expect(battle.minions.map((minion) => minion.lane)).toEqual([0, 1, 2, 3]);
+    expect(selectBossLane(battle, 1, 0)).toBe(true);
+    expect(selectBossLane(battle, 3, 1)).toBe(true);
+    for (const [player, forbidden] of [
+      [0, 2],
+      [1, 1],
+    ]) {
+      expect(selectBossLane(battle, forbidden, player)).toBe(false);
+      expect(spawnBossPlant(battle, 0, forbidden, player)).toBe(false);
+    }
+    const spores = battle.spores;
+    expect(spawnBossPlant(battle, 0, undefined, 0)).toBe(true);
+    expect(spawnBossPlant(battle, 0, undefined, 1)).toBe(true);
+    expect(battle.plants.map((plant) => plant.lane)).toEqual([1, 3]);
+    expect(battle.spores).toBe(spores - 2 * BOSS_KINDS[0].cost);
+    updateBossLevel(battle, 1);
+    expect(battle.plants[1].y).toBeCloseTo(battle.laneY[3]);
+  });
+
+  it("targets a fourth-lane wave with herbicide", () => {
+    const battle = createBossLevelState(2);
+    battle.leftEdge = 500;
+    spawnBossPlant(battle, 0, 3, 1);
+    battle.plants[0].s = getDistAtX(1400);
+    battle.boss.sprayCooldown = 0;
+    updateBossLevel(battle, 0.1);
+    expect(battle.spray?.lane).toBe(3);
   });
 });

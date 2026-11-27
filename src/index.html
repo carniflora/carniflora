@@ -55,6 +55,12 @@
           </span>
 
           <span>
+            <i class="icon-clock hud-icon" aria-hidden="true"></i>
+            Time
+            <b id="tm">0:00</b>
+          </span>
+
+          <span>
             <i class="icon-castle hud-icon" aria-hidden="true"></i>
             Enemies
             <b id="tw">0</b>
@@ -127,6 +133,15 @@
           </button>
 
           <section class="network-panel" aria-label="Online multiplayer">
+            <button
+              type="button"
+              id="closeMultiplayerBtn"
+              class="network-panel-close"
+              aria-label="Close multiplayer lobby"
+            >
+              &times;
+            </button>
+
             <div class="lobby-heading">
               <i class="icon-users" aria-hidden="true"></i>
 
@@ -183,10 +198,6 @@
             </div>
 
             <div class="lobby-status">
-              <p id="networkStatus" role="status" aria-live="polite">
-                Local play
-              </p>
-
               <button class="ctl" id="copySession" type="button" hidden>
                 Copy Key
               </button>
@@ -194,6 +205,11 @@
               <button class="ctl" id="leaveSession" type="button" hidden>
                 Leave Session
               </button>
+            </div>
+
+            <div class="lobby-keyboard-hint">
+              <i class="icon-keyboard" aria-hidden="true"></i>
+              <span>Press <kbd>Esc</kbd> to close the lobby</span>
             </div>
           </section>
 
@@ -514,8 +530,8 @@
                         <i class="icon-swords" aria-hidden="true"></i>
 
                         <div class="milestone-details">
-                          <strong>Castle Conqueror</strong>
-                          <p>Defeat the final boss</p>
+                          <strong>Harvester Breached</strong>
+                          <p>Defeat the Apex Harvester</p>
                           <span class="milestone-status">Locked</span>
                         </div>
                       </div>
@@ -748,7 +764,8 @@
                 ></div>
                 <aside class="upgrade-info">
                   <div id="upgradeInfoHeader" class="upgrade-info-header">
-                    PLANT DISCOVERY
+                    <i class="icon-sprout" aria-hidden="true"></i>
+                    <span>PLANT PROFILE</span>
                   </div>
 
                   <button
@@ -761,17 +778,21 @@
                   </button>
 
                   <div class="upgrade-info-content">
-                    <img
-                      id="upgradePreview"
-                      class="upgrade-preview"
-                      alt="Selected plant"
-                    />
+                    <div class="upgrade-profile-top">
+                      <div class="upgrade-preview-wrap">
+                        <img
+                          id="upgradePreview"
+                          class="upgrade-preview"
+                          alt="Selected plant"
+                        />
+                      </div>
 
-                    <h3 id="upgradeName"></h3>
+                      <h3 id="upgradeName"></h3>
 
-                    <p id="upgradeTerritory" class="upgrade-territory"></p>
+                      <p id="upgradeTerritory" class="upgrade-territory"></p>
 
-                    <span id="upgradeRole" class="upgrade-role"></span>
+                      <span id="upgradeRole" class="upgrade-role"></span>
+                    </div>
 
                     <div class="upgrade-requirements">
                       <h4>Unlock requirements</h4>
@@ -834,7 +855,7 @@
 
                   <button class="ctl" id="rs" title="Restart Level">
                     <i class="icon-rotate-ccw" aria-hidden="true"></i>
-                    <span class="control-label">Restart Level</span>
+                    <span>Restart Level</span>
                   </button>
 
                   <details class="battle-shortcuts">
@@ -1064,6 +1085,9 @@
                     </div>
 
                     <button class="ctl" id="ob"></button>
+                    <button class="ctl" id="ob2" type="button" hidden>
+                      Restart at Level 1
+                    </button>
                   </div>
                 </div>
               </div>
@@ -1118,6 +1142,9 @@
                   </span>
                 </p>
 
+                <button id="bossPlayer" type="button" class="ctl" hidden>
+                  Switch player
+                </button>
                 <div
                   id="bossLanes"
                   class="boss-lanes"
