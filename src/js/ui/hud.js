@@ -11,6 +11,7 @@ import {
   bossDeployButtons,
 } from "./bossControls.js";
 import { renderEvolutionCards } from "./flow.js";
+import { resetScoreScreen } from "./scoreScreen.js";
 import { LEVEL_TIME_LIMIT } from "../constants.js";
 
 const SECONDS_PER_MINUTE = 60;
@@ -387,6 +388,12 @@ export function show(t, m, b) {
   levelBadge.hidden = !isMission;
 
   $("missionStats").hidden = true;
+
+  // The score form only lives on the win screen; every other overlay
+  // (pause, loss, menu, session end) removes it.
+  if (phase !== "won") {
+    resetScoreScreen();
+  }
 
   // Display overlay.
   $("ov").classList.remove("hide");

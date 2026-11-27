@@ -108,6 +108,10 @@ export const battleService = {
   ready() {
     return ready;
   },
+  // Room generation, used to identify a specific win in the score screen.
+  generation() {
+    return generation;
+  },
   async create() {
     const result = await createSession(normalLevel(loadProgress()));
     open(result.key, result.token);
