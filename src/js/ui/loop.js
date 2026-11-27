@@ -47,6 +47,7 @@ function loop(timer) {
   // check if game is ended
   const phase = activePhase();
   if (phase !== lastPhase) {
+    syncPlayerToggle($);
     if (session.mode === "boss" && phase === "won") {
       saveCastleConquered();
       show(
