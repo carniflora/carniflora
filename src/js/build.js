@@ -18,6 +18,7 @@ export function build(
   state.seeds = [];
   state.spores = maxSpores(state);
   state.elapsed = 0;
+  state.plantsLost = 0;
 
   // Get the actual goal tile shared by all paths
   const [goalC, goalR] = state.map.goal;

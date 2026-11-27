@@ -202,7 +202,8 @@ export function update(deltaTime, state = localState, effects = localEffects) {
     }
   }
 
-  // Remove dead plants.
+  // Remove dead plants, counting each loss once for the win score.
+  state.plantsLost += state.plants.filter((p) => p.hp <= 0).length;
   state.plants = state.plants.filter((p) => p.hp > 0);
 
   // Update attack effects.

@@ -233,6 +233,45 @@ describe("kill rewards", () => {
   });
 });
 
+describe("plant loss counting", () => {
+  test("counts each plant lost in combat once", () => {
+    const a = addPlant(5);
+    const b = addPlant(5);
+    addEnemy(a, { dmg: 5000, base: 1, rng: 100 });
+    addEnemy(b, { dmg: 5000, base: 1, rng: 100 });
+    update(0.01, state, effects);
+    expect(state.plantsLost).toBe(2);
+
+    // Survivors of later ticks must not be recounted.
+    update(0.01, state, effects);
+    expect(state.plantsLost).toBe(2);
+  });
+
+  test("counts plants killed by splash damage", () => {
+    const target = addPlant(5);
+    const neighbour = addPlant(5);
+    addEnemy(target, { kind: "boiler", dmg: 5000, base: 1, rng: 20 });
+    update(0.01, state, effects);
+    expect(target.hp).toBeLessThanOrEqual(0);
+    expect(neighbour.hp).toBeLessThanOrEqual(0);
+    expect(state.plantsLost).toBe(2);
+  });
+
+  test("surviving plants are not counted", () => {
+    const p = addPlant(5);
+    addEnemy(p);
+    update(0.01, state, effects);
+    expect(p.hp).toBeGreaterThan(0);
+    expect(state.plantsLost).toBe(0);
+  });
+
+  test("building a level resets the loss counter", () => {
+    state.plantsLost = 7;
+    build(state, effects, () => 0.5);
+    expect(state.plantsLost).toBe(0);
+  });
+});
+
 describe("win and lose", () => {
   test("destroying the keep wins", () => {
     state.keep.hp = 0;

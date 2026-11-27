@@ -142,6 +142,23 @@ describe("Online boss level", () => {
   });
 });
 
+describe("Win score state", () => {
+  it("carries the plant loss counter in snapshots", () => {
+    const battle = createBattle(1);
+    battle.command({ type: Action.START }, 0);
+    battle.state.plantsLost = 3;
+    const restored = createState();
+
+    applySnapshot(
+      restored,
+      createEffects(restored),
+      JSON.parse(JSON.stringify(battle.snapshot())),
+    );
+
+    expect(restored.plantsLost).toBe(3);
+  });
+});
+
 describe("Battle tower lifetimes", () => {
   it("expires one room's towers without changing another room or local play", () => {
     const a = createBattle(1);
