@@ -7,6 +7,7 @@ export function createState() {
     level: 1,
     players: 1,
     spores: 0,
+    elapsed: 0,
     map: null,
     enemies: [],
     keep: null,

@@ -11,11 +11,22 @@ import {
   bossDeployButtons,
 } from "./bossControls.js";
 import { renderEvolutionCards } from "./flow.js";
+import { LEVEL_TIME_LIMIT } from "../constants.js";
+
+const SECONDS_PER_MINUTE = 60;
 
 // store currently displayed HUD value
 let shown = {};
 
 let lastRenderedEvolutionLevel = null;
+
+// 65.2 -> "1:05"
+function clock(seconds) {
+  const whole = Math.ceil(Math.max(0, seconds));
+  const mins = Math.floor(whole / SECONDS_PER_MINUTE);
+  const secs = String(whole % SECONDS_PER_MINUTE).padStart(2, "0");
+  return `${mins}:${secs}`;
+}
 
 function updateBossMission(battle, phase) {
   const { $ } = dom();
@@ -163,6 +174,10 @@ export function hud() {
   const v = {
     sp: Math.floor(battle.spores) + " / " + cap,
     lv: session.mode === "boss" ? "Boss" : state.level,
+    tm:
+      session.mode === "boss"
+        ? "—"
+        : clock(LEVEL_TIME_LIMIT - (battle.elapsed || 0)),
     tw: (session.mode === "boss"
       ? [...battle.towers, ...battle.minions, ...battle.tanks, battle.boss]
       : battle.enemies

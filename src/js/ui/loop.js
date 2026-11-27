@@ -7,7 +7,7 @@ import { updateBossLevel } from "../bossLevel.js";
 import { drawBossLevel } from "../bossRenderer.js";
 import { draw } from "./render.js";
 import { hud, show } from "./hud.js";
-import { LAST_REGULAR_LEVEL } from "../constants.js";
+import { LAST_REGULAR_LEVEL, LEVEL_TIME_LIMIT } from "../constants.js";
 
 let lastPhase = null;
 const RESTART_LABEL = "Restart Level";
@@ -78,6 +78,12 @@ function loop(timer) {
         "Victory!",
         `Congratulations! You successfully completed Level ${state.level}.`,
         state.level >= LAST_REGULAR_LEVEL ? "Replay Level" : "Next Level",
+      );
+    else if (phase === "lost" && state.elapsed >= LEVEL_TIME_LIMIT)
+      show(
+        "Time's Up",
+        "The castle held out until time ran out. Push faster and try again.",
+        RESTART_LABEL,
       );
     else if (phase === "lost")
       show(
