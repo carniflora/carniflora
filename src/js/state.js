@@ -1,4 +1,5 @@
 import { LEVEL_PATHS } from "./path.js";
+const CASTLE_KEY = "carniflora.harvesterConquered";
 
 export function createState() {
   return {
@@ -54,3 +55,20 @@ export function saveProgress(level) {
 // economy -- how spores are counted
 export const maxSpores = (localState = state) =>
   localState.players === 2 ? 180 : 120; // set the number of spores available for the level (180 for 2 players or 120 for 1)
+
+// Defeated Harvester
+export function loadCastleConquered() {
+  try {
+    return localStorage.getItem(CASTLE_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+export function saveCastleConquered() {
+  try {
+    localStorage.setItem(CASTLE_KEY, "1");
+  } catch {
+    // Storage restrictions must not interrupt play.
+  }
+}

@@ -1,7 +1,7 @@
 import { battleService } from "../battleService.js";
 import { Action } from "../network/protocol.js";
 import { dom } from "./dom.js";
-import { state, saveProgress } from "../state.js";
+import { state, saveProgress, loadCastleConquered } from "../state.js";
 import { plantProgression, plantDiscovery } from "./assets.js";
 
 import {
@@ -622,6 +622,9 @@ export function renderEvolutionCards() {
     "plantCollectorMilestone",
     totalUnlocked === plantProgression.length,
   );
+
+  const conquered = loadCastleConquered();
+  updateMilestone("castleConquerorMilestone", conquered);
 
   // Update the green progression path.
   const progressPath = document.querySelector(

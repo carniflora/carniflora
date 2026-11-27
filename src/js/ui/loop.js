@@ -1,7 +1,7 @@
 import { battleService } from "../battleService.js";
 import { dom } from "./dom.js";
 import { session, activePhase } from "./session.js";
-import { state } from "../state.js";
+import { state, saveCastleConquered } from "../state.js";
 import { update } from "../combat.js";
 import { updateBossLevel } from "../bossLevel.js";
 import { drawBossLevel } from "../bossRenderer.js";
@@ -36,6 +36,7 @@ function loop(timer) {
   const phase = activePhase();
   if (phase !== lastPhase) {
     if (session.mode === "boss" && phase === "won") {
+      saveCastleConquered();
       show(
         "Harvester breached",
         `The garden is reclaimed in ${Math.ceil(session.bossState.elapsed)} seconds. ${session.bossState.stats.deployed} plants deployed; ${session.bossState.stats.lost} lost (${session.bossState.stats.mistLost} to mist).`,
