@@ -3932,7 +3932,7 @@ body:has(.network-panel.is-open) {
   #app:has(#battleTab.active #bossControls[hidden])
     #plantDetailsPanel
     .plant-message {
-    margin: auto 0 0;
+    margin: 4px 0 0;
     padding: 5px;
     font-size: 10px;
   }
@@ -4514,7 +4514,6 @@ body:has(.network-panel.is-open) {
   /* ==========================================
      MISSION OVERLAY
      ========================================== */
-
   #battleTab:has(#bossControls[hidden]) #ov .box {
     width: 94%;
     max-height: 96%;
@@ -4560,7 +4559,6 @@ body:has(.network-panel.is-open) {
   }
 
   /* Keyboard shortcuts popup */
-
   #battleTab:has(#bossControls[hidden]) .shortcuts-panel {
     position: absolute;
     top: calc(100% + 6px);
@@ -4570,5 +4568,288 @@ body:has(.network-panel.is-open) {
     width: min(260px, calc(100vw - 30px));
     max-height: 70dvh;
     overflow-y: auto;
+  }
+}
+
+/* ==========================================
+   REGULAR BATTLE — SHORT SCREEN REFINEMENT
+   Prevent sidebar content overflow
+   ========================================== */
+
+@media (min-width: 900px) and (max-height: 850px) and (orientation: landscape) {
+  /* LEFT — Plant Selection Panel */
+
+  #battleTab:has(#bossControls[hidden]) .battle-toolbar {
+    min-height: 0;
+    padding: 6px;
+    gap: 5px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-selection {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    min-height: 0;
+    gap: 4px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-grid {
+    display: grid;
+    flex: 1 1 0;
+    min-height: 0;
+
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: repeat(4, minmax(0, 1fr));
+
+    gap: 4px;
+    margin: 0;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-option {
+    display: grid;
+    grid-template-columns: 26px minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+
+    height: 100%;
+    min-height: 0;
+    min-width: 0;
+
+    padding: 3px;
+    gap: 1px 4px;
+    box-sizing: border-box;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-option img {
+    width: 26px;
+    height: 28px;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-text {
+    gap: 1px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-text strong {
+    font-size: 11px;
+    line-height: 1.1;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-role,
+  #battleTab:has(#bossControls[hidden]) .battle-plant-cost {
+    font-size: 9px;
+    line-height: 1.15;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-plant-key {
+    padding: 1px 4px;
+    font-size: 8px;
+    line-height: 1;
+    margin: 0;
+  }
+
+  /* Deployment guide */
+  #battleTab:has(#bossControls[hidden]) .battle-deploy-guide {
+    flex: 0 0 auto;
+    padding: 4px 6px;
+    margin: 0;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-deploy-guide h3 {
+    font-size: 9px;
+    margin: 0 0 3px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-deploy-guide ol {
+    gap: 1px;
+    margin: 0;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-deploy-guide li {
+    font-size: 9px;
+    line-height: 1.1;
+    gap: 4px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-deploy-guide li i {
+    font-size: 11px;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-deploy-btn {
+    min-height: 36px;
+    padding: 4px;
+    margin: 0;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+
+  /* RIGHT — Plant Profile Panel */
+
+  #app:has(#battleTab.active #bossControls[hidden]) #plantDetailsPanel {
+    display: flex;
+    flex-direction: column;
+
+    height: 100%;
+    min-height: 0;
+    padding: 6px;
+    gap: 3px;
+
+    justify-content: flex-start;
+    box-sizing: border-box;
+  }
+
+  /* Profile heading */
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .sidebar-label {
+    padding: 6px;
+    font-size: 10px;
+  }
+
+  /* Plant portrait */
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .detail-color {
+    width: clamp(40px, 7vh, 65px);
+    height: clamp(40px, 7vh, 65px);
+    margin: 2px auto;
+    padding: 4px;
+    flex-shrink: 0;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden]) #detailName {
+    font-size: 18px;
+    line-height: 1.1;
+    margin: 2px 0;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden]) .battle-detail-role {
+    font-size: 9px;
+    padding: 2px 6px;
+  }
+
+  /* Special ability description */
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .battle-ability-box {
+    flex: 0 0 auto;
+    height: auto;
+    min-height: 0;
+    padding: 5px;
+    margin: 0;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .battle-ability-label {
+    font-size: 9px;
+    margin-bottom: 3px;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .detail-description {
+    min-height: 0;
+    margin: 0;
+    font-size: 10px;
+    line-height: 1.25;
+  }
+
+  /* Plant statistics */
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .plant-profile-stats {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+
+    flex: 1 1 auto;
+    min-height: 0;
+
+    gap: 5px;
+    padding: 4px 0;
+    margin: 4px 0;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .profile-stat {
+    gap: clamp(2px, 0.6vh, 6px);
+    margin: 0;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .profile-stat-heading,
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .profile-stat-heading
+    strong {
+    font-size: 10px;
+    line-height: 1.2;
+  }
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .profile-stat-track {
+    height: 5px;
+  }
+
+  /* Deployment cost */
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .profile-deployment-cost {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+
+    gap: 4px;
+    margin: 6px 0 0;
+    padding: 6px;
+
+    font-size: 9px;
+    line-height: 1.2;
+    flex-shrink: 0;
+  }
+
+  /* Selected plant message */
+
+  #app:has(#battleTab.active #bossControls[hidden])
+    #plantDetailsPanel
+    .plant-message {
+    margin: auto 0 0;
+    padding: 4px;
+
+    min-height: 0;
+    font-size: 9px;
+    line-height: 1.2;
+
+    flex: 0 0 auto;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-header {
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-heading {
+    padding: 0;
+    margin: 0;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-heading #battleTitle {
+    font-size: clamp(22px, 3.5vh, 32px);
+    margin: 2px 0;
+  }
+
+  #battleTab:has(#bossControls[hidden]) .battle-hud .stats > span {
+    padding: 5px 10px;
+    font-size: 11px;
   }
 }
