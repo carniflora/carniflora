@@ -317,7 +317,7 @@ describe("drawTank", () => {
 });
 
 describe("Boss arena sprites", () => {
-  test("draws both lane owners and the Harvester with their respective sheets", async () => {
+  test("draws both players, boss defenses and the Harvester with their own sheets", async () => {
     await loadedSprites();
     const { createBossLevelState, spawnBossPlant } =
       await import("../src/js/bossLevel.js");
@@ -338,6 +338,8 @@ describe("Boss arena sprites", () => {
     for (const sheet of [
       "snap-sheet16-1x",
       "snap-sheet16-1x-p2-blue",
+      "tower-sheet16-1x",
+      "cannon-sheet16-1x",
       "harvester-sheet16-1x",
     ]) {
       expect(sheets).toContain(`assets/carniflora-${sheet}.png`);
