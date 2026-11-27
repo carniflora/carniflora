@@ -1,5 +1,8 @@
 /** Three-lane reverse tower defense simulation. Coordinates are in world pixels. */
 import { BOSS_KINDS } from "./plants.js";
+// US 6.4 — per-plant damage cue (Part 1) + health display (Part 2).
+import { noteDamage, advanceCue } from "./damageCue.js";
+import { advancePlantFx, hitShake } from "./plantHealth.js";
 export const WORLD_WIDTH = 2000;
 export const ARENA_X = WORLD_WIDTH - 960;
 export const SCROLL_SPEED = 30;
@@ -262,7 +265,10 @@ function splashPlants(state, target, damage, color) {
       plant.hp > 0 &&
       Math.hypot(plant.x - target.x, plant.y - target.y) < 70
     ) {
+      const before = plant.hp;
       plant.hp -= damage;
+      // US 6.4 — mark the plants the splash actually damages.
+      if (noteDamage(plant, before - plant.hp)) hitShake(plant);
     }
   }
   state.fx.push({ x1: target.x, y1: target.y, c: color, t: 0.3, ring: 70 });
@@ -291,7 +297,10 @@ function updatePlants(state, dt) {
   for (const plant of state.plants) {
     if (plant.hp <= 0) continue;
     if (plant.x < state.leftEdge + KILLZONE_OFFSET) {
+      const before = plant.hp;
       plant.hp -= 65 * dt;
+      // US 6.4 — pulse the mist-damage cue at the limited rate.
+      if (noteDamage(plant, before - plant.hp)) hitShake(plant);
       if (plant.hp <= 0) {
         state.stats.mistLost++;
         continue;
@@ -384,7 +393,10 @@ function updateDefenses(state, dt) {
     const target = nearest(targets, enemy.x, enemy.y, enemy.rng);
     if (target) {
       enemy.cd = enemy.base;
+      const before = target.hp;
       target.hp -= enemy.dmg;
+      // US 6.4 — mark the plant the defence hit.
+      if (noteDamage(target, before - target.hp)) hitShake(target);
       beam(state, enemy, target, "#ffd9a0");
       if (enemy.type === "cannon") {
         splashPlants(state, target, 10, "#ffd9a0");
@@ -424,7 +436,10 @@ function updateBoss(state, dt) {
     const target = nearest(state.plants, boss.x, boss.y, 220);
     if (target && boss.attackCooldown <= 0) {
       boss.attackCooldown = 0.8;
+      const before = target.hp;
       target.hp -= 18;
+      // US 6.4 — mark the plant the exposed core hit.
+      if (noteDamage(target, before - target.hp)) hitShake(target);
       beam(state, boss, target, "#f06891");
       splashPlants(state, target, 10, "#f06891");
     }
@@ -442,7 +457,10 @@ function updateBoss(state, dt) {
           plant.x >= spray.x1 &&
           plant.x <= spray.x2
         ) {
+          const before = plant.hp;
           plant.hp -= (boss.enraged ? 40 : 32) * dt;
+          // US 6.4 — pulse the herbicide cue at the limited rate.
+          if (noteDamage(plant, before - plant.hp)) hitShake(plant);
         }
       }
     }
@@ -515,6 +533,12 @@ function updateFx(state, dt) {
     n.y -= dt * 25;
   });
   state.damageNumbers = state.damageNumbers.filter((n) => n.t > 0);
+
+  // US 6.4 — advance the per-plant cue and its visual timers.
+  for (const plant of state.plants) {
+    advanceCue(plant, dt); // Part 1
+    advancePlantFx(plant, dt); // Part 2 (droppable)
+  }
 }
 
 export function updateBossLevel(state, dt) {

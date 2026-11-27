@@ -16,6 +16,7 @@ import {
   drawTank,
 } from "./sprites.js";
 import { BOSS_KINDS } from "./plants.js";
+import { reducedMotion, drawPlantWithFx } from "./plantFx.js";
 
 const INK = "#e5efdc";
 const MUTED = "#8da58e";
@@ -229,7 +230,7 @@ function drawDefense(ctx, t, state) {
   );
 }
 
-function drawPlant(ctx, plant, elapsed) {
+function drawPlant(ctx, plant, elapsed, reduced) {
   const kind = BOSS_KINDS[plant.k];
   const y = plant.y + Math.sin(elapsed * 7 + plant.s * 0.04) * 1.5;
 
@@ -246,23 +247,28 @@ function drawPlant(ctx, plant, elapsed) {
 
   // sprite (keep a stable animation offset on the real plant)
   plant.animOffset ??= Math.floor(Math.random() * 16);
-  const drewSprite = drawPlantSprite(
-    ctx,
-    { ...plant, y },
-    elapsed * 1000 * 0.4,
-    44,
-  );
-
-  // fallback shapes while sprites are still loading
-  if (!drewSprite) {
-    circle(ctx, plant.x, y, kind.r, kind.col);
-  }
-  bar(ctx, plant.x, y - 34, 22, plant.hp, kind.hp, "#a9e67b");
+  const spriteTopY = y - 34;
+  // US 6.4 — red tint + white outline on a hit (Part 1) and the 32x6 tiered
+  // bar, lost-HP ghost, low-health ring and hit shake (Part 2), all in plantFx.
+  // Part 2 is separately droppable.
+  drawPlantWithFx(ctx, plant, kind, spriteTopY, reduced, elapsed * 1000, {
+    drawSprite: (c) => {
+      const drew = drawPlantSprite(
+        c,
+        { ...plant, y },
+        elapsed * 1000 * 0.4,
+        44,
+      );
+      // fallback shapes while sprites are still loading
+      if (!drew) circle(c, plant.x, y, kind.r, kind.col);
+    },
+  });
 }
 
 function drawWorld(ctx, state) {
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
+  const reduced = reducedMotion(); // US 6.4 Part 2 — reduced-motion is read once per frame
   for (let x = 60; x < WORLD_WIDTH; x += 75) {
     const y = 130 + ((x * 19) % 310);
     ctx.strokeStyle = "rgba(143,212,90,0.1)";
@@ -306,7 +312,7 @@ function drawWorld(ctx, state) {
     }
     bar(ctx, m.x, m.y - 28, 22, m.hp, m.max, PINK);
   }
-  state.plants.forEach((p) => drawPlant(ctx, p, state.elapsed));
+  state.plants.forEach((p) => drawPlant(ctx, p, state.elapsed, reduced));
   for (let lane = 0; lane < 3; lane++) {
     const [x, y] = atBossPath(getDistAtX(state.leftEdge + 85), lane);
     const selected = lane === state.selectedLane;

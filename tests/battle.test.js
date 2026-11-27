@@ -83,3 +83,44 @@ describe("Battle tower lifetimes", () => {
     expect(restored.myTowers[0].timeLeft).toBe(TOWER_LIFETIME - 1);
   });
 });
+
+describe("US 6.4 — plant damage cue state syncs over snapshots", () => {
+  it("carries a hit cue into the snapshot and back into a second client", () => {
+    const battle = createBattle(1);
+    battle.command({ type: Action.START }, 0);
+    const s = battle.state;
+    // Park a plant on the keep and make it fire so the cue starts.
+    s.keep.cooldown = 0;
+    s.keep.dmg = 20;
+    const p = {
+      plant: 0,
+      owner: 0,
+      dist: s.map.paths[0].pathLength,
+      pathIndex: 0,
+      x: s.keep.x,
+      y: s.keep.y,
+      hp: 1000,
+      cooldown: 99,
+    };
+    s.plants.push(p);
+
+    battle.tick(0.05); // the keep (cd 0) lands a hit → flash + cooldown start
+
+    expect(p.cue.flash).toBeGreaterThan(0);
+    expect(p.cue.cd).toBeGreaterThan(0);
+
+    // A fresh, independent client must receive the same cue via the snapshot.
+    const restored = createState();
+    applySnapshot(
+      restored,
+      createEffects(restored),
+      JSON.parse(JSON.stringify(battle.snapshot())),
+    );
+    const remote = restored.plants.find(
+      (pl) => pl.owner === 0 && pl.plant === 0,
+    );
+    expect(remote).toBeTruthy();
+    expect(remote.cue.flash).toBeGreaterThan(0);
+    expect(remote.cue.cd).toBeCloseTo(p.cue.cd, 5);
+  });
+});
