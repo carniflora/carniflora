@@ -6,7 +6,15 @@ import { update } from "./combat.js";
 import { loadLevel } from "./levels.js";
 import { LEVEL_PATHS } from "./path.js";
 import { PLANTS } from "./plants.js";
+import {
+  createBossLevelState,
+  updateBossLevel,
+  spawnBossPlant,
+  selectBossLane,
+} from "./bossLevel.js";
 import { Action } from "./network/protocol.js";
+
+const BOSS_PLAYERS = 2;
 
 export function validLevel(level) {
   return Number.isInteger(level) && level >= 1 && level <= LEVEL_PATHS.length;
@@ -20,6 +28,42 @@ export function createBattle(level, random = Math.random) {
   const effects = createEffects(state);
   const towers = createTowers(state);
   let generation = 0;
+  let boss = null; // set once the last regular level is won
+
+  function enterBoss() {
+    boss = createBossLevelState(BOSS_PLAYERS);
+    state.phase = boss.state;
+    generation++;
+  }
+
+  // Boss commands act on the boss state; its phase is mirrored to state.phase.
+  function bossCommand(action, player) {
+    switch (action.type) {
+      case Action.RESTART:
+        enterBoss();
+        return true;
+      case Action.PAUSE:
+        if (boss.state !== "play") {
+          return false;
+        }
+        boss.state = "pause";
+        break;
+      case Action.RESUME:
+        if (boss.state !== "pause") {
+          return false;
+        }
+        boss.state = "play";
+        break;
+      case Action.LANE:
+        return selectBossLane(boss, action.lane, player);
+      case Action.DEPLOY:
+        return spawnBossPlant(boss, action.plant, undefined, player);
+      default:
+        return false;
+    }
+    state.phase = boss.state;
+    return true;
+  }
 
   function reset() {
     build(state, effects, random);
@@ -28,6 +72,9 @@ export function createBattle(level, random = Math.random) {
   }
 
   function command(action, player) {
+    if (boss) {
+      return bossCommand(action, player);
+    }
     const plantValid = Number.isInteger(action.plant) && !!PLANTS[action.plant];
     switch (action.type) {
       case Action.START:
@@ -46,7 +93,11 @@ export function createBattle(level, random = Math.random) {
         if (state.phase !== "won") {
           return false;
         }
-        state.level = Math.min(state.level + 1, LEVEL_PATHS.length);
+        if (state.level >= LEVEL_PATHS.length) {
+          enterBoss();
+          return true;
+        }
+        state.level++;
         reset();
         return true;
       case Action.PAUSE:
@@ -82,6 +133,11 @@ export function createBattle(level, random = Math.random) {
   }
 
   function tick(dt) {
+    if (boss) {
+      updateBossLevel(boss, dt);
+      state.phase = boss.state;
+      return;
+    }
     if (state.phase === "play") {
       update(dt, state, effects);
     }
@@ -91,7 +147,12 @@ export function createBattle(level, random = Math.random) {
     const { map, keep, ...data } = state;
     void map;
     void keep;
-    return structuredClone({ ...data, effects: effects.active, generation });
+    return structuredClone({
+      ...data,
+      boss,
+      effects: effects.active,
+      generation,
+    });
   }
 
   build(state, effects, random);
@@ -107,8 +168,9 @@ export function createBattle(level, random = Math.random) {
 
 // Runtime path helpers and the keep/enemies alias cannot travel as JSON.
 export function applySnapshot(state, effects, snapshot) {
-  const { effects: active, generation, ...data } = snapshot;
+  const { effects: active, generation, boss, ...data } = snapshot;
   void generation;
+  void boss; // the client keeps it in its session, not in the shared state
   const changed =
     state.map?.index !== data.level - 1 || state.map?.players !== data.players;
   Object.assign(state, data);

@@ -235,7 +235,7 @@ export function hud() {
   document.querySelector(".battle-toolbar").hidden = session.mode === "boss";
 
   const coop = session.mode === "boss" && battle.selectedLanes.length === 2;
-  $("bossPlayer").hidden = !coop;
+  $("bossPlayer").hidden = !coop || battleService.online();
   if (coop) {
     const label = `Player ${session.activePlayer + 1} controls | Switch player`;
     if ($("bossPlayer").textContent !== label) {
@@ -243,7 +243,8 @@ export function hud() {
     }
   }
   bossDeployButtons.forEach((button, index) => {
-    const key = BOSS_KEYS[coop ? session.activePlayer : 0][index];
+    const switching = coop && !battleService.online();
+    const key = BOSS_KEYS[switching ? session.activePlayer : 0][index];
     const hint = button.querySelector("kbd");
     if (hint.textContent !== key) {
       hint.textContent = key;

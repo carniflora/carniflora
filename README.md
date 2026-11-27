@@ -38,7 +38,10 @@ WebSocket backend together. Static-only hosting supports local play only.
 
 Each browser controls one player. Tower ownership, two-player maps, costs,
 and shared spores follow local multiplayer rules. Tab switches players only
-in local play. Boss battles remain local.
+in local play. Winning the last regular level advances both players into the
+boss battle, which the server runs. Player 1 owns lanes 1-2, Player 2 owns
+lanes 3-4; W/S or the arrow keys choose a lane and 1-4 deploy. Winning the
+boss ends the session.
 
 Either player may pause, resume, restart, or advance. Sessions start at the
 creator's saved level. Advancing saves progress in both browsers without
