@@ -108,12 +108,12 @@ export function drawEnemy(ctx, e, now, size = 48) {
   let drawX = e.x - size / 2;
   let drawY = e.y - size / 2;
 
+  // Keep the boss sprite completely inside the canvas when available.
   if (e.keep && ctx.canvas) {
-    drawX = ctx.canvas.width - size + 18;
-    drawY = ctx.canvas.height - size - 12;
+    drawX = Math.max(0, Math.min(drawX, ctx.canvas.width - size));
+    drawY = Math.max(0, Math.min(drawY, ctx.canvas.height - size));
   }
 
-  // Default for normal enemies
   ctx.drawImage(
     img,
     frameFor(e, now) * FRAME,
