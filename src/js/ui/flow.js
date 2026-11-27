@@ -1,7 +1,7 @@
 import { battleService } from "../battleService.js";
 import { Action } from "../network/protocol.js";
 import { dom } from "./dom.js";
-import { state, saveProgress } from "../state.js";
+import { state, saveProgress, loadCastleConquered } from "../state.js";
 import { plantProgression, plantDiscovery } from "./assets.js";
 
 import {
@@ -26,7 +26,7 @@ import { LEVEL_PATHS } from "../path.js";
 import { MAP_COLS, MAP_ROWS, TILE, LAST_REGULAR_LEVEL } from "../constants.js";
 import { setActiveTab, showPlantDetails } from "./tabs.js";
 import { hud, showPlantMessage, show } from "./hud.js";
-import { isPlantUnlocked } from "./plantGrid.js";
+import { isPlantUnlocked, refreshPlantLocks } from "./plantGrid.js";
 
 export function setActivePlayer(p) {
   session.pickedBy[session.activePlayer] = session.selectedPlantIndex;
@@ -113,11 +113,13 @@ export function startLevel() {
       ? "Click a lane or use ↑/↓ to choose it. Keys 1–4 deploy plants. P pauses."
       : "Click a plant (or press 1–4), click a tile beside the path to place its tower, then deploy.";
   $("ov").classList.add("hide");
+  $("ob2").hidden = true;
   showPlantMessage(
     session.mode === "boss"
       ? "Choose a lane, then deploy plants to break the chemical tanks."
       : "Choose a plant and deploy it.",
   );
+  refreshPlantLocks();
   hud();
 }
 
@@ -138,6 +140,7 @@ function enterBossMode() {
 
 function returnToHome() {
   const { $, canvas } = dom();
+  $("ob2").hidden = true;
 
   // leave boss mode and reset progress.
   session.mode = "td";
@@ -164,6 +167,17 @@ function returnToHome() {
     "Start Battle",
   );
 
+  renderEvolutionCards();
+  setActiveTab("plants");
+  hud();
+}
+
+export function restartFromLevelOne() {
+  session.mode = "td";
+  state.level = 1;
+  saveProgress(1);
+  startLevel(); // builds level 1 and starts playing
+  syncModeButton();
   renderEvolutionCards();
   setActiveTab("battle");
   hud();
@@ -592,6 +606,7 @@ export function renderEvolutionCards() {
 
   // Celebrate a newly discovered plant.
   if (previousUnlockedCount !== null && totalUnlocked > previousUnlockedCount) {
+    refreshPlantLocks();
     const newPlant = plantProgression[totalUnlocked - 1];
 
     if (newPlant) {
@@ -600,14 +615,20 @@ export function renderEvolutionCards() {
   }
 
   previousUnlockedCount = totalUnlocked;
+  refreshPlantLocks();
 
   // Update journey achievements.
+  const conquered = loadCastleConquered();
+  const collected = conquered ? plantProgression.length : totalUnlocked;
+
   updateMilestone("firstDiscoveryMilestone", totalUnlocked >= 1);
 
   updateMilestone(
     "plantCollectorMilestone",
-    totalUnlocked === plantProgression.length,
+    collected === plantProgression.length,
   );
+
+  updateMilestone("castleConquerorMilestone", conquered);
 
   // Update the green progression path.
   const progressPath = document.querySelector(
@@ -630,15 +651,15 @@ export function renderEvolutionCards() {
 
   const totalPlants = plantProgression.length;
 
-  const percentage = Math.round((totalUnlocked / totalPlants) * 100);
+  const percentage = Math.round((collected / totalPlants) * 100);
 
   if (collectionCount) {
-    collectionCount.textContent = `${totalUnlocked} / ${totalPlants}`;
+    collectionCount.textContent = `${collected} / ${totalPlants}`;
   }
 
   if (collectionProgress) {
     collectionProgress.max = totalPlants;
-    collectionProgress.value = totalUnlocked;
+    collectionProgress.value = collected;
   }
 
   if (collectionPercentage) {
@@ -646,7 +667,7 @@ export function renderEvolutionCards() {
   }
 
   if (unlockedCount) {
-    unlockedCount.textContent = `${totalUnlocked} of ${plantProgression.length} unlocked`;
+    unlockedCount.textContent = `${collected} of ${plantProgression.length} unlocked`;
   }
 
   // Remove previous checkpoints before rendering.

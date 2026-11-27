@@ -2104,6 +2104,27 @@ button:focus-visible {
   box-shadow: 0 16px 40px rgba(112, 70, 163, 0.15);
 }
 
+#battleTab .mission-briefing #ob2 {
+  width: 100%;
+  margin-top: 10px;
+  padding: 14px;
+  background: #e5d5f5;
+  color: #7046a3;
+  border: 1px solid #dcc9ef;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#battleTab .mission-briefing #ob2:hover {
+  background: #d8c0f1;
+}
+
+#battleTab .mission-briefing #ob2[hidden] {
+  display: none;
+}
+
 #battleTab #overlayLevel:not([hidden]) {
   display: inline-flex;
   padding: 6px 14px;
