@@ -1,12 +1,14 @@
 import { battleService } from "../battleService.js";
 import { dom } from "./dom.js";
 import { session, activePhase } from "./session.js";
-import { state, saveCastleConquered } from "../state.js";
+import { state, saveCastleConquered, BOSS_LEVEL } from "../state.js";
 import { update } from "../combat.js";
 import { updateBossLevel } from "../bossLevel.js";
 import { drawBossLevel } from "../bossRenderer.js";
 import { draw } from "./render.js";
 import { hud, show } from "./hud.js";
+import { present } from "./scoreScreen.js";
+import { winKey } from "../score.js";
 import { LAST_REGULAR_LEVEL, LEVEL_TIME_LIMIT } from "../constants.js";
 
 let lastPhase = null;
@@ -31,6 +33,31 @@ function syncPlayerToggle($) {
   button.title = locked
     ? "Player number can only be changed before the first level starts."
     : "";
+}
+
+// Everything the score screen needs, captured at the moment of victory.
+function winResult() {
+  const online = battleService.online();
+  const isBoss = session.mode === "boss";
+  const battle = isBoss ? session.bossState : state;
+  const mode = isBoss ? "boss" : "td";
+  return {
+    winId: winKey({
+      mode,
+      level: isBoss ? mode : state.level,
+      players: state.players,
+      generation: online ? battleService.generation() : undefined,
+      room: online ? battleService.key() : undefined,
+      at: Date.now(),
+    }),
+    isBoss,
+    level: isBoss ? BOSS_LEVEL : state.level,
+    players: state.players,
+    online,
+    elapsed: battle.elapsed || 0,
+    spores: battle.spores || 0,
+    plantsLost: isBoss ? battle.stats.lost : state.plantsLost || 0,
+  };
 }
 
 function loop(timer) {
@@ -87,6 +114,9 @@ function loop(timer) {
         "Your swarm has run out of plants and spores. Regroup and try again.",
         RESTART_LABEL,
       );
+    if (phase === "won") {
+      present(winResult());
+    }
     lastPhase = phase;
   }
   if (session.mode === "boss")

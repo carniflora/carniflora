@@ -13,6 +13,7 @@ import { dom, resizeCanvas } from "./dom.js";
 import { setActiveTab, showPlantDetails } from "./tabs.js";
 import { restoreCampaign, setPlayers } from "./flow.js";
 import { show, showPlantMessage } from "./hud.js";
+import { holdOverlay } from "./scoreScreen.js";
 
 export function mountMultiplayer() {
   const { $ } = dom();
@@ -123,7 +124,12 @@ export function mountMultiplayer() {
           "Resume",
         );
       } else if (state.phase === "play") {
-        $("ov").classList.add("hide");
+        // A peer may have advanced while this player is still on the win
+        // form; the form stays until its own Save or Skip.
+        const hide = () => $("ov").classList.add("hide");
+        if (!holdOverlay(hide)) {
+          hide();
+        }
       }
       controls();
     },

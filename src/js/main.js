@@ -13,6 +13,7 @@ import {
   renderEvolutionCards,
 } from "./ui/flow.js";
 import { mountInput } from "./ui/input.js";
+import { mountScoreScreen } from "./ui/scoreScreen.js";
 import { loadSprites } from "./sprites.js";
 
 // Composition root
@@ -28,6 +29,7 @@ mountBossControls({
   },
 });
 mountInput();
+mountScoreScreen();
 
 restoreCampaign();
 setPlayers(state.players === 2 ? 2 : 1);

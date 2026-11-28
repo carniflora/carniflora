@@ -394,6 +394,26 @@ describe("Three-lane Harvester breach", () => {
     expect(spawnBossPlant(state, 1)).toBe(true);
   });
 
+  it("counts mist and combat losses together without recounting", () => {
+    const state = quietBattle();
+    state.leftEdge = 500;
+    state.plants = [
+      plantAt(200, 0, 0, 1), // inside the mist killzone
+      plantAt(800, 1, 0, 1), // killed by a defence this tick
+    ];
+    state.towers = [{ ...defense(800, 1, 500), dmg: 3, rng: 100, cd: 0 }];
+
+    updateBossLevel(state, 0.05);
+
+    expect(state.stats.mistLost).toBe(1);
+    expect(state.stats.lost).toBe(2);
+
+    // Dead plants stay dead: later ticks must not recount them.
+    updateBossLevel(state, 2);
+    expect(state.stats.mistLost).toBe(1);
+    expect(state.stats.lost).toBe(2);
+  });
+
   it("caps regeneration and freezes all simulation timers when paused", () => {
     const state = quietBattle();
     state.spores = 250;

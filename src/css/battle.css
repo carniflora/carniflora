@@ -2238,6 +2238,158 @@ button:focus-visible {
   box-shadow: 0 0 0 4px rgba(140, 112, 200, 0.15);
 }
 /* ==========================================
+   WIN SCORE SCREEN
+   ========================================== */
+
+/* The game area is too short for the form on phones, so cover the viewport
+   and scroll. #app raises specificity above the responsive overlay rules. */
+#app #battleTab #ov:not(.hide):has(.score-panel:not([hidden])) {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: flex-start;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+#app #battleTab #ov:has(.score-panel:not([hidden])) .box.mission-briefing {
+  flex-shrink: 0;
+  width: min(100%, 480px);
+  max-height: none;
+  margin: auto;
+  padding: 20px;
+  overflow: visible;
+}
+
+#battleTab .score-panel:not([hidden]) {
+  margin: 4px 0 14px;
+  text-align: left;
+}
+
+#battleTab .score-breakdown {
+  display: grid;
+  gap: 6px;
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  background: #f0e7f8;
+  border-radius: 12px;
+}
+
+#battleTab .score-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+#battleTab .score-row dt {
+  color: #8064a6;
+  font-size: 13px;
+}
+
+#battleTab .score-row dd {
+  margin: 0;
+  color: #7046a3;
+  font-size: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+#battleTab .score-row.score-total {
+  margin-top: 6px;
+  padding-top: 8px;
+  border-top: 1px solid #dcc9ef;
+}
+
+#battleTab .score-row.score-total dt {
+  color: #7046a3;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+#battleTab .score-row.score-total dd {
+  font-size: 24px;
+}
+
+#battleTab .score-field:not([hidden]) {
+  display: block;
+  margin-bottom: 10px;
+}
+
+#battleTab .score-field span {
+  display: block;
+  margin-bottom: 4px;
+  color: #8064a6;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+#battleTab .score-field input {
+  width: 100%;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  background: #ffffff;
+  color: #3a2b52;
+  border: 1px solid #dcc9ef;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+#battleTab .score-field input:focus-visible {
+  outline: 2px solid #8c70c8;
+  outline-offset: 2px;
+}
+
+#battleTab .score-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+#battleTab .score-actions .ctl {
+  flex: 1;
+  min-width: 120px;
+  margin: 0;
+  padding: 12px;
+  background: #8c70c8;
+  border: none;
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#battleTab .score-actions .ctl:hover {
+  background: #7046a3;
+}
+
+#battleTab .score-actions #scoreSkip {
+  background: #e5d5f5;
+  border: 1px solid #dcc9ef;
+  color: #7046a3;
+}
+
+#battleTab .score-actions #scoreSkip:hover {
+  background: #d8c0f1;
+}
+
+#battleTab .score-confirm {
+  margin: 12px 0 0;
+  color: #4c7a3f;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+#battleTab .score-confirm[data-status="error"] {
+  color: #b3261e;
+}
+/* ==========================================
    BOSS BATTLE — COMMAND CENTRE
    ========================================== */
 

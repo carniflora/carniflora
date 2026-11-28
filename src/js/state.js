@@ -8,6 +8,7 @@ export function createState() {
     players: 1,
     spores: 0,
     elapsed: 0,
+    plantsLost: 0,
     map: null,
     enemies: [],
     keep: null,

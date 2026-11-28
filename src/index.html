@@ -1084,6 +1084,68 @@
                       </div>
                     </div>
 
+                    <div id="scorePanel" class="score-panel" hidden>
+                      <dl id="scoreBreakdown" class="score-breakdown">
+                        <div class="score-row">
+                          <dt>Mode</dt>
+                          <dd id="scoreMode">—</dd>
+                        </div>
+                        <div class="score-row">
+                          <dt>Level</dt>
+                          <dd id="scoreLevel">—</dd>
+                        </div>
+                        <div class="score-row">
+                          <dt>Time</dt>
+                          <dd id="scoreTime">—</dd>
+                        </div>
+                        <div class="score-row">
+                          <dt>Spores left</dt>
+                          <dd id="scoreSpores">—</dd>
+                        </div>
+                        <div class="score-row">
+                          <dt>Plants lost</dt>
+                          <dd id="scoreLost">—</dd>
+                        </div>
+                        <div class="score-row score-total">
+                          <dt>Total</dt>
+                          <dd id="scoreTotal">—</dd>
+                        </div>
+                      </dl>
+
+                      <form id="scoreForm" novalidate>
+                        <label class="score-field">
+                          <span>Nickname</span>
+                          <input
+                            id="scoreName1"
+                            name="nickname1"
+                            type="text"
+                            maxlength="12"
+                            autocomplete="off"
+                          />
+                        </label>
+                        <label class="score-field" id="scoreName2Field" hidden>
+                          <span>Nickname (Player 2)</span>
+                          <input
+                            id="scoreName2"
+                            name="nickname2"
+                            type="text"
+                            maxlength="12"
+                            autocomplete="off"
+                          />
+                        </label>
+                        <div class="score-actions">
+                          <button type="submit" class="ctl" id="scoreSave">
+                            Save
+                          </button>
+                          <button type="button" class="ctl" id="scoreSkip">
+                            Skip
+                          </button>
+                        </div>
+                      </form>
+
+                      <p id="scoreConfirm" class="score-confirm" hidden></p>
+                    </div>
+
                     <button class="ctl" id="ob"></button>
                     <button class="ctl" id="ob2" type="button" hidden>
                       Restart at Level 1
