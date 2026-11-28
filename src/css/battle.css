@@ -2241,6 +2241,27 @@ button:focus-visible {
    WIN SCORE SCREEN
    ========================================== */
 
+/* The game area is too short for the form on phones, so cover the viewport
+   and scroll. #app raises specificity above the responsive overlay rules. */
+#app #battleTab #ov:not(.hide):has(.score-panel:not([hidden])) {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: flex-start;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+#app #battleTab #ov:has(.score-panel:not([hidden])) .box.mission-briefing {
+  flex-shrink: 0;
+  width: min(100%, 480px);
+  max-height: none;
+  margin: auto;
+  padding: 20px;
+  overflow: visible;
+}
+
 #battleTab .score-panel:not([hidden]) {
   margin: 4px 0 14px;
   text-align: left;
@@ -2293,7 +2314,7 @@ button:focus-visible {
   font-size: 24px;
 }
 
-#battleTab .score-field {
+#battleTab .score-field:not([hidden]) {
   display: block;
   margin-bottom: 10px;
 }

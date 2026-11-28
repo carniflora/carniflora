@@ -75,3 +75,13 @@ describe("winKey", () => {
     expect(winKey({ ...args, at: 2000 })).not.toBe(winKey(args));
   });
 });
+
+describe("online win ids", () => {
+  test("differ between rooms with the same generation", () => {
+    const win = { mode: "td", level: 1, players: 2, generation: 1 };
+
+    expect(winKey({ ...win, room: "ROOMA" })).not.toBe(
+      winKey({ ...win, room: "ROOMB" }),
+    );
+  });
+});

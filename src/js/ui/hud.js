@@ -11,7 +11,7 @@ import {
   bossDeployButtons,
 } from "./bossControls.js";
 import { renderEvolutionCards } from "./flow.js";
-import { resetScoreScreen } from "./scoreScreen.js";
+import { resetScoreScreen, holdOverlay } from "./scoreScreen.js";
 import { LEVEL_TIME_LIMIT } from "../constants.js";
 
 const SECONDS_PER_MINUTE = 60;
@@ -347,6 +347,10 @@ export function showPlantMessage(message, type = "info") {
 }
 
 export function show(t, m, b) {
+  if (holdOverlay(() => show(t, m, b))) {
+    return;
+  }
+
   const { $ } = dom();
   const phase = activePhase();
 

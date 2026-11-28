@@ -47,6 +47,7 @@ function winResult() {
       level: isBoss ? mode : state.level,
       players: state.players,
       generation: online ? battleService.generation() : undefined,
+      room: online ? battleService.key() : undefined,
       at: Date.now(),
     }),
     isBoss,

@@ -13,6 +13,10 @@ const SAVE_FAILURES = {
 };
 
 let pending = null;
+
+// Online only: a peer can change the room while this form is open.
+let queuedWin = null;
+let heldOverlay = null;
 let storage = scoreStorage;
 let nextActionWasVisible = false;
 
@@ -36,7 +40,38 @@ function setProgressionHidden(hidden) {
   $("ob2").hidden = hidden || !nextActionWasVisible;
 }
 
-function showConfirmation(message, isError = false) {
+// Keeps the form open so the player can correct the input.
+function showError(message) {
+  const { $ } = dom();
+  const confirm = $("scoreConfirm");
+  confirm.textContent = message;
+  confirm.dataset.status = "error";
+  confirm.hidden = false;
+}
+
+// Replay what the peer did while the form was open. A running battle takes
+// the screen; a held pause or session end redraws instead.
+function releaseOverlay() {
+  const redraw = heldOverlay;
+  const next = queuedWin;
+  heldOverlay = null;
+  queuedWin = null;
+
+  if (next) {
+    present(next);
+    return;
+  }
+  if (redraw) {
+    redraw();
+    return;
+  }
+  if (activePhase() !== "won") {
+    dom().$("ov").classList.add("hide");
+  }
+}
+
+// Ends the form's turn: Save or Skip has been handled.
+function resolveWin(message, isError = false) {
   const { $ } = dom();
   const confirm = $("scoreConfirm");
   confirm.textContent = message;
@@ -44,11 +79,8 @@ function showConfirmation(message, isError = false) {
   confirm.hidden = false;
   $("scoreForm").hidden = true;
   setProgressionHidden(false);
-  // A peer may have advanced the room while this form was open; once the
-  // player has acted, yield the screen to the running battle.
-  if (activePhase() !== "won") {
-    $("ov").classList.add("hide");
-  }
+  pending = null;
+  releaseOverlay();
 }
 
 // Trimmed, non-empty, at most 12 characters. Rendered via textContent only.
@@ -66,7 +98,7 @@ function collectNicknames(result) {
   if (empty) {
     empty.value = "";
     empty.focus();
-    showConfirmation("Enter a nickname for each player.", true);
+    showError("Enter a nickname for each player.");
     return null;
   }
   return names;
@@ -91,26 +123,36 @@ function saveResult(event) {
   });
 
   if (outcome.ok) {
-    showConfirmation(`Saved for ${names.join(" & ")}.`);
+    resolveWin(`Saved for ${names.join(" & ")}.`);
   } else if (outcome.reason === "duplicate") {
-    showConfirmation("Already saved.");
+    resolveWin("Already saved.");
   } else {
     const why = SAVE_FAILURES[outcome.reason] || "saving failed";
-    showConfirmation(`Score not saved — ${why}.`, true);
+    resolveWin(`Score not saved — ${why}.`, true);
   }
 }
 
 function skipResult() {
   if (!pending) return;
   storage.skip(pending.winId);
-  showConfirmation("Skipped — nothing was saved.");
+  resolveWin("Skipped — nothing was saved.");
 }
 
 // Show the form for a win. Presenting the same win again (repeated online
 // snapshots, a reconnect) keeps the form and the typing untouched.
 export function present(result) {
   const { $ } = dom();
-  if (pending && pending.winId === result.winId) return;
+  if (pending && pending.winId === result.winId) {
+    return;
+  }
+  // Already saved or skipped, e.g. after a refresh.
+  if (storage.isResolved(result.winId)) {
+    return;
+  }
+  if (pending?.online) {
+    queuedWin = result;
+    return;
+  }
   pending = { ...result, score: computeScore(result) };
   nextActionWasVisible = !$("ob2").hidden;
 
@@ -137,15 +179,25 @@ export function present(result) {
 // Called from show(), the single place every overlay redraw goes through.
 export function resetScoreScreen() {
   pending = null;
+  queuedWin = null;
+  heldOverlay = null;
   const { $ } = dom();
   $("scorePanel").hidden = true;
   $("ob").hidden = false;
 }
 
-// True while a win awaits Save/Skip: peer actions advance the server without
-// closing this player's form.
 export function hasPending() {
   return pending !== null;
+}
+
+// While an online win awaits Save/Skip, peer actions advance the server but
+// must not close this player's form. Only the latest redraw is kept.
+export function holdOverlay(redraw) {
+  if (!pending?.online || activePhase() === "won") {
+    return false;
+  }
+  heldOverlay = redraw;
+  return true;
 }
 
 export function mountScoreScreen(injectedStorage = undefined) {

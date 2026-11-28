@@ -43,7 +43,9 @@ export function modeLabel(online, players) {
 // A win's identity. Online wins share the room's generation, so both
 // browsers and a refreshed tab derive the same key; local wins use the
 // moment of victory, so replaying a level is a new, savable win.
-export function winKey({ mode, level, players, generation, at }) {
-  const token = generation === undefined ? `t${at}` : `g${generation}`;
+export function winKey({ mode, level, players, generation, at, room }) {
+  // Generations restart in every room, so the room key keeps ids unique.
+  const scope = room ? `${room}-` : "";
+  const token = generation === undefined ? `t${at}` : `${scope}g${generation}`;
   return `${mode}-${level}-${players}-${token}`;
 }
