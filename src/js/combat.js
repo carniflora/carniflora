@@ -4,6 +4,9 @@ import { effects as localEffects } from "./effects.js";
 import { pxPosOf } from "./levels.js";
 import { PLANT_BLOCK, LEVEL_TIME_LIMIT, SPORES_PER_KILL } from "./constants.js";
 import { updateTowers } from "./towers.js";
+// US 6.4 — per-plant damage cue (Part 1) and plant health display (Part 2).
+import { noteDamage, advanceCue } from "./damageCue.js";
+import { advancePlantFx, hitShake } from "./plantHealth.js";
 
 // ============================
 // FIND NEAREST TARGET
@@ -171,12 +174,18 @@ export function update(deltaTime, state = localState, effects = localEffects) {
         // Both are scoped to the targeted plant's type (US 4.2/4.3).
         const taken = effects.eff("damageTakenMult", 1, p.plant);
         const tough = effects.eff("hpMult", 1, p.plant);
+        const before = p.hp;
         p.hp -= (enemy.dmg * taken) / tough;
+        // US 6.4 — mark the plant that took the direct hit.
+        if (noteDamage(p, before - p.hp)) hitShake(p);
 
         if (ENEMY_KINDS[enemy.kind]?.style === "splash") {
           for (const other of state.plants) {
             if (other !== p && Math.hypot(other.x - p.x, other.y - p.y) < 60) {
+              const before = other.hp;
               other.hp -= (enemy.dmg * 0.5 * taken) / tough;
+              // US 6.4 — mark only the plants the splash actually damages.
+              if (noteDamage(other, before - other.hp)) hitShake(other);
             }
           }
           state.fx.push({
@@ -208,6 +217,12 @@ export function update(deltaTime, state = localState, effects = localEffects) {
   // Update attack effects.
   state.fx.forEach((f) => (f.timer -= deltaTime));
   state.fx = state.fx.filter((f) => f.timer > 0);
+
+  // US 6.4 — advance the per-plant damage cue and its visual timers.
+  for (const plant of state.plants) {
+    advanceCue(plant, deltaTime); // Part 1
+    advancePlantFx(plant, deltaTime); // Part 2 (droppable)
+  }
 
   // Win.
   if (state.keep.hp <= 0) {

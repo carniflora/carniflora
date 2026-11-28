@@ -6,6 +6,7 @@ import { TILE } from "../constants.js";
 import { canPlaceTower } from "../towers.js";
 import { effects } from "../effects.js";
 import { drawPlant, drawEnemy, drawTree } from "../sprites.js";
+import { reducedMotion, drawPlantWithFx } from "../plantFx.js";
 
 import { drawTerrain, strokeTrail } from "../terrainRenderer.js";
 
@@ -179,23 +180,44 @@ export function draw() {
   }
 
   // plants that are sent out (drawn after towers so they sit on top)
+  const reducedNow = reducedMotion();
   for (const p of state.plants) {
     const k = PLANTS[p.plant];
-    if (!drawPlant(g, p, now, SPRITE_SIZE)) {
-      g.fillStyle = k.col;
-      g.beginPath();
-      g.arc(p.x, p.y, k.radius, 0, 7);
-      g.fill();
-      g.strokeStyle = p.owner === 0 ? "#fff" : "#7300f7";
-      g.stroke();
-      g.fillStyle = "rgba(0,0,0,.45)";
-      g.beginPath();
-      g.arc(p.x, p.y, k.radius * 0.45, 0, 7);
-      g.fill();
-    }
-    healthBar(p.x, p.y - SPRITE_SIZE / 2 - 2, 20, p.hp, k.hp, "#8fd45a");
+    // US 6.4 — Part 1 (red flash + white outline on a hit) and Part 2
+    // (32x6 tiered bar, "lost" white ghost, low-health ring, hit shake). Both
+    // live in plantFx; Part 2 is separately droppable.
+    drawPlantWithFx(g, p, k, p.y - SPRITE_SIZE / 2 - 2, reducedNow, now, {
+      drawSprite: (c) => {
+        if (drawPlant(c, p, now, SPRITE_SIZE)) return;
+        // fallback: the old circle shapes
+        c.fillStyle = k.col;
+        c.beginPath();
+        c.arc(p.x, p.y, k.radius, 0, 7);
+        c.fill();
+        c.strokeStyle = p.owner === 0 ? "#fff" : "#7300f7";
+        c.stroke();
+        c.fillStyle = "rgba(0,0,0,.45)";
+        c.beginPath();
+        c.arc(p.x, p.y, k.radius * 0.45, 0, 7);
+        c.fill();
+      },
+      // BUG 3 — shape-masked flash: silhouette of the same sprite (or fallback
+      // circle) drawn for `tintDraw`; no bob here, so `spriteY` is p.y.
+      tintDraw: (off, ox, oy, size) => {
+        const cx = ox + size / 2;
+        const cy = oy + size / 2;
+        if (drawPlant(off, { ...p, x: cx, y: cy }, now, size)) return;
+        off.fillStyle = k.col; // fallback circle = the shape, tinted
+        off.beginPath();
+        off.arc(cx, cy, k.radius, 0, 7);
+        off.fill();
+      },
+      spriteSize: SPRITE_SIZE,
+      spriteY: p.y,
+    });
 
-    // active effect icons float above the plant (US 6.5)
+    // active effect icons float above the plant (US 6.5) — kept in fixed UI
+    // space so the 32px bar just below never overlaps them.
     drawIcons(g, p.x, p.y - SPRITE_SIZE / 2 - 14, effects.iconsFor(p.plant));
   }
 

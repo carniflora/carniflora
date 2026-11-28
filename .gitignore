@@ -155,3 +155,7 @@ docs/refactor-plan.md
 
 # Cloudflare local runtime
 .wrangler/
+
+# Local US-6.4 dev/verify artifacts (not shipped, not CI assets)
+_flashharness.html
+US-6.4-DAMAGE-NOTIFICATION-CASE-FILE.md

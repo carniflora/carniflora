@@ -273,3 +273,45 @@ describe("win and lose", () => {
     expect(state.elapsed).toBe(0);
   });
 });
+
+// US 6.4 — a red flash + white outline mark the plant that a hit lands on.
+// Poison is deliberately excluded; continuous pulses are covered at the boss level.
+describe("US 6.4 — damage cues on plants (normal battle)", () => {
+  test("a direct enemy hit flashes the plant that was hit", () => {
+    const p = addPlant(5);
+    addEnemy(p, { dmg: 10, base: 1 });
+    update(0.01, state, effects);
+    expect(p.hp).toBeLessThan(1000); // health still updates on every hit
+    expect(p.cue.flash).toBeGreaterThan(0);
+  });
+
+  test("a boiler splash flashes only the plants it actually damages", () => {
+    const target = addPlant(5);
+    const neighbour = addPlant(5); // co-located, inside the 60px splash
+    const far = addPlant(200); // well outside the splash
+    addEnemy(target, { kind: "boiler", dmg: 40, base: 1, rng: 20 });
+    update(0.01, state, effects);
+    expect(target.hp).toBeLessThan(1000);
+    expect(neighbour.hp).toBeLessThan(1000); // took the splash
+    expect(far.hp).toBe(1000); // untouched
+    expect(target.cue.flash).toBeGreaterThan(0);
+    expect(neighbour.cue.flash).toBeGreaterThan(0);
+    expect(far.cue).toBeUndefined(); // undamaged → no cue at all
+  });
+
+  test("an enemy that deals no damage never flashes a plant", () => {
+    const p = addPlant(5);
+    addEnemy(p, { dmg: 0, base: 1, rng: 100 });
+    update(0.01, state, effects);
+    expect(p.hp).toBe(1000);
+    expect(p.cue).toBeUndefined();
+  });
+
+  test("poison drains health without ever flashing the plant", () => {
+    effects.fire("poisoned"); // global drain, no per-plant cue
+    const p = addPlant(5);
+    update(0.5, state, effects);
+    expect(p.hp).toBeLessThan(1000);
+    expect(p.cue).toBeUndefined();
+  });
+});

@@ -555,6 +555,38 @@ describe("Three-lane Harvester breach", () => {
   );
 });
 
+describe("US 6.4 — damage cues at the boss level", () => {
+  it("flashes and shakes a plant the mist is draining (continuous, pulsed)", () => {
+    const state = quietBattle();
+    state.leftEdge = 500; // the mist edge sits behind this plant
+    const plant = plantAt(200, 0, 0, 100);
+    state.plants = [plant];
+    updateBossLevel(state, 0.05);
+    expect(plant.hp).toBeLessThan(100); // mist still drains it
+    expect(plant.cue.flash).toBeGreaterThan(0);
+    expect(plant.shake).toBeGreaterThan(0); // Part 2 shake fired with the cue
+  });
+
+  it("flashes the boss's direct hit but leaves an undamaged plant uncued", () => {
+    const state = quietBattle();
+    state.tanks.forEach((t) => (t.cd = 100)); // silence the existing enemy tanks
+    state.towers = [];
+    state.phase = "core";
+    state.boss.shielded = false;
+    state.boss.active = true;
+    state.boss.attackCooldown = 0;
+    const hit = plantAt(1850, 1, 0, 150);
+    const safe = plantAt(1000, 0, 0, 150); // far from the core, out of the mist
+    state.plants = [hit, safe];
+    updateBossLevel(state, 0.05);
+    expect(hit.hp).toBeLessThan(150);
+    expect(hit.cue.flash).toBeGreaterThan(0);
+    expect(hit.shake).toBeGreaterThan(0);
+    expect(safe.hp).toBe(150); // not hit, not splashed
+    expect(safe.cue).toBeUndefined();
+  });
+});
+
 describe("Local boss co-op", () => {
   it("keeps each player's deployment in their own pair of lanes", () => {
     const battle = createBossLevelState(2);
