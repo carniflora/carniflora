@@ -522,26 +522,31 @@
    US 8.9 — ROAD VISIBILITY BY SCREEN SIZE
    Prevent desktop and tablet roads overlapping
    ========================================== */
+/* ==========================================
+   UPGRADES — ROAD VISIBILITY BY SCREEN SIZE
+   ========================================== */
 
-/* DESKTOP — 1251px and above */
-@media (min-width: 1251px) {
+/* Desktop and landscape laptops */
+
+@media (min-width: 1251px), (min-width: 900px) and (orientation: landscape) {
   #upgradesTab .upgrade-path:not(.upgrade-path-tablet) {
-    display: block;
+    display: block !important;
   }
 
   #upgradesTab .upgrade-path.upgrade-path-tablet {
-    display: none;
+    display: none !important;
   }
 }
 
-/* TABLET AND IPHONE — 1250px and below */
-@media (max-width: 1250px) {
+/* Portrait tablets and phones */
+
+@media (max-width: 899px), (max-width: 1250px) and (orientation: portrait) {
   #upgradesTab .upgrade-path:not(.upgrade-path-tablet) {
-    display: none;
+    display: none !important;
   }
 
   #upgradesTab .upgrade-path.upgrade-path-tablet {
-    display: block;
+    display: block !important;
   }
 }
 
@@ -1478,7 +1483,7 @@
     grid-template-rows:
       auto
       minmax(0, 1fr)
-      auto
+      min-content
       auto;
   }
 
@@ -2078,6 +2083,34 @@
     box-sizing: border-box;
   }
 
+  /* Responsive Upgrades HUD */
+
+  #upgradesTab .upgrade-hud {
+    flex: 0 0 auto;
+    width: 100%;
+    min-width: 0;
+    margin: 4px auto 6px;
+  }
+
+  #upgradesTab .upgrade-hud .stats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    min-width: 0;
+    gap: clamp(5px, 1vw, 12px);
+  }
+
+  #upgradesTab .upgrade-hud .stats > span {
+    padding: clamp(5px, 1vh, 10px) clamp(8px, 1.2vw, 16px);
+
+    font-size: clamp(11px, 1.7vh, 15px);
+    white-space: nowrap;
+    box-sizing: border-box;
+  }
+
   /* Main battle container */
   #app .game-layout:has(#battleTab.active) :where(.unused-selector) {
     min-height: 0;
@@ -2272,8 +2305,12 @@
     width: 100%;
     height: 100%;
 
+    min-width: 0;
+    min-height: 0;
     max-width: 100%;
     max-height: 100%;
+
+    flex: 1 1 0;
 
     object-fit: fill;
     aspect-ratio: auto;
@@ -2875,12 +2912,16 @@
     align-items: stretch;
     justify-content: flex-start;
 
-    flex: 1;
+    flex: 1 1 auto;
+    width: 100%;
     min-height: 0;
-    gap: 6px;
+    min-width: 0;
+
+    gap: 5px;
     padding: 0;
 
-    overflow-y: auto;
+    overflow: visible;
+    box-sizing: border-box;
   }
 
   /* Plant portrait and information */
@@ -2890,9 +2931,12 @@
     align-items: center;
     justify-content: center;
 
-    flex: 1 0 auto;
-    gap: 5px;
-    padding: 6px 0;
+    flex: 0 0 auto;
+    width: 100%;
+    min-height: 0;
+
+    gap: 4px;
+    padding: 3px 0;
   }
 
   /* Circular plant portrait */
@@ -2901,11 +2945,11 @@
     align-items: center;
     justify-content: center;
 
-    width: clamp(65px, 13vh, 110px);
+    width: clamp(50px, 10vh, 100px);
     aspect-ratio: 1;
 
     margin: 0 auto;
-    padding: 10px;
+    padding: 7px;
 
     border: 1px solid var(--plant-accent);
     border-radius: 50%;
@@ -2960,12 +3004,18 @@
   #upgradesTab .upgrade-info .upgrade-mission,
   #upgradesTab .upgrade-info .upgrade-strategy {
     width: 100%;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+
     margin: 0;
-    padding: 10px;
+    padding: clamp(5px, 1vh, 10px);
 
     border-radius: 10px;
     box-sizing: border-box;
-    flex-shrink: 0;
+    flex: 0 0 auto;
+
+    overflow-wrap: anywhere;
   }
 
   #upgradesTab .upgrade-info .upgrade-mission {
@@ -3082,8 +3132,6 @@
     flex-direction: column;
   }
 
-  /* Main Boss Battle layout */
-  /* Main Boss Battle layout */
   #app .game-layout:has(#battleTab.active #bossControls:not([hidden])) {
     display: grid;
     flex: 1 1 0;
@@ -3195,40 +3243,25 @@
     box-sizing: border-box;
     overflow: hidden;
   }
-
-  #battleTab:has(#bossControls:not([hidden])) .stage:not(:fullscreen) canvas {
-    display: block;
-
-    width: min(100cqw, calc(100cqh * 16 / 9));
-    height: auto;
-
-    min-width: 0;
-    max-width: 100%;
-    max-height: 100%;
-
-    aspect-ratio: 16 / 9;
-    object-fit: contain;
-
-    margin: 0;
-    padding: 0;
-
-    border: none;
-    border-radius: 10px;
-    box-shadow: none;
-  }
-
   #battleTab:has(#bossControls:not([hidden])) .stage:not(:fullscreen) canvas {
     display: block;
 
     width: 100%;
-    height: auto;
-    max-width: 100%;
+    height: 100%;
 
-    aspect-ratio: 16 / 9;
-    object-fit: contain;
+    min-width: 0;
+    min-height: 0;
+    max-width: 100%;
+    max-height: 100%;
+
+    flex: 1 1 0;
+
+    object-fit: fill;
+    aspect-ratio: auto;
 
     margin: 0;
     padding: 0;
+
     border: none;
     border-radius: 0;
     box-shadow: none;
@@ -3456,15 +3489,15 @@
 /* Boss battle — make Attack Direction thinner */
 @media (min-width: 1251px) and (min-height: 550px) {
   #battleTab:has(#bossControls:not([hidden])) .boss-attack-panel {
-    padding: 6px 8px;
-    gap: 4px;
+    padding: 5px;
+    gap: 3px;
   }
 
   #battleTab:has(#bossControls:not([hidden])) .boss-lane-button {
-    min-height: 52px;
+    min-height: 35px;
     height: auto;
-    padding: 6px 8px;
-    gap: 5px;
+    padding: 4px;
+    gap: 2px;
   }
 
   #battleTab:has(#bossControls:not([hidden])) .boss-attack-heading {
@@ -5061,8 +5094,8 @@ body:has(.network-panel.is-open) {
   #app:has(#battleTab.active #bossControls[hidden])
     #plantDetailsPanel
     .detail-color {
-    width: clamp(40px, 7vh, 65px);
-    height: clamp(40px, 7vh, 65px);
+    width: clamp(35px, 7vh, 50px);
+    height: clamp(35px, 7vh, 50px);
     margin: 2px auto;
     padding: 4px;
     flex-shrink: 0;
@@ -5207,5 +5240,2120 @@ body:has(.network-panel.is-open) {
   #battleTab:has(#bossControls[hidden]) .battle-hud .stats > span {
     padding: 5px 10px;
     font-size: 11px;
+  }
+}
+/* ==========================================
+   UPGRADES — TABLET AND MOBILE RESPONSIVE
+   ========================================== */
+
+@media (max-width: 1250px) {
+  #app:has(#upgradesTab.active) {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    height: auto;
+    min-height: 100dvh;
+
+    padding: 8px;
+    overflow: visible;
+    box-sizing: border-box;
+  }
+
+  #app .game-layout:has(#upgradesTab.active) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
+
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    min-width: 0;
+
+    margin: 0 auto;
+    padding: 8px;
+    gap: 8px;
+
+    background: #f5effc;
+    border: 1px solid #dcc6ee;
+    border-radius: 18px;
+
+    box-sizing: border-box;
+  }
+
+  #app:has(#upgradesTab.active) .main-panel,
+  #upgradesTab.active {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    min-width: 0;
+
+    margin: 0;
+    padding: 0;
+
+    overflow: visible;
+  }
+
+  #app:has(#upgradesTab.active) > header {
+    display: none;
+  }
+
+  #upgradesTab.active .upgrade-world {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    height: auto;
+    min-height: 0;
+
+    padding: 8px;
+    margin: 0;
+    gap: 10px;
+
+    overflow: visible;
+    box-sizing: border-box;
+  }
+
+  /* Page heading */
+
+  #upgradesTab .upgrade-heading {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+  }
+
+  #upgradesTab .upgrade-heading h2 {
+    font-size: clamp(26px, 4vw, 38px);
+    margin: 4px 0;
+  }
+
+  #upgradesTab .upgrade-heading p {
+    font-size: clamp(11px, 1.5vw, 14px);
+    line-height: 1.4;
+    white-space: normal;
+  }
+
+  /* HUD */
+
+  #upgradesTab .upgrade-hud {
+    width: 100%;
+    margin: 4px auto;
+  }
+
+  #upgradesTab .upgrade-hud .stats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    width: 100%;
+    gap: 6px;
+  }
+
+  #upgradesTab .upgrade-hud .stats > span {
+    padding: 7px 10px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  /* Main evolution layout */
+
+  #upgradesTab.active .upgrade-map {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
+
+    width: 100%;
+    height: auto;
+    min-height: 0;
+
+    margin: 0;
+    padding: 0;
+    gap: 10px;
+  }
+
+  /* Journey Milestones */
+
+  #upgradesTab.active .upgrade-map .upgrade-roadmap-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    position: relative;
+
+    grid-column: 1;
+    grid-row: 1;
+
+    inset: auto;
+
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    height: auto;
+    min-height: 0;
+
+    margin: 0;
+    padding: 0;
+
+    justify-self: stretch;
+    box-sizing: border-box;
+  }
+  #upgradesTab.active .upgrade-map .journey-milestones {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    height: auto;
+
+    margin: 0;
+    padding: 8px;
+
+    box-sizing: border-box;
+  }
+
+  #upgradesTab.active .upgrade-map .journey-milestones {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    height: auto;
+
+    margin: 0;
+    padding: 8px;
+
+    box-sizing: border-box;
+  }
+
+  #upgradesTab .milestone-grid {
+    display: grid;
+
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    align-items: stretch;
+    gap: 6px;
+
+    box-sizing: border-box;
+  }
+
+  #upgradesTab .milestone {
+    min-width: 0;
+    padding: 8px;
+    gap: 6px;
+  }
+
+  #upgradesTab .milestone-details {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  /* Evolution Roadmap */
+
+  #upgradesTab.active .upgrade-map .upgrade-roadmap {
+    display: block;
+    position: relative;
+
+    grid-column: 1;
+    grid-row: 2;
+
+    inset: auto;
+    width: 100%;
+    height: clamp(550px, 65dvh, 800px);
+    min-width: 0;
+
+    margin: 0;
+
+    background: #eee5f8;
+    border: 1px solid #dcc6ee;
+    border-radius: 14px;
+
+    box-sizing: border-box;
+  }
+
+  /* Level selection */
+
+  #upgradesTab .roadmap-levels {
+    position: absolute;
+    top: 12px;
+    left: 8px;
+    right: 8px;
+
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    gap: 6px;
+  }
+
+  #upgradesTab .roadmap-level {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  /* Plant collection progress */
+
+  #upgradesTab.active .upgrade-map .upgrade-collection-progress {
+    display: flex;
+    flex-direction: column;
+
+    position: relative;
+    grid-column: 1;
+    grid-row: 3;
+
+    inset: auto;
+    width: 100%;
+    height: auto;
+
+    margin: 0;
+    padding: 10px;
+    gap: 8px;
+
+    background: #fcf8ff;
+    border: 1px solid #dcc6ee;
+    border-radius: 12px;
+
+    box-sizing: border-box;
+  }
+}
+/* ==========================================
+   UPGRADES — RESPONSIVE WINDING ROAD
+   ========================================== */
+
+@media (max-width: 1250px) {
+  #upgradesTab .upgrade-roadmap .upgrade-path:not(.upgrade-path-tablet) {
+    display: none;
+  }
+
+  #upgradesTab .upgrade-roadmap .upgrade-path.upgrade-path-tablet,
+  #upgradesTab .upgrade-roadmap .upgrade-stages {
+    position: absolute;
+
+    top: 65px;
+    left: 5%;
+    right: auto;
+
+    width: 90%;
+    height: calc(100% - 115px);
+  }
+
+  #upgradesTab .upgrade-roadmap .upgrade-stage {
+    width: clamp(75px, 13vw, 120px);
+    min-height: 0;
+    padding: 2px;
+    gap: 4px;
+
+    transform: translate(-50%, -50%);
+  }
+
+  /* Flytrap */
+
+  #upgradesTab.active .upgrade-roadmap .upgrade-stage-1 {
+    left: 63%;
+    top: 89%;
+  }
+
+  /* Sundew */
+
+  #upgradesTab.active .upgrade-roadmap .upgrade-stage-2 {
+    left: 23%;
+    top: 76%;
+  }
+
+  /* Pitcher */
+
+  #upgradesTab.active .upgrade-roadmap .upgrade-stage-3 {
+    left: 65%;
+    top: 57%;
+  }
+
+  /* Rafflesia */
+
+  #upgradesTab.active .upgrade-roadmap .upgrade-stage-4 {
+    left: 29%;
+    top: 43%;
+  }
+
+  /* Boss Castle */
+
+  #upgradesTab.active .upgrade-roadmap .upgrade-stage-5 {
+    left: 71%;
+    top: 25%;
+  }
+
+  /* Plant sprite sizes */
+
+  #upgradesTab.active .upgrade-roadmap .upgrade-stage:not(.boss-stage) img {
+    width: clamp(48px, 9vw, 95px);
+    height: clamp(48px, 9vw, 95px);
+
+    object-fit: contain;
+  }
+
+  #upgradesTab .upgrade-roadmap .boss-stage-image {
+    width: clamp(65px, 12vw, 115px);
+    height: clamp(65px, 12vw, 115px);
+  }
+
+  #upgradesTab .upgrade-roadmap .boss-stage-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  /* Plant names and status */
+
+  #upgradesTab .upgrade-stage-name {
+    padding: 4px 8px;
+    font-size: clamp(10px, 1.5vw, 14px);
+  }
+
+  #upgradesTab .upgrade-stage-state {
+    padding: 4px 7px;
+    font-size: clamp(9px, 1.2vw, 11px);
+  }
+
+  #upgradesTab .upgrade-stage-number {
+    width: 23px;
+    height: 23px;
+    font-size: 11px;
+    margin: 0;
+  }
+
+  /* Roadmap legend */
+
+  #upgradesTab .upgrade-roadmap .roadmap-legend {
+    bottom: 10px;
+    gap: 8px;
+
+    font-size: 11px;
+    flex-wrap: wrap;
+  }
+}
+/* ==========================================
+   UPGRADES — RESPONSIVE PLANT PROFILE POPUP
+   ========================================== */
+
+@media (max-width: 1250px) {
+  #upgradesTab.active .upgrade-map .upgrade-info {
+    position: fixed;
+
+    top: 50%;
+    left: 50%;
+    right: auto;
+    bottom: auto;
+
+    display: flex;
+    flex-direction: column;
+
+    width: min(420px, calc(100vw - 24px));
+    height: auto;
+    max-height: calc(100dvh - 32px);
+
+    padding: 12px;
+    margin: 0;
+    gap: 8px;
+
+    box-sizing: border-box;
+
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    z-index: 101;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transform: translate(-50%, -150vh);
+  }
+
+  #upgradesTab.active .upgrade-map .upgrade-info.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+
+    transform: translate(-50%, -50%);
+  }
+
+  #upgradesTab .upgrade-info-content {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    width: 100%;
+    height: auto;
+
+    flex: 0 0 auto;
+
+    padding: 0;
+    gap: 8px;
+
+    overflow: visible;
+  }
+
+  #upgradesTab .upgrade-profile-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 4px;
+    gap: 5px;
+  }
+
+  #upgradesTab .upgrade-preview-wrap {
+    width: clamp(65px, 12vh, 100px);
+    aspect-ratio: 1;
+
+    margin: 0 auto;
+    padding: 7px;
+
+    box-sizing: border-box;
+  }
+
+  #upgradesTab .upgrade-info .upgrade-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  #upgradesTab .upgrade-info .upgrade-requirements,
+  #upgradesTab .upgrade-info .upgrade-mission,
+  #upgradesTab .upgrade-info .upgrade-strategy {
+    width: 100%;
+    height: auto;
+
+    padding: 9px;
+    margin: 0;
+
+    box-sizing: border-box;
+  }
+
+  #upgradesTab .upgrade-panel-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+
+    display: grid;
+    place-items: center;
+
+    width: 32px;
+    height: 32px;
+
+    z-index: 102;
+  }
+
+  #upgradesTab .upgrade-panel-backdrop {
+    z-index: 100;
+  }
+
+  #upgradesTab.active .upgrade-map .upgrade-info .upgrade-battle-button {
+    width: 100%;
+    min-height: 44px;
+
+    margin: 0;
+    padding: 8px;
+
+    flex-shrink: 0;
+  }
+}
+/* ==========================================
+   UPGRADES — TABLET AND MOBILE NAVIGATION
+   ========================================== */
+
+@media (max-width: 899px), (max-width: 1250px) and (orientation: portrait) {
+  #app .game-layout:has(#upgradesTab.active) > .side-nav {
+    position: relative;
+
+    grid-column: 1;
+    grid-row: 2;
+
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 1.4fr);
+
+    inset: auto;
+    transform: none;
+
+    width: 100%;
+    max-width: 1000px;
+    height: auto;
+    min-height: 0;
+    min-width: 0;
+
+    margin: 0 auto;
+    padding: 6px;
+    gap: 5px;
+
+    box-sizing: border-box;
+  }
+
+  #app:has(#upgradesTab.active) .nav-links {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 5px;
+  }
+
+  #app:has(#upgradesTab.active) .side-nav .nav-btn {
+    min-width: 0;
+    min-height: 44px;
+
+    padding: 6px 4px;
+    gap: 4px;
+
+    font-size: 12px;
+    justify-content: center;
+  }
+
+  #app:has(#upgradesTab.active) .side-nav .nav-btn span {
+    white-space: normal;
+    text-align: center;
+  }
+
+  #app:has(#upgradesTab.active) .network-toggle {
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+
+    padding: 6px;
+    margin: 0;
+
+    font-size: 11px;
+    white-space: normal;
+  }
+}
+/* ==========================================
+   UPGRADES — PHONE REFINEMENT
+   ========================================== */
+
+@media (max-width: 650px) {
+  #app:has(#upgradesTab.active) {
+    padding: 5px;
+  }
+
+  #app .game-layout:has(#upgradesTab.active) {
+    padding: 5px;
+    gap: 6px;
+  }
+
+  #upgradesTab.active .upgrade-world {
+    padding: 5px;
+    gap: 7px;
+  }
+
+  /* Page heading */
+
+  #upgradesTab .upgrade-heading h2 {
+    font-size: clamp(24px, 6vw, 30px);
+  }
+
+  #upgradesTab .upgrade-heading p {
+    font-size: 11px;
+  }
+
+  /* HUD */
+
+  #upgradesTab .upgrade-hud .stats {
+    gap: 4px;
+  }
+
+  #upgradesTab .upgrade-hud .stats > span {
+    padding: 6px 7px;
+    font-size: 10px;
+    gap: 4px;
+  }
+
+  /* Journey milestones */
+
+  #upgradesTab .journey-milestones {
+    padding: 6px;
+  }
+
+  #upgradesTab .milestone-grid {
+    display: grid;
+
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    align-items: stretch;
+    gap: 6px;
+
+    box-sizing: border-box;
+  }
+
+  #upgradesTab .milestone {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+
+    padding: 6px 3px;
+    gap: 4px;
+
+    text-align: center;
+  }
+
+  #upgradesTab .milestone > i {
+    font-size: 18px;
+  }
+
+  #upgradesTab .milestone-details {
+    align-items: center;
+    gap: 3px;
+  }
+
+  #upgradesTab .milestone-details strong {
+    font-size: 10px;
+  }
+
+  #upgradesTab .milestone-details p {
+    font-size: 9px;
+    line-height: 1.2;
+  }
+
+  #upgradesTab .milestone-status {
+    font-size: 9px;
+    padding: 3px 6px;
+  }
+
+  /* Roadmap */
+
+  #upgradesTab.active .upgrade-map .upgrade-roadmap {
+    height: clamp(620px, 85dvh, 760px);
+  }
+
+  #upgradesTab .roadmap-levels {
+    top: 8px;
+    gap: 4px;
+  }
+
+  #upgradesTab .roadmap-level {
+    padding: 7px 8px;
+    font-size: 10px;
+    min-height: 36px;
+  }
+
+  #upgradesTab .upgrade-roadmap .upgrade-stage {
+    width: 75px;
+    gap: 3px;
+  }
+
+  #upgradesTab.active .upgrade-roadmap .upgrade-stage:not(.boss-stage) img {
+    width: clamp(46px, 15vw, 65px);
+    height: clamp(46px, 15vw, 65px);
+  }
+
+  #upgradesTab .upgrade-roadmap .boss-stage-image {
+    width: 70px;
+    height: 75px;
+  }
+
+  #upgradesTab .upgrade-stage-name {
+    font-size: 11px;
+    padding: 3px 7px;
+  }
+
+  #upgradesTab .upgrade-stage-state {
+    font-size: 9px;
+    padding: 3px 5px;
+  }
+
+  #upgradesTab .upgrade-roadmap .roadmap-legend {
+    gap: 5px 8px;
+    font-size: 9px;
+  }
+
+  /* Bottom navigation */
+
+  #app .game-layout:has(#upgradesTab.active) > .side-nav {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 5px;
+    padding: 5px;
+  }
+
+  #app:has(#upgradesTab.active) .nav-links {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  #app:has(#upgradesTab.active) .side-nav .nav-btn {
+    flex-direction: column;
+    justify-content: center;
+
+    min-height: 46px;
+    padding: 5px 2px;
+    gap: 3px;
+
+    font-size: 10px;
+  }
+
+  #app:has(#upgradesTab.active) .network-toggle {
+    grid-column: 1;
+    width: 100%;
+    min-height: 40px;
+  }
+}
+/* ==========================================
+   UPGRADES — SMALL PORTRAIT TABLETS
+   ========================================== */
+
+@media (min-width: 651px) and (max-width: 899px) and (max-height: 1100px) and (orientation: portrait) {
+  #app:has(#upgradesTab.active) {
+    padding: 6px;
+  }
+
+  #app .game-layout:has(#upgradesTab.active) {
+    padding: 6px;
+    gap: 6px;
+  }
+
+  #upgradesTab.active .upgrade-world {
+    padding: 6px;
+    gap: 6px;
+  }
+
+  /* Compact heading */
+
+  #upgradesTab .upgrade-heading h2 {
+    font-size: 30px;
+    margin: 3px 0;
+  }
+
+  #upgradesTab .upgrade-heading p {
+    font-size: 11px;
+    line-height: 1.3;
+  }
+
+  /* Compact HUD */
+
+  #upgradesTab .upgrade-hud {
+    margin: 2px auto;
+  }
+
+  #upgradesTab .upgrade-hud .stats {
+    gap: 5px;
+  }
+
+  #upgradesTab .upgrade-hud .stats > span {
+    padding: 6px 9px;
+    font-size: 11px;
+  }
+
+  /* Reduce roadmap height */
+
+  #upgradesTab.active .upgrade-map {
+    gap: 7px;
+  }
+
+  #upgradesTab.active .upgrade-map .upgrade-roadmap {
+    height: clamp(400px, calc(100dvh - 450px), 600px);
+  }
+
+  #upgradesTab .upgrade-roadmap .upgrade-path.upgrade-path-tablet,
+  #upgradesTab .upgrade-roadmap .upgrade-stages {
+    top: 45px;
+    height: calc(100% - 90px);
+  }
+
+  /* Plant sizes */
+
+  #upgradesTab.active .upgrade-roadmap .upgrade-stage:not(.boss-stage) img {
+    width: 65px;
+    height: 65px;
+  }
+
+  #upgradesTab .upgrade-roadmap .boss-stage-image {
+    width: 85px;
+    height: 85px;
+  }
+
+  /* Collection progress */
+
+  #upgradesTab.active .upgrade-map .upgrade-collection-progress {
+    padding: 8px;
+    gap: 5px;
+  }
+
+  /* Navigation */
+
+  #app .game-layout:has(#upgradesTab.active) > .side-nav {
+    margin: 0 auto;
+    padding: 4px;
+    min-height: 0;
+  }
+
+  #app:has(#upgradesTab.active) .side-nav .nav-btn,
+  #app:has(#upgradesTab.active) .network-toggle {
+    min-height: 40px;
+    padding: 5px;
+  }
+}
+/* ==========================================
+   UPGRADES — LAPTOP LANDSCAPE REFINEMENT
+   ========================================== */
+
+@media (min-width: 900px) and (max-width: 1250px) and (orientation: landscape) {
+  /* Overall application */
+
+  #app:has(#upgradesTab.active) {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    height: 100dvh;
+    min-height: 0;
+
+    margin: 0 auto;
+    padding: 5px;
+
+    box-sizing: border-box;
+  }
+
+  /* Main page container */
+
+  #app .game-layout:has(#upgradesTab.active) {
+    display: grid;
+
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+
+    flex: 1 1 0;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    min-width: 0;
+
+    margin: 0;
+    padding: 6px;
+    gap: 6px;
+
+    box-sizing: border-box;
+  }
+
+  #app:has(#upgradesTab.active) .main-panel,
+  #upgradesTab.active {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    min-width: 0;
+
+    margin: 0;
+    padding: 0;
+  }
+
+  #upgradesTab.active .upgrade-world {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+
+    padding: 6px;
+    margin: 0;
+    gap: 5px;
+
+    box-sizing: border-box;
+  }
+
+  /* Compact page heading */
+
+  #upgradesTab .upgrade-heading {
+    flex-shrink: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  #upgradesTab .upgrade-heading h2 {
+    font-size: clamp(24px, 4vh, 32px);
+    margin: 2px 0;
+  }
+
+  #upgradesTab .upgrade-heading p {
+    font-size: 11px;
+    line-height: 1.3;
+    margin: 2px 0;
+  }
+
+  /* Compact HUD */
+
+  #upgradesTab .upgrade-hud {
+    flex-shrink: 0;
+    margin: 4px auto;
+  }
+
+  #upgradesTab .upgrade-hud .stats {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  #upgradesTab .upgrade-hud .stats > span {
+    padding: 5px 9px;
+    font-size: 11px;
+  }
+
+  /* Main evolution grid */
+
+  #upgradesTab.active .upgrade-map {
+    display: grid;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      clamp(165px, 19vw, 220px);
+
+    grid-template-rows:
+      auto
+      minmax(0, 1fr)
+      auto;
+
+    flex: 1 1 0;
+
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    min-width: 0;
+
+    padding: 0;
+    margin: 0;
+    gap: 6px;
+
+    box-sizing: border-box;
+  }
+
+  /* Journey milestones */
+
+  #upgradesTab.active .upgrade-map .upgrade-roadmap-footer {
+    display: flex;
+    flex-direction: column;
+
+    grid-column: 1;
+    grid-row: 1;
+
+    position: relative;
+    inset: auto;
+
+    width: 100%;
+    height: auto;
+    min-height: 0;
+
+    margin: 0;
+    padding: 0;
+  }
+
+  #upgradesTab .journey-milestones {
+    width: 100%;
+    padding: 6px;
+    box-sizing: border-box;
+  }
+
+  #upgradesTab .milestone-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 5px;
+  }
+
+  #upgradesTab .milestone {
+    padding: 6px;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  #upgradesTab .milestone > i {
+    font-size: 19px;
+  }
+
+  #upgradesTab .milestone-details strong {
+    font-size: 11px;
+  }
+
+  #upgradesTab .milestone-details p {
+    font-size: 10px;
+    line-height: 1.2;
+  }
+
+  /* Winding roadmap */
+
+  #upgradesTab.active .upgrade-map .upgrade-roadmap {
+    display: block;
+    position: relative;
+
+    grid-column: 1;
+    grid-row: 2;
+
+    inset: auto;
+
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    min-width: 0;
+
+    margin: 0;
+
+    background: #eee5f8;
+    border: 1px solid #dcc6ee;
+    border-radius: 12px;
+
+    box-sizing: border-box;
+  }
+
+  /* Level selection buttons */
+
+  #upgradesTab .roadmap-levels {
+    top: 8px;
+    left: 10px;
+    right: 10px;
+
+    justify-content: flex-start;
+    gap: 5px;
+  }
+
+  #upgradesTab .roadmap-level {
+    font-size: 10px;
+    padding: 6px 10px;
+  }
+
+  /* Restore horizontal desktop road */
+
+  #upgradesTab .upgrade-roadmap .upgrade-path:not(.upgrade-path-tablet) {
+    display: block !important;
+  }
+
+  #upgradesTab .upgrade-roadmap .upgrade-path.upgrade-path-tablet {
+    display: none !important;
+  }
+
+  #upgradesTab.active .upgrade-roadmap .upgrade-path,
+  #upgradesTab.active .upgrade-roadmap .upgrade-stages {
+    position: absolute;
+
+    top: 35px;
+    left: 5%;
+    right: auto;
+    bottom: auto;
+
+    width: 90%;
+    height: calc(100% - 65px);
+  }
+
+  /* Horizontal plant positions */
+
+  #upgradesTab.active .upgrade-map .upgrade-roadmap .upgrade-stage-1 {
+    left: 7% !important;
+    top: 66% !important;
+  }
+
+  #upgradesTab.active .upgrade-map .upgrade-roadmap .upgrade-stage-2 {
+    left: 26% !important;
+    top: 41% !important;
+  }
+
+  #upgradesTab.active .upgrade-map .upgrade-roadmap .upgrade-stage-3 {
+    left: 47% !important;
+    top: 48% !important;
+  }
+
+  #upgradesTab.active .upgrade-map .upgrade-roadmap .upgrade-stage-4 {
+    left: 70% !important;
+    top: 34% !important;
+  }
+
+  #upgradesTab.active .upgrade-map .upgrade-roadmap .upgrade-stage-5 {
+    left: 93% !important;
+    top: 18% !important;
+  }
+
+  /* Plant sprite sizes */
+
+  #upgradesTab.active .upgrade-roadmap .upgrade-stage {
+    width: 75px;
+    min-height: 0;
+    padding: 2px;
+    gap: 3px;
+
+    transform: translate(-50%, -50%);
+  }
+
+  #upgradesTab.active .upgrade-roadmap .upgrade-stage:not(.boss-stage) img {
+    width: clamp(35px, 8vh, 65px);
+    height: clamp(35px, 8vh, 65px);
+
+    object-fit: contain;
+  }
+
+  #upgradesTab.active .upgrade-roadmap .boss-stage-image {
+    width: clamp(45px, 10vh, 85px);
+    height: clamp(45px, 10vh, 85px);
+  }
+
+  #upgradesTab .upgrade-roadmap .boss-stage-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  #upgradesTab .upgrade-stage-name {
+    font-size: 10px;
+    padding: 3px 7px;
+  }
+
+  #upgradesTab .upgrade-stage-state {
+    font-size: 9px;
+    padding: 3px 6px;
+  }
+
+  #upgradesTab .upgrade-stage-number {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+    margin: 0;
+  }
+
+  /* Roadmap legend */
+
+  #upgradesTab .upgrade-roadmap .roadmap-legend {
+    bottom: 5px;
+    gap: 8px;
+    font-size: 10px;
+  }
+
+  #upgradesTab.active .upgrade-map .upgrade-collection-progress {
+    display: flex;
+    flex-direction: column;
+
+    position: relative;
+    grid-column: 1;
+    grid-row: 3;
+
+    inset: auto;
+
+    width: 100%;
+    height: auto;
+
+    padding: 6px 9px;
+    margin: 0;
+    gap: 5px;
+
+    box-sizing: border-box;
+  }
+
+  #upgradesTab.active .upgrade-map .upgrade-info {
+    position: relative;
+    inset: auto;
+    transform: none;
+
+    grid-column: 2;
+    grid-row: 1 / 4;
+
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    min-height: 0;
+    min-width: 0;
+
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+
+    padding: 7px;
+    margin: 0;
+    gap: 5px;
+
+    box-sizing: border-box;
+  }
+
+  #upgradesTab .upgrade-panel-close,
+  #upgradesTab .upgrade-panel-backdrop {
+    display: none;
+  }
+
+  #upgradesTab.active .upgrade-map .upgrade-info-content {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    flex: 1 1 auto;
+    min-height: 0;
+
+    padding: 0;
+    gap: 5px;
+
+    overflow: visible;
+  }
+
+  #upgradesTab .upgrade-profile-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    flex: 0 0 auto;
+    gap: 4px;
+    padding: 2px;
+  }
+
+  /* Restore circular portrait */
+
+  #upgradesTab .upgrade-preview-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: clamp(42px, 9vh, 75px);
+    aspect-ratio: 1;
+
+    margin: 0 auto;
+    padding: 5px;
+
+    border-radius: 50%;
+    border: 1px solid var(--plant-accent);
+    background: var(--plant-soft);
+
+    flex-shrink: 0;
+    box-sizing: border-box;
+  }
+
+  #upgradesTab .upgrade-info .upgrade-preview {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    object-fit: contain;
+  }
+
+  #upgradesTab .upgrade-info-header {
+    padding: 7px;
+    font-size: 10px;
+  }
+
+  #upgradesTab .upgrade-info h3 {
+    font-size: 19px;
+    margin: 2px 0;
+  }
+
+  #upgradesTab .upgrade-territory {
+    font-size: 10px;
+  }
+
+  #upgradesTab .upgrade-role {
+    font-size: 9px;
+    padding: 3px 7px;
+  }
+
+  #upgradesTab .upgrade-info .upgrade-requirements,
+  #upgradesTab .upgrade-info .upgrade-mission,
+  #upgradesTab .upgrade-info .upgrade-strategy {
+    flex: 0 0 auto;
+    width: 100%;
+    height: auto;
+
+    padding: 6px;
+    margin: 0;
+
+    box-sizing: border-box;
+  }
+
+  #upgradesTab .upgrade-info h4 {
+    font-size: 11px;
+    margin: 0 0 3px;
+  }
+
+  #upgradesTab .upgrade-info .upgrade-requirement-row,
+  #upgradesTab .upgrade-info .upgrade-mission p,
+  #upgradesTab .upgrade-info .upgrade-strategy p {
+    font-size: 10px;
+    line-height: 1.3;
+    margin: 0;
+  }
+
+  #upgradesTab.active .upgrade-map .upgrade-info .upgrade-battle-button {
+    width: 100%;
+    min-height: 30px;
+
+    margin: auto 0 0;
+    padding: 5px;
+
+    flex-shrink: 0;
+  }
+
+  #app .game-layout:has(#upgradesTab.active) > .side-nav {
+    position: relative;
+
+    display: grid;
+    grid-template-columns:
+      minmax(0, 4fr)
+      minmax(0, 1.4fr);
+
+    grid-column: 1;
+    grid-row: 2;
+
+    inset: auto;
+    transform: none;
+
+    width: min(1000px, 100%);
+    height: auto;
+    min-height: 0;
+    min-width: 0;
+
+    margin: 0 auto;
+    padding: 5px;
+    gap: 5px;
+
+    box-sizing: border-box;
+  }
+
+  #app:has(#upgradesTab.active) .nav-links {
+    display: grid;
+    grid-column: 1;
+    grid-row: 1;
+
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 5px;
+    min-width: 0;
+  }
+
+  #app:has(#upgradesTab.active) .side-nav .nav-btn {
+    min-height: 34px;
+    min-width: 0;
+
+    padding: 5px;
+    gap: 4px;
+    font-size: 10px;
+  }
+
+  #app:has(#upgradesTab.active) .network-toggle {
+    grid-column: 2;
+    grid-row: 1;
+
+    width: 100%;
+    min-width: 0;
+    min-height: 34px;
+
+    margin: 0;
+    padding: 5px;
+
+    font-size: 10px;
+    white-space: normal;
+
+    box-sizing: border-box;
+  }
+}
+
+/* ==========================================
+   BOSS BATTLE — LAPTOP LANDSCAPE REFINEMENT
+   ========================================== */
+
+@media (min-width: 900px) and (max-width: 1250px) and (orientation: landscape) {
+  /* Overall application */
+
+  #app:has(#battleTab.active #bossControls:not([hidden])) {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    height: 100dvh;
+    min-height: 0;
+
+    padding: 5px;
+    margin: 0 auto;
+
+    box-sizing: border-box;
+  }
+
+  /* Main Boss Battle grid */
+
+  #app .game-layout:has(#battleTab.active #bossControls:not([hidden])) {
+    display: grid;
+
+    grid-template-columns:
+      minmax(135px, 16%)
+      minmax(0, 1fr)
+      minmax(135px, 16%);
+
+    grid-template-rows:
+      auto
+      minmax(0, 1fr)
+      auto
+      auto;
+
+    flex: 1 1 0;
+
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    min-width: 0;
+
+    padding: 6px;
+    margin: 0;
+    gap: 6px;
+
+    align-items: stretch;
+    box-sizing: border-box;
+  }
+
+  /* Compact header */
+
+  #battleTab:has(#bossControls:not([hidden])) .battle-header {
+    grid-column: 1 / -1;
+    grid-row: 1;
+
+    margin: 0;
+    padding: 0;
+    gap: 4px;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .battle-heading {
+    margin: 0;
+    padding: 0;
+    gap: 3px;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) #battleTitle {
+    font-size: clamp(22px, 3.5vh, 30px);
+    margin: 2px 0;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .battle-hud {
+    margin: 3px 0;
+  }
+
+  /* Battlefield */
+
+  /* Battlefield container */
+
+  #battleTab:has(#bossControls:not([hidden])) .stage:not(:fullscreen) {
+    position: relative;
+
+    grid-column: 2;
+    grid-row: 2;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: stretch;
+
+    width: 100%;
+    height: 100%;
+
+    min-width: 0;
+    min-height: 0;
+    max-width: 100%;
+    max-height: 100%;
+
+    aspect-ratio: auto;
+    container-type: size;
+
+    margin: 0;
+    padding: 0;
+
+    background: #12251b;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  /* Battlefield canvas */
+
+  #battleTab:has(#bossControls:not([hidden])) .stage:not(:fullscreen) canvas {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    min-width: 0;
+    min-height: 0;
+    max-width: 100%;
+    max-height: 100%;
+
+    flex: 1 1 0;
+
+    object-fit: fill;
+    aspect-ratio: auto;
+
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+/* ==========================================
+   BOSS BATTLE — LAPTOP PLANT ARSENAL
+   ========================================== */
+
+@media (min-width: 900px) and (max-width: 1250px) and (orientation: landscape) {
+  #battleTab:has(#bossControls:not([hidden])) .boss-arsenal {
+    grid-column: 1;
+    grid-row: 2 / 4;
+
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    min-width: 0;
+
+    padding: 5px;
+    gap: 4px;
+
+    align-self: stretch;
+
+    overflow-y: visible;
+    justify-content: flex-start;
+    gap: 3px;
+    padding: 4px;
+    box-sizing: border-box;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-arsenal-subtitle {
+    font-size: 10px;
+    margin: 0;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-deploy {
+    display: grid;
+
+    flex: 0 0 auto;
+
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: repeat(4, minmax(0, auto));
+    gap: 3px;
+
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    min-width: 0;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-plant-card {
+    display: grid;
+
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
+
+    align-content: center;
+
+    height: auto;
+    min-height: min-content;
+    min-width: 0;
+
+    padding: 2px 3px;
+    gap: 1px;
+
+    box-sizing: border-box;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-plant-profile {
+    display: grid;
+
+    grid-column: 1;
+    grid-row: 1;
+
+    grid-template-columns: 28px minmax(0, 1fr);
+
+    align-items: center;
+
+    width: 100%;
+    height: auto;
+    min-width: 0;
+
+    gap: 4px;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-plant-image {
+    width: 26px;
+    height: 28px;
+    object-fit: contain;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-plant-information strong {
+    font-size: 11px;
+    line-height: 1.2;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-plant-role,
+  #battleTab:has(#bossControls:not([hidden])) .boss-plant-cost {
+    font-size: 9px;
+    line-height: 1.2;
+  }
+
+  #battleTab:has(#bossControls:not([hidden]))
+    .boss-plant-card
+    .boss-deploy-button {
+    position: static;
+
+    grid-column: 1;
+    grid-row: 2;
+
+    width: 100%;
+    height: auto;
+    min-height: 22px;
+    padding: 2px 4px;
+    margin: 0;
+
+    font-size: 10px;
+    box-sizing: border-box;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-strategy-tip {
+    flex-shrink: 0;
+
+    margin: 0;
+    padding: 5px;
+
+    font-size: 10px;
+    line-height: 1.3;
+  }
+}
+
+/* ==========================================
+   BOSS BATTLE — LAPTOP NO SCROLL REFINEMENT
+   ========================================== */
+
+@media (min-width: 900px) and (max-width: 1250px) and (orientation: landscape) {
+  /* Reduce header height */
+
+  #battleTab:has(#bossControls:not([hidden])) .battle-header {
+    gap: 3px;
+    padding: 0;
+    margin: 0;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .battle-heading {
+    gap: 2px;
+    padding: 0;
+    margin: 0;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .battle-heading p {
+    margin: 2px 0;
+    font-size: 10px;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .battle-hud {
+    margin: 2px 0;
+  }
+
+  /* ==========================================
+     LEFT — PLANT ARSENAL
+     ========================================== */
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-arsenal {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+
+    height: 100%;
+    min-height: 0;
+
+    padding: 3px;
+    gap: 2px;
+
+    overflow: visible;
+    box-sizing: border-box;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-deploy {
+    display: grid;
+
+    flex: 1 1 auto;
+
+    height: auto;
+    min-height: min-content;
+    min-width: 0;
+
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: repeat(4, minmax(min-content, 1fr));
+
+    gap: 3px;
+    margin: 0;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-plant-card {
+    display: grid;
+
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
+
+    align-content: center;
+
+    height: auto;
+    min-height: min-content;
+    min-width: 0;
+
+    padding: 3px;
+    gap: 3px;
+
+    box-sizing: border-box;
+  }
+  #battleTab:has(#bossControls:not([hidden])) .boss-plant-information {
+    display: flex;
+    flex-direction: column;
+
+    height: auto;
+    min-height: min-content;
+    min-width: 0;
+
+    gap: 0;
+    margin: 0;
+
+    line-height: 1.1;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-plant-profile {
+    display: grid;
+    grid-template-columns: 26px minmax(0, 1fr);
+
+    align-items: center;
+
+    height: auto;
+    min-height: min-content;
+
+    padding: 0;
+    margin: 0;
+    gap: 3px;
+  }
+
+  #battleTab:has(#bossControls:not([hidden]))
+    .boss-plant-card
+    .boss-deploy-button {
+    position: static;
+
+    grid-column: 1;
+    grid-row: 2;
+
+    width: 100%;
+    height: auto;
+    min-height: 24px;
+
+    padding: 2px 3px;
+    margin: 0;
+
+    line-height: 1.1;
+    box-sizing: border-box;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-strategy-tip {
+    display: flex;
+    flex-direction: column;
+
+    flex: 0 0 auto;
+
+    width: 100%;
+    height: auto;
+    min-height: min-content;
+    max-height: none;
+
+    padding: 3px 4px;
+    margin: 0;
+    gap: 1px;
+
+    overflow: visible;
+    white-space: normal;
+    overflow-wrap: break-word;
+
+    box-sizing: border-box;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-strategy-tip h4 {
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.2;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-strategy-tip p {
+    height: auto;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+
+    font-size: 10px;
+    line-height: 1.3;
+  }
+
+  /* ==========================================
+     CENTRE — ATTACK DIRECTION
+     ========================================== */
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-attack-panel {
+    position: relative;
+
+    grid-column: 2;
+    grid-row: 3;
+
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+
+    width: 100%;
+    height: auto;
+
+    min-width: 0;
+    min-height: min-content;
+
+    padding: 4px 7px;
+    margin: 0;
+    gap: 3px;
+
+    box-sizing: border-box;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-attack-heading {
+    margin: 0;
+    padding: 0;
+    font-size: 11px;
+    line-height: 1.2;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-lanes {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-lane-button {
+    min-height: 36px;
+    height: auto;
+
+    padding: 4px 5px;
+    margin: 0;
+    gap: 3px;
+
+    font-size: 10px;
+    line-height: 1.1;
+
+    box-sizing: border-box;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-lane-button i {
+    font-size: 16px;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-lane-button strong {
+    font-size: 11px;
+    line-height: 1.1;
+    margin: 0;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-lane-button small {
+    font-size: 9px;
+    line-height: 1.1;
+    margin: 0;
+  }
+
+  #battleTab:has(#bossControls:not([hidden])) .boss-attack-footer {
+    margin: 0;
+    padding-top: 2px;
+    font-size: 9px;
+    line-height: 1.1;
+  }
+
+  /* ==========================================
+     RIGHT — PLANT PROFILE
+     ========================================== */
+
+  #app:has(#battleTab.active #bossControls:not([hidden])) #plantDetailsPanel {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+
+    height: auto;
+    min-height: 0;
+    min-width: 0;
+
+    padding: 5px;
+    gap: 4px;
+
+    overflow: visible;
+    box-sizing: border-box;
+  }
+
+  /* Profile heading */
+
+  #app:has(#battleTab.active #bossControls:not([hidden]))
+    #plantDetailsPanel
+    .sidebar-label {
+    padding: 6px;
+    margin: 0;
+    font-size: 10px;
+  }
+
+  /* Plant portrait */
+
+  #app:has(#battleTab.active #bossControls:not([hidden]))
+    #plantDetailsPanel
+    .detail-color {
+    width: clamp(45px, 9vh, 65px);
+    height: clamp(45px, 9vh, 65px);
+
+    padding: 4px;
+    margin: 0 auto;
+
+    flex-shrink: 0;
+  }
+
+  /* Plant name */
+
+  #app:has(#battleTab.active #bossControls:not([hidden])) #detailName {
+    font-size: 16px;
+    line-height: 1.1;
+    margin: 2px 0;
+  }
+
+  #app:has(#battleTab.active #bossControls:not([hidden]))
+    #plantDetailsPanel
+    .battle-detail-role {
+    padding: 2px 5px;
+    margin: 0 auto;
+    font-size: 9px;
+  }
+
+  /* Special ability */
+
+  #app:has(#battleTab.active #bossControls:not([hidden]))
+    #plantDetailsPanel
+    .battle-ability-box {
+    flex: 0 0 auto;
+
+    height: auto;
+    min-height: 0 !important;
+
+    padding: 5px;
+    margin: 0;
+    gap: 2px;
+  }
+
+  #app:has(#battleTab.active #bossControls:not([hidden]))
+    #plantDetailsPanel
+    .battle-ability-label {
+    font-size: 9px;
+    margin: 0 0 2px;
+  }
+
+  #app:has(#battleTab.active #bossControls:not([hidden]))
+    #plantDetailsPanel
+    .battle-ability-box
+    .detail-description {
+    font-size: 10px;
+    line-height: 1.2;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Compact statistics */
+
+  #app:has(#battleTab.active #bossControls:not([hidden]))
+    #plantDetailsPanel
+    .plant-profile-stats {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+
+    flex: 1 1 auto;
+
+    width: 100%;
+    height: auto;
+    min-height: min-content;
+
+    gap: 6px;
+    padding: 4px 0;
+    margin: 0;
+  }
+
+  #app:has(#battleTab.active #bossControls:not([hidden]))
+    #plantDetailsPanel
+    .profile-stat {
+    gap: 2px;
+    margin: 0;
+  }
+
+  #app:has(#battleTab.active #bossControls:not([hidden]))
+    #plantDetailsPanel
+    .profile-stat-heading,
+  #app:has(#battleTab.active #bossControls:not([hidden]))
+    #plantDetailsPanel
+    .profile-stat-heading
+    strong {
+    font-size: 10px;
+    line-height: 1.2;
+  }
+
+  #app:has(#battleTab.active #bossControls:not([hidden]))
+    #plantDetailsPanel
+    .profile-stat-track {
+    height: 5px;
+  }
+
+  /* Deployment cost */
+
+  #app:has(#battleTab.active #bossControls:not([hidden]))
+    #plantDetailsPanel
+    .profile-deployment-cost {
+    flex: 0 0 auto;
+
+    padding: 5px;
+    margin: 2px 0 0;
+    gap: 3px;
+
+    font-size: 10px;
+    line-height: 1.2;
+  }
+
+  /* Selected plant message */
+
+  #app:has(#battleTab.active #bossControls:not([hidden]))
+    #plantDetailsPanel
+    .plant-message {
+    flex: 0 0 auto;
+
+    height: auto;
+    min-height: 0;
+
+    padding: 4px;
+    margin: 0;
+
+    font-size: 9px;
+    line-height: 1.2;
+  }
+
+  /* ==========================================
+     BOTTOM NAVIGATION — PREVENT OVERLAP
+     ========================================== */
+
+  #app
+    .game-layout:has(#battleTab.active #bossControls:not([hidden]))
+    > .side-nav {
+    position: relative;
+
+    grid-column: 1 / -1;
+    grid-row: 4;
+
+    inset: auto;
+    transform: none;
+
+    width: min(1000px, 100%);
+    max-width: 100%;
+
+    height: auto;
+    min-height: 0;
+    min-width: 0;
+
+    margin: 0 auto;
+    padding: 4px;
+    gap: 4px;
+
+    align-self: end;
+    box-sizing: border-box;
+  }
+
+  #app:has(#battleTab.active #bossControls:not([hidden])) .side-nav .nav-btn {
+    min-height: 32px;
+    padding: 5px;
+    font-size: 10px;
   }
 }
